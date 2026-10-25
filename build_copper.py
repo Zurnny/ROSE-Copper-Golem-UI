@@ -36,7 +36,7 @@ def map_rgb(r, g, b, mode='normal'):
     return int(round(r2 * 255)), int(round(g2 * 255)), int(round(b2 * 255))
 
 # vectorised version for images
-def map_image(im, mode='normal'):
+def map_image(im, mode='normal', keep_red=False):
     a = np.asarray(im.convert('RGBA'), float)
     rgb = a[..., :3] / 255
     r, g, b = rgb[..., 0], rgb[..., 1], rgb[..., 2]
@@ -46,6 +46,7 @@ def map_image(im, mode='normal'):
     H, S, V = h.copy(), s.copy(), v.copy()
     brass = (h >= 28) & (h <= 58) & (s > 0.28) & (v > 0.38)
     copper = (h >= 12) & (h < 28) & (s > 0.38) & (v > 0.30)
+    if keep_red: copper[:] = False   # gauges: the HP fill is a red-orange, keep it red
     dark = (v <= 0.38) & (s < 0.75) & ((h <= 60) | (s < 0.15))
     H[brass] = 20; S[brass] = np.minimum(0.9, s[brass] * 1.15); V[brass] = v[brass] * 0.95
     H[copper] = 272; S[copper] = np.minimum(0.8, s[copper] * 0.95); V[copper] = np.minimum(1, v[copper] * 0.9)
@@ -114,7 +115,7 @@ for root, _, files in os.walk(DST):
             s = open(p, encoding='utf-8', newline='').read(); s2 = recolour_text(s)
             if s2 != s: open(p, 'w', encoding='utf-8', newline='').write(s2)
         elif ext == 'dds':
-            write_dds(map_image(Image.open(p)), p)
+            write_dds(map_image(Image.open(p), keep_red=f.lower().startswith('gauge')), p)
         elif ext == 'png':
             im = Image.open(p); mode = im.mode
             out = map_image(im)

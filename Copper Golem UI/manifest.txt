@@ -1,5 +1,5 @@
 ; Update list for Copper Golem UI. Upload this next to mod.ini and the files folder.
-version=1.1
+version=1.2
 b4da904abc082f890895af65d6b58626d0ac7857|files/Data/ui/themes/rose/game/announce.html
 82790a6c851c89e3e4c2f186eb830f09b16f9226|files/Data/ui/themes/rose/game/arena_browser.css
 8fb13abac758778905c2ccd6054a3654ee9518a5|files/Data/ui/themes/rose/game/arena_group.html
@@ -72,7 +72,7 @@ ec0670de5f63c4b776c9a49c0feffaf7fd2c1182|files/Data/ui/themes/rose/game/tos.html
 22d51b4bbd60fb3b16bf34845c0726ac994a3a76|files/Data/ui/themes/rose/game/tutorial.html
 a0f6b1e73871464d06424d411a7420de074b3597|files/Data/ui/themes/rose/game/world_map.html
 d9b60643fda2f2921c7e2287461b6af8e28aa72f|files/Data/ui/themes/rose/game/zone_notice.html
-5be1572f675bc49d88d1738176c7b318eddcc6e5|files/Data/ui/themes/rose/imgs/gauge_steampunk.dds
+84d4d69d74b0af29bd28e5ccdf1c79b799aee5ee|files/Data/ui/themes/rose/imgs/gauge_steampunk.dds
 348829662f563b821777e6a7cea8f2beba97271e|files/Data/ui/themes/rose/imgs/steampunk_menu.dds
 3c596d191cd9c0a3d4cb92ed790e57fb4e0337dd|files/Data/ui/themes/rose/imgs/steampunk_minimap.dds
 6b1d8665954736829ef10f5aae165c2872c3fc75|files/Data/ui/themes/rose/imgs/steampunk_ui.dds
@@ -133,4 +133,4 @@ c7f75cc18de182b5e7d68d2b7896b14c2aa67a04|launcher/nav_support_n.png
 7e8f2ac0f0c23b7e83561144262c341c27bad5a5|launcher/skin.ini
 21540afb2c00543e886211a3d322082feca69a83|launcher/start_h.png
 8dbb845963698e2100f2206fbaaa5c882b4caf04|launcher/start_n.png
-f34dbe9b64ee973945d53c47d02eb6e684175946|mod.ini
+13056dcec5261fdd56eb72043282c5e054199fd0|mod.ini

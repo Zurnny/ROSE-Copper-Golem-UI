@@ -1,10 +1,10 @@
 ; Update list for Copper Golem UI. Upload this next to mod.ini and the files folder.
-version=1.0
+version=1.1
 b4da904abc082f890895af65d6b58626d0ac7857|files/Data/ui/themes/rose/game/announce.html
 82790a6c851c89e3e4c2f186eb830f09b16f9226|files/Data/ui/themes/rose/game/arena_browser.css
 8fb13abac758778905c2ccd6054a3654ee9518a5|files/Data/ui/themes/rose/game/arena_group.html
 a21c3210ce18d9838756aaf51fe92992e5fa76a7|files/Data/ui/themes/rose/game/avatar_selection.html
-d1b0bf506980544fba173c46df5ef433deb61ea5|files/Data/ui/themes/rose/game/avatar_store.html
+caa3e8ec4288ec30983b498cf4412abab9636ca5|files/Data/ui/themes/rose/game/avatar_store.html
 ce58ce9bbc7eb03007baddf18eb364cf4971d6a6|files/Data/ui/themes/rose/game/char_actions.html
 fcd4db4d6438c8a1016d09924bb414b8d7be5b3e|files/Data/ui/themes/rose/game/character_create.html
 37627df4c726bf3d66ffca8af118f777c0650744|files/Data/ui/themes/rose/game/character_preview.html
@@ -51,7 +51,7 @@ fb37bcade545f34eb8ba42df3373c6fb51b80fac|files/Data/ui/themes/rose/game/options_
 33dbff42cb2229f8b78ff331a0aab59f08ed44b2|files/Data/ui/themes/rose/game/personal_store.html
 9ea968196ece914af24a235ea0219ea91835cb5f|files/Data/ui/themes/rose/game/personal_store_management.html
 264cb9b89f37d80b5f46aad9339c44f09208b939|files/Data/ui/themes/rose/game/personal_store_price.html
-8588f258dc573175b10d5bb666f07ae0762eba7e|files/Data/ui/themes/rose/game/personal_vending.html
+76d7c91433bd34ea5c6cfff492e638fae2f28b30|files/Data/ui/themes/rose/game/personal_vending.html
 419e295fbd1f52ce94f50de038ac15aca47300fb|files/Data/ui/themes/rose/game/player_trade.html
 1d3ef00968bf94930141551afb58bebb0fa227fb|files/Data/ui/themes/rose/game/private_chat.html
 44be93181da88ae9a7e619c07f50eed16b80be5b|files/Data/ui/themes/rose/game/quest_list.html
@@ -133,4 +133,4 @@ c7f75cc18de182b5e7d68d2b7896b14c2aa67a04|launcher/nav_support_n.png
 7e8f2ac0f0c23b7e83561144262c341c27bad5a5|launcher/skin.ini
 21540afb2c00543e886211a3d322082feca69a83|launcher/start_h.png
 8dbb845963698e2100f2206fbaaa5c882b4caf04|launcher/start_n.png
-919b7d2f5dc9aa1a8bcfaad4746ea542b45fe288|mod.ini
+f34dbe9b64ee973945d53c47d02eb6e684175946|mod.ini

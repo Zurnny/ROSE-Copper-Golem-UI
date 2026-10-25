@@ -17,9 +17,10 @@
 			.shop-grid { display: flex; flex-wrap: wrap; width: 272dp; gap: 4dp; margin: 0 auto; }
 			.shop-grid item-slot { width: 40dp; height: 40dp; flex: 0 0 40dp; border: 1dp transparent; }
 			.shop-grid item-slot.selected { border-color: rgb(231, 154, 116); }
-			.shop-selection { display: flex; flex-direction: row; align-items: center; min-height: 24dp; margin-top: 8dp; }
-			#selected-name { flex: 1 1 auto; min-width: 0; white-space: normal; color: rgb(231, 154, 116); margin-right: 8dp; padding-top: 5dp; }
-			.shop-price { display: flex; align-items: center; justify-content: flex-end; gap: 5dp; flex: 0 0 auto; white-space: nowrap; }
+			/* name on the left and price on the right, both centred up and down; long names wrap */
+			.shop-selection { display: block; position: relative; min-height: 26dp; margin-top: 8dp; }
+			#selected-name { display: block; min-width: 0; white-space: normal; word-break: break-word; color: rgb(231, 154, 116); margin: 0 106dp 0 0; padding: 4dp 0; line-height: 18dp; }
+			#game-avatar-store .shop-selection .shop-price { position: absolute; right: 0dp; top: 50%; transform: translateY(-50%); white-space: nowrap; }
 			#selected-price { color: rgb(231, 154, 116); }
 			.shop-price { display: flex; align-items: center; justify-content: flex-end; gap: 5dp; height: 21dp; }
 			.shop-price img { width: 21dp; height: 21dp; flex-shrink: 0; }

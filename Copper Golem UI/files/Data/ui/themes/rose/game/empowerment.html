@@ -1,0 +1,53 @@
+<rml>
+    <head>
+        <title>Empowerment</title>
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/spritesheet_itemicon.css" />
+        <link type="text/rcss" href="../styles/spritesheet_socketgem.css" />
+        <link type="text/rcss" href="../styles/item_slot.css" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+        <style>
+            body { width: 340dp; max-width: 92vw; }
+        </style>
+    </head>
+    <body template="window-fixed-size" id="empowerment">
+        <div data-model="empowerment">
+            <div class="content-box ui-section ui-item-row">
+                <item-slot id="empowerment-target" class="default" />
+                <div class="ui-item-details"><str string-id="1259" class="ui-item-caption" /><span class="ui-section-title">{{target_name}}</span></div>
+            </div>
+            <div class="content-box ui-section ui-item-row" data-if="materials[0].required">
+                <item-slot id="empowerment-material-0" class="default" />
+                <div class="ui-item-details"><str string-id="1260" class="ui-item-caption" /><span class="ui-section-title">{{materials[0].name}}</span></div><span class="ui-item-amount">{{materials[0].count}}</span>
+            </div>
+            <div class="content-box ui-section ui-item-row" data-if="materials[1].required">
+                <item-slot id="empowerment-material-1" class="default" />
+                <div class="ui-item-details"><str string-id="1260" class="ui-item-caption" /><span class="ui-section-title">{{materials[1].name}}</span></div><span class="ui-item-amount">{{materials[1].count}}</span>
+            </div>
+            <div class="content-box ui-section ui-item-row" data-if="materials[2].required">
+                <item-slot id="empowerment-material-2" class="default" />
+                <div class="ui-item-details"><str string-id="1260" class="ui-item-caption" /><span class="ui-section-title">{{materials[2].name}}</span></div><span class="ui-item-amount">{{materials[2].count}}</span>
+            </div>
+            <div class="content-box ui-section ui-item-row" data-if="materials[3].required">
+                <item-slot id="empowerment-material-3" class="default" />
+                <div class="ui-item-details"><str string-id="1260" class="ui-item-caption" /><span class="ui-section-title">{{materials[3].name}}</span></div><span class="ui-item-amount">{{materials[3].count}}</span>
+            </div>
+            <div class="content-box ui-section ui-item-row" data-if="materials[4].required">
+                <item-slot id="empowerment-enhancer" class="default" />
+                <div class="ui-item-details"><str string-id="1302" class="ui-item-caption" /><span class="ui-section-title">{{materials[4].name}}</span></div><span class="ui-item-amount">{{materials[4].count}}</span>
+            </div>
+            <div class="content-box ui-section ui-item-row" data-if="ready">
+                <item-slot id="empowerment-next" class="default" />
+                <div class="ui-item-details"><str string-id="1261" class="ui-item-caption" /><span class="ui-section-title">{{next_name}}</span></div>
+            </div>
+            <div class="ui-footer">
+                <div class="ui-detail-row" data-if="ready"><str string-id="318" /><span class="ui-detail-value" id="empowerment-chance">{{chance}}</span></div>
+                <div class="ui-detail-row"><str string-id="574" /><div class="ui-currency"><img id="empowerment-currency" sprite="button-zulie-n" /><span id="empowerment-cost">{{cost}}</span></div></div>
+            </div>
+            <span id="empowerment-status" class="ui-status ui-operation-status" data-if="status != ''">{{status}}</span>
+            <div class="ui-actions ui-operation-actions"><button id="empowerment-begin" class="default accept" onclick="begin" data-attrif-disabled="busy"><str string-id="1262" /></button></div>
+        </div>
+    </body>
+</rml>

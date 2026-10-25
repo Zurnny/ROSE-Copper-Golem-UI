@@ -1,0 +1,425 @@
+/* =====================================================================
+ * Steampunk theme overrides
+ * Load this LAST, after every other stylesheet, so it wins.
+ * Only restyles shared pieces: buttons, tabs, sliders, scrollbars,
+ * panels, tooltips, dropped item labels, party/arena overlays.
+ * Delete the <link> to it to go back to the normal look.
+ * ===================================================================== */
+
+/* ---- Shared text colours (replaces the old bright yellow) ------------ */
+.ui-section-title,
+.ui-detail-value,
+.ui-currency,
+.stat-points-row .stat-value,
+.currency-value,
+.stat-cost,
+listbox-item:not([disabled]):hover
+{
+    color: rgb(255, 217, 128);
+}
+.ui-section-heading,
+.ui-footer
+{
+    border-color: rgb(116, 53, 22);
+}
+.ui-status,
+.ui-item-caption,
+.stat-label
+{
+    color: rgb(191, 145, 122);
+}
+
+/* ---- Palette (for reference) -----------------------------------------
+ * brass       rgb(203, 117, 74)     dark brass  rgb(116, 53, 22)
+ * copper      rgb(127, 61, 185)     iron        rgb(42, 40, 45)
+ * parchment   rgb(226, 208, 170)    ink         rgb(69, 68, 75)
+ * ------------------------------------------------------------------- */
+
+/* ---- Panels ---------------------------------------------------------- */
+.content-box
+{
+    background: rgba(42, 40, 45, 200);
+    border: 1dp rgb(116, 53, 22);
+    border-radius: 2dp;
+}
+
+.settings-group,
+.options-panel details
+{
+    background: rgba(28, 27, 30, 150);
+    border: 1dp rgb(116, 53, 22);
+    border-radius: 2dp;
+}
+
+.settings-group > h3,
+.options-panel details > summary > summary-text
+{
+    color: rgb(203, 117, 74);
+    font-effect: outline(1dp rgb(40, 25, 10));
+}
+
+/* ---- Window frames: riveted brass (art: imgs/steampunk_ui.dds) --------
+ * Needs styles/spritesheet_steampunk.css, which this file imports below
+ * by linking it from each window. Padding is widened slightly so the
+ * content clears the 6dp brass border.
+ * ------------------------------------------------------------------- */
+.window-fixed-size,
+.window-resizeable,
+.window-fixed,
+.window-box,
+.window-small
+{
+    decorator: tiled-box(
+        sp-frame-tl, sp-frame-t, sp-frame-tr,
+        sp-frame-l,  sp-frame-c, sp-frame-r,
+        sp-frame-bl, sp-frame-b, sp-frame-br
+    );
+}
+
+.window-fixed-size,
+.window-resizeable,
+.window-fixed
+{
+    padding-left: 8dp;
+    padding-right: 8dp;
+}
+.window-fixed-size,
+.window-fixed { padding-bottom: 8dp; }
+.window-box { padding: 8dp; }
+
+/* Inner panels: dark iron with a thin brass edge */
+#window-content,
+.window-pane
+{
+    decorator: none;
+    background: rgba(28, 27, 30, 170);
+    border: 1dp rgb(116, 53, 22);
+    /* Square corners on purpose: a rounded, scrolling panel that holds
+       another rounded, scrolling box (skills window) hides its contents. */
+    border-radius: 0dp;
+}
+
+/* Close button: tint the red art toward brass/copper */
+button.window-title-close { image-color: rgb(223, 150, 114); }
+button.window-title-close:hover { image-color: rgb(242, 180, 149); }
+
+.window-resize-handle { image-color: rgb(203, 117, 74); }
+span.line-splitter    { image-color: rgb(203, 117, 74); }
+
+/* ---- Title bar ---------------------------------------------------------
+ * The brass border is 6dp thick, so the title strip runs from 6dp to
+ * 32dp: tall enough for the full-size (24x26) X. The title text and
+ * the X are both centred in that strip.
+ * ------------------------------------------------------------------- */
+.window-fixed-size,
+.window-resizeable,
+.window-fixed
+{
+    padding-top: 32dp;
+}
+
+.window-title
+{
+    top: 6dp;
+    height: 26dp;
+    line-height: 26dp;
+    padding-left: 12dp;
+    color: rgb(231, 154, 116);
+}
+
+button.window-title-close
+{
+    top: 6dp;          /* sits just inside the 6dp top border */
+    right: 10dp;       /* clear of the 6dp side border */
+}
+
+/* ---- Buttons ----------------------------------------------------------
+ * Dark glass art with a brass rim and a gloss band (sp-btn-* in
+ * spritesheet_steampunk.css). The selectors copy button.css so they win on
+ * specificity when this file loads after it.
+ * ------------------------------------------------------------------- */
+button.default,
+tab.default
+{
+    decorator: tiled-horizontal( sp-btn-n-l, sp-btn-n-c, sp-btn-n-r );
+    image-color: rgb(255, 255, 255);
+    color: rgb(255, 240, 210);
+    font-effect: outline(1dp rgb(50, 30, 10));
+}
+
+/* Hover: clearly brighter, polished brass with lighter text */
+button.default:not(button[disabled]):hover,
+tab.default:not(button[disabled]):hover,
+.ui-tabs > button.default:not(button[disabled]):hover,
+button.default.ui-compact:not(button[disabled]):hover
+{
+    decorator: tiled-horizontal( sp-btn-h-l, sp-btn-h-c, sp-btn-h-r );
+    image-color: rgb(255, 255, 255);
+    color: rgb(255, 250, 235);
+}
+
+/* Hover on the already-selected tab: a lighter copper */
+button.default.selected:not(button[disabled]):hover,
+.ui-tabs > button.active:not(button[disabled]):hover,
+.ui-tabs > button.selected:not(button[disabled]):hover,
+tab.default:selected:hover
+{
+    decorator: tiled-horizontal( sp-btn-a-l, sp-btn-a-c, sp-btn-a-r );
+    image-color: rgb(255, 255, 255);
+    color: rgb(255, 245, 210);
+}
+
+button.default:not(button[disabled]):active,
+button.default.selected,
+tab.default:not(button[disabled]):active,
+tab.default:active,
+tab.default:selected
+{
+    decorator: tiled-horizontal( sp-btn-a-l, sp-btn-a-c, sp-btn-a-r );
+    image-color: rgb(255, 255, 255);
+    color: rgb(242, 173, 138);
+}
+
+button[disabled]
+{
+    image-color: rgb(110, 100, 90);
+    color: rgb(170, 160, 150);
+}
+button.default:disabled,
+button.default[disabled],
+tab.default:disabled,
+tab.default[disabled],
+body button.default[disabled],
+body button.default[disabled]:hover,
+body button.default[disabled]:active,
+body button.default.selected[disabled],
+body button.default.ui-compact[disabled],
+body button.default.ui-compact[disabled]:hover,
+body .ui-tabs > button.default[disabled],
+body tab.default[disabled]:hover
+{
+    decorator: tiled-horizontal( sp-btn-d-l, sp-btn-d-c, sp-btn-d-r );
+    image-color: rgb(255, 255, 255);
+    color: rgb(170, 160, 150);
+}
+
+/* Compact tab buttons from components.css */
+.ui-tabs > button.active,
+.ui-tabs > button.selected
+{
+    decorator: tiled-horizontal( sp-btn-a-l, sp-btn-a-c, sp-btn-a-r );
+    image-color: rgb(255, 255, 255);
+    color: rgb(242, 173, 138);
+}
+
+/* ---- Text accents ------------------------------------------------------ */
+label[for]:hover,
+details > summary:hover,
+listbox-item:not([disabled]):hover
+{
+    color: rgb(231, 154, 116);
+}
+
+/* ---- Sliders ----------------------------------------------------------- */
+input.range slidertrack
+{
+    image-color: rgb(171, 90, 50);
+}
+
+input.range sliderbar
+{
+    image-color: rgb(203, 117, 74);
+}
+
+input.range sliderbar:hover,
+input.range slidertrack:hover + sliderbar
+{
+    image-color: rgb(237, 165, 128);
+}
+
+/* ---- Scrollbars -------------------------------------------------------- */
+scrollbarvertical slidertrack
+{
+    image-color: rgb(165, 134, 61);
+}
+
+scrollbarvertical sliderbar
+{
+    image-color: rgb(235, 196, 106);
+}
+
+scrollbarhorizontal sliderbar
+{
+    background-color: rgb(198, 161, 76);
+}
+
+scrollbarhorizontal sliderbar:hover,
+scrollbarhorizontal sliderbar:active
+{
+    background-color: rgb(235, 196, 106);
+}
+
+/* ---- Dropdowns --------------------------------------------------------- */
+select option:hover,
+select selectvalue:hover,
+select selectbox option[selected]
+{
+    color: rgb(203, 117, 74);
+}
+
+select selectbox
+{
+    background: rgba(42, 40, 45, 235);
+    border-bottom: 1dp rgb(116, 53, 22);
+    border-left: 1dp rgb(116, 53, 22);
+    border-right: 1dp rgb(116, 53, 22);
+}
+
+/* ---- Tooltips -----------------------------------------------------------
+ * Simple hover hints are parchment. Item and skill tooltips
+ * (.ui-tooltip-surface) stay dark iron, because the game fills them with
+ * white and rarity-coloured text that would not read on parchment.
+ * ------------------------------------------------------------------- */
+.tooltip .tooltiptext
+{
+    background: rgba(226, 208, 170, 245);
+    color: rgb(69, 68, 75);
+    border: 1dp rgb(116, 53, 22);
+    font-effect: none;
+}
+
+.ui-tooltip-surface
+{
+    background: rgba(35, 34, 38, 245);
+    border: 1dp rgb(171, 90, 50);
+    border-radius: 2dp;
+}
+
+/* ---- Dropped item labels: brass-edged iron tags ------------------------
+ * The client sets each name's colour inline (data-style-color), which a
+ * stylesheet can't override, so the tag stays dark to keep white and
+ * gold names readable. Change the background alpha (180) to taste,
+ * or use "background: transparent;" for no box at all.
+ * ------------------------------------------------------------------- */
+.dropped-item
+{
+    background: rgba(42, 40, 45, 180);
+    border: 1dp rgb(116, 53, 22);
+    border-radius: 2dp;
+}
+
+/* ---- Party / arena overlays -------------------------------------------- */
+#party,
+#arena-group
+{
+    background-color: rgba(42, 40, 45, 170);
+    border: 1dp rgb(116, 53, 22);
+    border-radius: 2dp;
+}
+
+.ui-roster-member.leader .ui-roster-name,
+.ui-section-title,
+.ui-detail-value
+{
+    color: rgb(231, 154, 116);
+}
+
+/* Selection colours for item slots and lists */
+.ui-selectable-slots item-slot:hover,
+button.ui-icon-choice:hover
+{
+    border-color: rgb(127, 61, 185);
+}
+
+.ui-selectable-slots item-slot.selected,
+button.ui-icon-choice.selected
+{
+    border-color: rgb(203, 117, 74);
+}
+
+.ui-list-row.selected,
+.ui-list > listbox-item:not([disabled])[selected],
+listbox-item:not([disabled])[selected]
+{
+    background: rgba(203, 117, 74, 50);
+    color: rgb(231, 154, 116);
+}
+
+/* =====================================================================
+ * Shared pieces the base stylesheets still colour on their own
+ * (html.css, input.css, label.css, listbox.css, details.css,
+ *  components.css). The originals stay untouched.
+ * ===================================================================== */
+
+/* Keyboard focus outline: bright yellow -> brass */
+[focus]:focus { border-color: rgb(203, 117, 74); }
+
+/* Small icon buttons (red glass art) tinted toward brass */
+button.minus, button.plus,
+button.left-sm, button.right-sm,
+button.down-arrow, button.trash,
+button.close, button.settings,
+.button-move, .button-resize,
+select selectarrow,
+details > summary > summary-marker
+{
+    image-color: rgb(223, 150, 114);
+}
+button.minus:hover, button.plus:hover,
+button.left-sm:hover, button.right-sm:hover,
+button.down-arrow:hover, button.trash:hover,
+button.close:hover, button.settings:hover,
+.button-move:hover, .button-resize:hover,
+select selectarrow:hover,
+details > summary:hover > summary-marker
+{
+    image-color: rgb(242, 180, 149);
+}
+
+/* Checkboxes and radio buttons */
+input[type="radio"], input[type="checkbox"], button.checkbox { image-color: rgb(228, 170, 141); }
+
+/* Text boxes, dropdowns and framed labels: warm the glass frame */
+input[type="text"], input[type="password"], input[type="email"],
+textarea, select, label.textarea, label.custom, label.custom-2
+{
+    image-color: rgb(223, 169, 141);
+}
+label.text { background-color: rgba(42, 40, 45, 170); }
+
+/* Dropdown list rows */
+select option { border-top: 1dp rgba(116, 53, 22, 160); }
+select option:hover { background: rgba(81, 79, 88, 230); }
+
+/* List hover: grey -> faint brass */
+listbox-item:not([disabled]):not([selected]):hover,
+.ui-list-row:hover,
+.ui-list > listbox-item:not([disabled]):not([selected]):hover
+{
+    background: rgba(203, 117, 74, 30);
+}
+
+/* Icon choice buttons (clan marks etc.) */
+button.ui-icon-choice
+{
+    background-color: rgba(42, 40, 45, 170);
+    border-color: rgb(116, 53, 22);
+}
+
+/* Item stack counts */
+item-slot .item-quantity { background: rgba(35, 34, 38, 170); }
+
+/* Video player controls (video.css): iron bar, brass track and buttons */
+.video-controls { background-color: rgba(35, 34, 38, 200); border-top: 1dp rgb(116, 53, 22); }
+.video-controls__button { background-color: rgba(203, 117, 74, 60); color: rgb(255, 240, 210); }
+.video-controls__track { background-color: rgba(116, 53, 22, 140); }
+.video-controls__fill { background-color: rgb(203, 117, 74); }
+.video-controls__thumb { background-color: rgb(231, 154, 116); }
+
+/* Empty item slots everywhere (inventory, storage, trade, shops): riveted brass
+   sockets instead of the grey squares. "body" makes this beat item_slot.css. */
+body item-slot[empty="1"] { decorator: image(sp-slot); }
+
+/* Tooltips grow to fit their text instead of letting it run past the edge */
+.tooltip .tooltiptext { width: auto; max-width: none; }
+.ui-tooltip-surface { width: auto; }

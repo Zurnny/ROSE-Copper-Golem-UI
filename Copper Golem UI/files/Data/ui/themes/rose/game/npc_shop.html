@@ -1,0 +1,82 @@
+<rml>
+    <head>
+        <title>NPC shop</title>
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/spritesheet_itemicon.css" />
+        <link type="text/rcss" href="../styles/spritesheet_socketgem.css" />
+        <link type="text/rcss" href="../styles/item_slot.css" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+        <style>
+            body { width: 372dp; max-width: 94vw; }
+            .shop-grid { width: 348dp; }
+        </style>
+    </head>
+    <body template="window-fixed-size" id="npc-shop">
+        <div data-model="npc-shop">
+        <div class="ui-tabs">
+            <button id="shop-tab-0" class="default" onclick="tab0" data-if="tabs[0].visible" data-class-active="tabs[0].active">{{ tabs[0].label }}</button>
+            <button id="shop-tab-1" class="default" onclick="tab1" data-if="tabs[1].visible" data-class-active="tabs[1].active">{{ tabs[1].label }}</button>
+            <button id="shop-tab-2" class="default" onclick="tab2" data-if="tabs[2].visible" data-class-active="tabs[2].active">{{ tabs[2].label }}</button>
+            <button id="shop-tab-3" class="default" onclick="tab3" data-if="tabs[3].visible" data-class-active="tabs[3].active">{{ tabs[3].label }}</button>
+        </div>
+        <div class="ui-tabs" id="shop-subtabs" data-if="subtabs_visible">
+            <button id="shop-sub-0" class="default" onclick="sub0" data-if="subtabs[0].visible" data-class-active="subtabs[0].active">{{ subtabs[0].label }}</button>
+            <button id="shop-sub-1" class="default" onclick="sub1" data-if="subtabs[1].visible" data-class-active="subtabs[1].active">{{ subtabs[1].label }}</button>
+            <button id="shop-sub-2" class="default" onclick="sub2" data-if="subtabs[2].visible" data-class-active="subtabs[2].active">{{ subtabs[2].label }}</button>
+            <button id="shop-sub-3" class="default" onclick="sub3" data-if="subtabs[3].visible" data-class-active="subtabs[3].active">{{ subtabs[3].label }}</button>
+        </div>
+        <div class="shop-grid ui-slot-grid">
+            <item-slot id="shop-slot-0" hide-quantity />
+            <item-slot id="shop-slot-1" hide-quantity />
+            <item-slot id="shop-slot-2" hide-quantity />
+            <item-slot id="shop-slot-3" hide-quantity />
+            <item-slot id="shop-slot-4" hide-quantity />
+            <item-slot id="shop-slot-5" hide-quantity />
+            <item-slot id="shop-slot-6" hide-quantity />
+            <item-slot id="shop-slot-7" hide-quantity />
+            <item-slot id="shop-slot-8" hide-quantity />
+            <item-slot id="shop-slot-9" hide-quantity />
+            <item-slot id="shop-slot-10" hide-quantity />
+            <item-slot id="shop-slot-11" hide-quantity />
+            <item-slot id="shop-slot-12" hide-quantity />
+            <item-slot id="shop-slot-13" hide-quantity />
+            <item-slot id="shop-slot-14" hide-quantity />
+            <item-slot id="shop-slot-15" hide-quantity />
+            <item-slot id="shop-slot-16" hide-quantity />
+            <item-slot id="shop-slot-17" hide-quantity />
+            <item-slot id="shop-slot-18" hide-quantity />
+            <item-slot id="shop-slot-19" hide-quantity />
+            <item-slot id="shop-slot-20" hide-quantity />
+            <item-slot id="shop-slot-21" hide-quantity />
+            <item-slot id="shop-slot-22" hide-quantity />
+            <item-slot id="shop-slot-23" hide-quantity />
+            <item-slot id="shop-slot-24" hide-quantity />
+            <item-slot id="shop-slot-25" hide-quantity />
+            <item-slot id="shop-slot-26" hide-quantity />
+            <item-slot id="shop-slot-27" hide-quantity />
+            <item-slot id="shop-slot-28" hide-quantity />
+            <item-slot id="shop-slot-29" hide-quantity />
+            <item-slot id="shop-slot-30" hide-quantity />
+            <item-slot id="shop-slot-31" hide-quantity />
+            <item-slot id="shop-slot-32" hide-quantity />
+            <item-slot id="shop-slot-33" hide-quantity />
+            <item-slot id="shop-slot-34" hide-quantity />
+            <item-slot id="shop-slot-35" hide-quantity />
+            <item-slot id="shop-slot-36" hide-quantity />
+            <item-slot id="shop-slot-37" hide-quantity />
+            <item-slot id="shop-slot-38" hide-quantity />
+            <item-slot id="shop-slot-39" hide-quantity />
+            <item-slot id="shop-slot-40" hide-quantity />
+            <item-slot id="shop-slot-41" hide-quantity />
+            <item-slot id="shop-slot-42" hide-quantity />
+            <item-slot id="shop-slot-43" hide-quantity />
+            <item-slot id="shop-slot-44" hide-quantity />
+            <item-slot id="shop-slot-45" hide-quantity />
+            <item-slot id="shop-slot-46" hide-quantity />
+            <item-slot id="shop-slot-47" hide-quantity />
+        </div>
+        </div>
+    </body>
+</rml>

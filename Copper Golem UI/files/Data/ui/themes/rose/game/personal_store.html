@@ -1,0 +1,265 @@
+<rml>
+    <head>
+        <title>Personal Stores</title>
+
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            body
+            {
+                width: 640dp;
+                height: 600dp;
+                font-effect: outline(1dp black);
+            }
+
+            handle
+            {
+                display: block;
+            }
+
+            .store-item
+            {
+                display: flex;
+                width: 100%;
+                height: 60dp;
+                cursor: hand;
+                align-items:center;
+            }
+
+            .store-item > div:nth-child(1)
+            {
+                font-size: 12dp;
+                text-align: center;
+                width: 100dp;
+            }
+
+            .store-item > div:nth-child(2)
+            {
+                width: 100%;
+            }
+
+            .store-item > div:nth-child(3)
+            {
+                width: 260dp;
+            }
+
+            .store-item > div:nth-child(4)
+            {
+                width: 60dp;
+            }
+
+            .store-name
+            {
+                font-size: 14dp;
+                font-weight: bold;
+                color: rgb(231, 154, 116);
+            }
+
+            .store-item:hover
+            {
+                background: rgba(203, 117, 74, 60);
+            }
+
+            .store-item[selected]
+            {
+                background: rgba(203, 117, 74, 60);
+            }
+
+            .store-item-inner
+            {
+                display: block;
+                margin: 6dp;
+                font-size: 12dp;
+            }
+
+            .store-item-inner > span
+            {
+                margin: 1dp;
+            }
+
+            .slot
+            {
+                margin: 5dp;
+            }
+
+            tab
+            {
+                margin-top: 5dp;
+                font-weight: 800;
+            }
+
+            tabset panels panel
+            {
+                position: relative;
+                display: block;
+                width: 630dp;
+                height: 524dp;
+            }
+
+            #company-container
+            {
+                display: flex;
+                flex-direction: column;
+                justify-content:center;
+                align-items:flex-start;
+            }
+
+            #company-container div > * {
+                margin: 5dp;
+                display: inline-block;
+            }
+
+            label {
+                color: rgb(231, 154, 116);
+                font-size: 20dp;
+                padding: 5dp;
+                font-weight: 800;
+            }
+
+            button.trash-btn
+            {
+                min-width: 24dp;
+                width: 24dp;
+                align-items: center;
+                display: block;
+            }
+
+            button img
+            {
+                margin-top: 4dp;
+            }
+
+            panel.store-panel
+            {
+                display: flex;
+                flex-direction: column;
+                align-items:flex-start;
+                flex: 1;
+            }
+
+            div.stores-container
+            {
+                width: 100%;
+                height: 100%;
+            }
+
+            div.store-list
+            {
+                height: 100%;
+                flex-direction: column;
+            }
+
+            div.max-stores
+            {
+                display: flex;
+                flex-direction: row;
+                height: 17dp;
+                align-items:flex-start;
+            }
+
+            .company-warning
+            {
+                width: 350dp;
+
+                font-weight: 800;
+                font-size: 12dp;
+                color: rgb(231, 154, 116);
+                font-effect: outline(1dp black);
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+
+                background: rgba(42, 40, 45, 200);
+            }
+
+            div.company-warning >
+            {
+                margin: 5dp;
+            }
+        </style>
+    </head>
+
+    <body id="game-personal-store" template="window-fixed-size">
+        <tabset>
+            <tab class="default">Stores</tab>
+            <panel class="store-panel">
+                <div class="tooltip">
+                    <button class="plus" onclick="create-store"></button>
+                    <span class="tooltiptext">Add a new personal store</span>
+                </div>
+                <div class="stores-container">
+                    <div class="window-inner store-list" data-model="personalstore-data">
+                        <listbox data-for="store : stores">
+                            <listbox-item class="store-item">
+                                <div>
+                                    <span data-if="store.status == 0"><b><fc_green>Open</fc_green></b></span>
+                                    <span data-if="store.status == 1"><b><fc_gray>Closed</fc_gray></b></span>
+                                </div>
+                                <div>
+                                    <div class="store-item-inner">
+                                        <span class="store-name">{{store.title}}</span><br/>
+                                        <span>ID: {{store.store_index}}</span><br/>
+                                        <span>{{store.map}}</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div data-if="store.status == 0">
+                                        <div class="tooltip">
+                                            <button class="default" disabled>Manage</button>
+                                            <span class="tooltiptext">Your store is already open, you need to go to it to manage it</span>
+                                        </div>
+                                    </div>
+                                    <div data-if="store.status == 1">
+                                        <button data-attr-id="store.store_id" class="default" onclick="manage-store"><b>Manage</b></button>
+                                    </div>
+                                </div>
+                                <!-- Delete Button -->
+                                <div>
+                                    <div data-if="store.status == 0">
+                                        <div class="tooltip">
+                                            <button class="default trash-btn" disabled><img sprite="trash-icon"/></button>
+                                            <span class="tooltiptext">You can delete your store only if it is closed</span>
+                                        </div>
+                                    </div>
+                                    <div data-if="store.status == 1">
+                                        <button data-attr-id="store.store_id" class="default trash-btn" onclick="delete-store"><img sprite="trash-icon"/></button>
+                                    </div>
+                                </div>
+                            </listbox-item>
+                        </listbox>
+                    </div>
+                </div>
+            </panel>
+
+            <tab class="default">Company</tab>
+            <panel>
+                <div id="company-container" data-model="personalstore-data">
+                    <div data-if="company.is_stores_closed == false" class="company-warning">
+                        <img sprite="warning-icon"/>
+                        <p>You need to close all your stores to manage your company</p>
+                    </div>
+                    <div>
+                        <p><b>Company Name</b></p><br/>
+                        <input id="company-name" type="text" data-value="company.name" maxlength="20"/><br/>
+                        <button class="default" data-if="company.is_stores_closed == false" disabled>Change Name</button>
+                        <button class="default" data-if="company.is_stores_closed == true" onclick="set-company-name">Change Name</button>
+                    </div>
+                    <div>
+                        <p><b>Max personal stores: </b></p>
+                        <div class="max-stores">
+                            <button class="minus" data-if="company.is_stores_closed == false" disabled></button>
+                            <button class="minus" data-if="company.is_stores_closed == true" onclick="decrease-store-limit"></button>
+
+                            <label>{{company.max_stores}}</label>
+
+                            <button class="plus" data-if="company.is_stores_closed == false" disabled></button>
+                            <button class="plus" data-if="company.is_stores_closed == true" onclick="increase-store-limit"></button>
+                        </div>
+                    </div>
+                </div>
+            </panel>
+        </tabset>
+    </body>
+</rml>

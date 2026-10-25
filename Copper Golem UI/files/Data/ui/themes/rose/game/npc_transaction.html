@@ -1,0 +1,57 @@
+<rml>
+    <head>
+        <title>Transaction</title>
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/spritesheet_itemicon.css" />
+        <link type="text/rcss" href="../styles/spritesheet_socketgem.css" />
+        <link type="text/rcss" href="../styles/item_slot.css" />
+        <link type="text/rcss" href="../styles/spritesheet_currencyicon.css" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+        <style>
+            body { width: 258dp; max-width: 94vw; }
+            .cart-section { margin-bottom: 12dp; }
+            .cart-grid { width: 216dp; }
+        </style>
+    </head>
+    <body template="window-fixed-size" id="npc-transaction">
+        <div data-model="npc-transaction">
+        <div class="cart-section ui-section content-box">
+            <div class="ui-section-title" id="buy-label">{{ buy_label }}</div>
+            <div class="cart-grid ui-slot-grid" id="buy-slots">
+                <item-slot id="cart-slot-0" />
+                <item-slot id="cart-slot-1" />
+                <item-slot id="cart-slot-2" />
+                <item-slot id="cart-slot-3" />
+                <item-slot id="cart-slot-4" />
+                <item-slot id="cart-slot-5" />
+                <item-slot id="cart-slot-6" />
+                <item-slot id="cart-slot-7" />
+                <item-slot id="cart-slot-8" />
+                <item-slot id="cart-slot-9" />
+            </div>
+            <div class="ui-currency ui-footer"><img id="buy-currency" data-attr-sprite="buy_currency" /><span id="buy-total">{{ buy_total }}</span></div>
+        </div>
+        <div class="cart-section ui-section content-box">
+            <div class="ui-section-title" id="sell-label">{{ sell_label }}</div>
+            <div class="cart-grid ui-slot-grid" id="sell-slots">
+                <item-slot id="cart-slot-10" />
+                <item-slot id="cart-slot-11" />
+                <item-slot id="cart-slot-12" />
+                <item-slot id="cart-slot-13" />
+                <item-slot id="cart-slot-14" />
+                <item-slot id="cart-slot-15" />
+                <item-slot id="cart-slot-16" />
+                <item-slot id="cart-slot-17" />
+                <item-slot id="cart-slot-18" />
+                <item-slot id="cart-slot-19" />
+            </div>
+            <div class="ui-currency ui-footer"><img sprite="button-zulie-n" /><span id="sell-total">{{ sell_total }}</span></div>
+        </div>
+        <div class="ui-actions">
+            <button id="confirm" class="default" onclick="confirm" data-attrif-disabled="!confirm_enabled">{{ confirm_label }}</button>
+        </div>
+        </div>
+    </body>
+</rml>

@@ -1,0 +1,110 @@
+<rml>
+    <head>
+        <title>Trade</title>
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/spritesheet_itemicon.css" />
+        <link type="text/rcss" href="../styles/spritesheet_socketgem.css" />
+        <link type="text/rcss" href="../styles/item_slot.css" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+        <style>
+            body { width: 560dp; max-width: 96vw; }
+
+            /* ---- Steampunk trade window ------------------------------------ */
+            /* Two offers side by side, joined by a brass gear */
+            .trade-offers { position: relative; display: flex; flex-wrap: wrap; justify-content: center; gap: 22dp; margin: 4dp 0 10dp 0; }
+            .trade-gear { position: absolute; left: 50%; top: 50%; width: 36dp; height: 36dp; margin-left: -18dp; margin-top: -18dp; decorator: image(sp-gear-ring); z-index: 2; pointer-events: none; }
+
+            .trade-offer.content-box
+            {
+                display: flex; flex-direction: column; width: 240dp; flex: 0 0 240dp;
+                box-sizing: border-box; padding: 0 10dp 10dp 10dp;
+                background-color: rgba(28, 27, 30, 200);
+                border: 2dp rgb(142, 73, 39);
+                border-radius: 0dp;
+            }
+            /* Ready: the panel lights up in polished brass, the status turns green */
+            .trade-offer.content-box.ready { border-color: rgb(231, 154, 116); background-color: rgba(60, 58, 65, 210); }
+
+            /* Name plate across the top of each offer */
+            .trade-offer > .ui-section-title
+            {
+                margin: 0 -10dp 10dp -10dp; padding: 6dp 10dp;
+                background-color: rgba(81, 79, 88, 200);
+                border-bottom: 1dp rgb(116, 53, 22);
+                color: rgb(231, 154, 116); font-size: 15dp; text-align: center;
+                font-effect: outline(1dp rgb(35, 34, 38));
+                white-space: nowrap; overflow: hidden;
+            }
+
+            /* Riveted brass sockets for every item slot */
+            .trade-grid { width: 216dp; margin: 0 auto; }
+            .trade-grid item-slot, .trade-grid item-slot[empty="1"] { decorator: image(sp-slot); }
+            .trade-grid item-slot[dimmed="1"], .trade-grid item-slot[dimmed="true"] { opacity: 0.6; }
+
+            /* Zulie: a small brass plate with the amount on the right */
+            .trade-offer .ui-currency.ui-footer
+            {
+                margin-top: 10dp; padding: 4dp 8dp;
+                border: 1dp rgb(116, 53, 22); border-radius: 0dp;
+                background-color: rgba(16, 16, 18, 200);
+                justify-content: space-between;
+            }
+            .trade-offer .ui-currency.ui-footer > span { color: rgb(231, 154, 116); font-weight: 800; font-size: 15dp; }
+
+            .trade-status { margin-top: 8dp; text-align: center; font-size: 12dp; color: rgb(191, 145, 122); }
+            .trade-status.ready { color: rgb(150, 220, 110); font-weight: 800; }
+
+            #trade-status { margin: 0 0 8dp 0; padding-top: 8dp; border-top: 1dp rgb(116, 53, 22); text-align: center; color: rgb(226, 208, 170); }
+            #trade-status:empty { padding-top: 0; }
+            .ui-actions { justify-content: center; gap: 12dp; }
+        </style>
+    </head>
+    <body template="window-fixed-size" id="player-trade">
+        <div data-model="player-trade">
+        <div class="trade-offers">
+            <div class="trade-gear"></div>
+            <div class="trade-offer ui-section content-box" data-class-ready="my_ready">
+                <div id="my-name" class="ui-section-title">{{ my_name }}</div>
+                <div class="trade-grid ui-slot-grid" id="my-slots">
+                    <item-slot id="trade-slot-0" data-attr-dimmed="dimmed" />
+                    <item-slot id="trade-slot-1" data-attr-dimmed="dimmed" />
+                    <item-slot id="trade-slot-2" data-attr-dimmed="dimmed" />
+                    <item-slot id="trade-slot-3" data-attr-dimmed="dimmed" />
+                    <item-slot id="trade-slot-4" data-attr-dimmed="dimmed" />
+                    <item-slot id="trade-slot-5" data-attr-dimmed="dimmed" />
+                    <item-slot id="trade-slot-6" data-attr-dimmed="dimmed" />
+                    <item-slot id="trade-slot-7" data-attr-dimmed="dimmed" />
+                    <item-slot id="trade-slot-8" data-attr-dimmed="dimmed" />
+                    <item-slot id="trade-slot-9" data-attr-dimmed="dimmed" />
+                </div>
+                <div class="ui-currency ui-footer"><button id="my-money-icon" class="zulie" onclick="money" data-attrif-disabled="!money_enabled" /><span id="my-money">{{ my_money }}</span></div>
+                <div id="my-status" class="trade-status ui-status" data-class-ready="my_ready">{{ my_status }}</div>
+            </div>
+            <div class="trade-offer ui-section content-box" data-class-ready="other_ready">
+                <div id="other-name" class="ui-section-title">{{ other_name }}</div>
+                <div class="trade-grid ui-slot-grid" id="other-slots">
+                    <item-slot id="trade-slot-10" data-attr-dimmed="dimmed" />
+                    <item-slot id="trade-slot-11" data-attr-dimmed="dimmed" />
+                    <item-slot id="trade-slot-12" data-attr-dimmed="dimmed" />
+                    <item-slot id="trade-slot-13" data-attr-dimmed="dimmed" />
+                    <item-slot id="trade-slot-14" data-attr-dimmed="dimmed" />
+                    <item-slot id="trade-slot-15" data-attr-dimmed="dimmed" />
+                    <item-slot id="trade-slot-16" data-attr-dimmed="dimmed" />
+                    <item-slot id="trade-slot-17" data-attr-dimmed="dimmed" />
+                    <item-slot id="trade-slot-18" data-attr-dimmed="dimmed" />
+                    <item-slot id="trade-slot-19" data-attr-dimmed="dimmed" />
+                </div>
+                <div class="ui-currency ui-footer"><img sprite="button-zulie-n" /><span id="other-money">{{ other_money }}</span></div>
+                <div id="other-status" class="trade-status ui-status" data-class-ready="other_ready">{{ other_status }}</div>
+            </div>
+        </div>
+        <div id="trade-status" class="ui-status">{{ trade_status }}</div>
+        <div class="ui-actions">
+            <button id="ready" class="default" onclick="ready" data-attrif-disabled="!ready_enabled">{{ ready_label }}</button>
+            <button id="confirm" class="default" onclick="confirm" data-attrif-disabled="!confirm_enabled">{{ confirm_label }}</button>
+        </div>
+        </div>
+    </body>
+</rml>

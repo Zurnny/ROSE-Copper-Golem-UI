@@ -1,0 +1,612 @@
+<rml>
+
+	<head>
+		<title></title>
+		<link type="text/template" href="../templates/window-box.html" />
+		<link type="text/template" href="../templates/elements/gauge.html" />
+		<link type="text/rcss" href="../styles/spritesheet_itemicon.css" />
+		<link type="text/rcss" href="../styles/spritesheet_socketgem.css" />
+		<link type="text/rcss" href="../styles/spritesheet_elementicon.css" />
+		<link type="text/rcss" href="../styles/item_slot.css" />
+		<link type="text/rcss" href="../styles/spritesheet_inventory.css" />
+		<link type="text/rcss" href="../styles/components.css" />
+		<link type="text/rcss" href="../styles/spritesheet_icons.css" />
+		<link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+		<style>
+			/* =========================================================
+			 * Layout (all sizes in dp)
+			 *
+			 *   +--------------------------------------+
+			 *   | Name                     Lv 22  Job  |
+			 *   | [ HP ............... ]   [weapon]    |
+			 *   | [ MP ............... ]   [ slot ]    |
+			 *   | [ EXP .............. ]               |
+			 *   | ==== drag bar: hold here to move ==== |
+			 *   +--------------------------------------+
+			 * ========================================================= */
+
+			body { margin: 5dp; }
+
+			/* The HUD panel. The drag bar moves the whole HUD document,
+			   as the original HUD did. */
+			/* Compact layout (no job portrait) so the game's FPS readout,
+			   drawn to the right of the HUD, stays fully visible. */
+			.sp-hud
+			{
+				position: relative;
+				width: 248dp;
+				height: 126dp;
+			}
+
+			/* Brass frame */
+			.sp-plate
+			{
+				position: absolute;
+				left: 0;
+				top: 0;
+				width: 248dp;
+				height: 126dp;
+				decorator: tiled-box(
+					sp-frame-tl, sp-frame-t, sp-frame-tr,
+					sp-frame-l,  sp-frame-c, sp-frame-r,
+					sp-frame-bl, sp-frame-b, sp-frame-br
+				);
+				font-family: Nunito;
+				color: rgb(241, 227, 196);
+			}
+
+			/* Window title: the character name */
+			.sp-title
+			{
+				position: absolute;
+				left: 14dp;
+				top: 8dp;
+				width: 220dp;
+				height: 20dp;
+				display: flex;
+				flex-direction: row;
+				justify-content: space-between;
+				align-items: center;
+			}
+			.sp-name
+			{
+				font-size: 15dp;
+				font-weight: 800;
+				line-height: 20dp;
+				color: rgb(231, 154, 116);
+				font-effect: outline(1dp rgb(40, 25, 10));
+				white-space: nowrap;
+				overflow: hidden;
+			}
+			.sp-job
+			{
+				font-size: 12dp;
+				font-weight: 700;
+				line-height: 20dp;
+				color: rgb(191, 145, 122);
+				font-effect: outline(1dp rgb(40, 25, 10));
+				white-space: nowrap;
+			}
+
+
+			/* HP / MP / EXP column along the left edge */
+			.sp-bars
+			{
+				position: absolute;
+				left: 14dp;
+				top: 34dp;
+				width: 162dp;
+			}
+
+			/* Pressure-gauge bars: brass flange | glass tube | brass flange */
+			.sp-gauge
+			{
+				position: relative;
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				height: 18dp;
+				margin-bottom: 4dp;
+			}
+			.sp-cap
+			{
+				width: 7dp;
+				height: 18dp;
+				flex-shrink: 0;
+			}
+			.sp-cap.left  { decorator: image(sp-cap-l); }
+			.sp-cap.right { decorator: image(sp-cap-r); }
+			.sp-track
+			{
+				position: relative;
+				flex: 1;
+				height: 14dp;
+				/* centres the number in the tube */
+				display: flex;
+				flex-direction: row;
+				justify-content: center;
+				align-items: center;
+				decorator: tiled-horizontal(sp-track-l, sp-track-c, sp-track-r);
+			}
+			.sp-fill
+			{
+				position: absolute;
+				left: 0;
+				top: 1dp;
+				height: 13dp;
+				decorator: image(sp-glare);
+			}
+			.sp-fill.hp { background-color: rgb(104, 34, 166); }
+			.sp-fill.mp { background-color: rgb(63, 138, 116); }
+			/* The tube (a flex box) centres this text; positioning it absolutely
+			   left it off-centre in game. */
+			.sp-gauge-text
+			{
+				display: block;
+				position: relative;
+				top: 2dp;              /* nudged down to sit in the middle of the tube */
+				flex: 0 0 auto;
+				white-space: nowrap;
+				text-align: center;
+				font-size: 12dp;
+				line-height: 14dp;
+				font-weight: 800;
+				color: rgb(255, 244, 224);
+				font-effect: outline(1dp black);
+			}
+
+			@keyframes sp-low
+			{
+				from { color: rgb(255, 80, 60); }
+				to   { color: rgb(255, 244, 224); }
+			}
+			.sp-gauge-text.low
+			{
+				animation: 1.5s cubic-in-out infinite alternate sp-low;
+			}
+
+			/* The game's own HP / MP / EXP bars, sized to sit between the brass caps */
+			.sp-gauge gauge { flex: 0 0 auto; width: 148dp; height: 18dp; }
+			.sp-gauge.exp gauge { width: 150dp; height: 11dp; }
+			@keyframes low { from { color: red; } to { color: white; } }
+			gauge.low-value-animation { animation: 1.5s cubic-in-out infinite alternate low; }
+			#exp { position: relative; }
+			#exp > span.exp-text
+			{
+				position: absolute;
+				left: 0dp;
+				top: 0dp;
+				width: 100%;
+				height: 11dp;
+				line-height: 11dp;
+				text-align: center;
+				font-size: 11dp;
+				font-weight: 800;
+				color: rgb(255, 255, 255);
+				font-effect: outline(1dp black);
+				pointer-events: none;
+			}
+
+			/* EXP: a slimmer pipe */
+			.sp-gauge.exp { height: 14dp; margin-bottom: 0; }
+			.sp-gauge.exp .sp-cap { width: 6dp; height: 14dp; }
+			.sp-gauge.exp .sp-track { height: 11dp; }
+			.sp-fill.exp
+			{
+				top: 1dp;
+				height: 10dp;
+				background-color: rgb(206, 125, 85);
+			}
+			.sp-gauge.exp .sp-gauge-text
+			{
+				top: 1dp;
+				font-size: 10dp;
+				line-height: 11dp;
+			}
+
+			/* Weapon slot on the right, in a riveted brass socket */
+			.weapon-slot
+			{
+				position: absolute;
+				left: 188dp;
+				top: 40dp;
+				width: 46dp;
+				height: 46dp;
+				decorator: image(sp-slot);
+			}
+			/* ">" = only the slot's own children, not the icon image inside item-slot */
+			.weapon-slot > img { pointer-events: none; }
+			.weapon-slot > item-slot,
+			.weapon-slot > img
+			{
+				position: absolute;
+				left: 3dp;
+				top: 3dp;
+				width: 40dp;
+				height: 40dp;
+			}
+
+			/* Footer: weight on the left, Zulie on the right.
+			   It is also the drag area, the only place that moves the HUD. */
+			.sp-drag
+			{
+				position: absolute;
+				left: 14dp;
+				top: 102dp;
+				width: 220dp;
+				height: 16dp;
+				cursor: move;
+			}
+			.sp-footer
+			{
+				display: flex;
+				flex-direction: row;
+				justify-content: space-between;
+				align-items: center;
+				height: 16dp;
+				padding-top: 1dp;
+				border-top: 1dp rgb(116, 53, 22);
+				font-family: Nunito;
+				font-size: 12dp;
+				line-height: 15dp;
+				font-weight: 700;
+				color: rgb(241, 227, 196);
+				font-effect: outline(1dp rgb(40, 25, 10));
+				pointer-events: none;   /* clicks fall through to the handle */
+			}
+			.sp-footer b { color: rgb(231, 154, 116); font-weight: 800; }
+			.sp-zulie
+			{
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				gap: 3dp;
+			}
+			.sp-zulie img { width: 14dp; height: 14dp; }
+
+			/* PAT fuel: to the right of the plate, along its bottom edge */
+			.pat-fuel
+			{
+				position: absolute;
+				left: 254dp;
+				top: 101dp;
+			}
+
+			/* State (buff/debuff) icons */
+			#state-icon-container { margin-top: 5dp; width: 248dp; }
+			.hud-status-row { display: flex; flex-wrap: wrap; }
+			.hud-status-icon { display: inline-block; width: 20dp; height: 20dp; margin: 0 1dp 1dp 0; flex-shrink: 0; }
+			.hud-status-icon img { width: 20dp; height: 20dp; pointer-events: none; }
+			.hud-status-icon.blink { opacity: 0.25; }
+			.hud-status-icon.inactive img { image-color: rgb(255, 0, 0); }
+			.hud-status-icon.warning img { image-color: rgb(255, 180, 180); }
+
+			/* Tooltips: parchment cards that appear while hovering */
+			.sp-tip
+			{
+				position: absolute;
+				left: 0;
+				top: 100%;
+				z-index: 10;
+				width: 182dp;
+				margin-top: 3dp;
+				padding: 4dp 6dp;
+				background: rgba(226, 208, 170, 245);
+				border: 1dp rgb(116, 53, 22);
+				border-radius: 1dp;
+				color: rgb(69, 68, 75);
+				font-size: 13dp;
+				line-height: 18dp;
+				font-weight: 700;
+				font-effect: none;
+				text-align: left;
+				visibility: hidden;
+				pointer-events: none;
+			}
+						.sp-gauge:hover .sp-tip { visibility: visible; }
+			.sp-level { color: rgb(231, 154, 116); font-weight: 800; margin-right: 5dp; }
+			.sp-tip-title
+			{
+				display: block;
+				font-weight: 800;
+				color: rgb(51, 17, 81);
+				border-bottom: 1dp rgb(153, 88, 56);
+				margin-bottom: 2dp;
+			}
+			.sp-tip-row  { display: block; }
+			.sp-tip-warn { display: block; color: rgb(170, 50, 30); }
+			.sp-tip-note { display: block; color: rgb(114, 60, 33); font-size: 11dp; line-height: 15dp; font-weight: 600; }
+
+			/* Session trackers (XP per hour in the EXP tooltip, zuly in the zuly tooltip) */
+			#sp-track { display: none; }
+			#sp-weapon-src { display: none; }
+			@keyframes sp-track-tick-a { from { opacity: 0; } to { opacity: 0; } }
+			@keyframes sp-track-tick-b { from { opacity: 0; } to { opacity: 0; } }
+			#sp-track-timer { position: absolute; width: 1dp; height: 1dp; opacity: 0; animation: 5s sp-track-tick-a; }
+			.sp-zulie { position: relative; pointer-events: auto; cursor: hand; }
+			.sp-zulie .sp-tip { left: auto; right: -6dp; width: 196dp; margin-top: 4dp; }
+			.sp-zulie:hover .sp-tip { visibility: visible; }
+		</style>
+		<script>
+-- Session trackers (steampunk add-on).
+-- Every 5 seconds this notes your EXP and zuly. Hovering the EXP bar shows EXP
+-- per hour (over the last 10 minutes), time to the next level and what this
+-- session has earned; hovering the zuly shows zuly gained or spent this
+-- session and per hour. Double-click the zuly to start a new session. A new
+-- character starts a new session by itself. Text only changes while you hover,
+-- so nothing is redrawn in the background.
+pcall(function()
+    local document = document
+    local function el(id) return document:GetElementById(id) end
+    local STEP, WINDOW = 5, 120          -- seconds per sample, samples kept (10 min)
+    local function num(n)
+        local neg = n < 0
+        local t = string.format('%.0f', math.abs(n))
+        t = t:reverse():gsub('(%d%d%d)', '%1,'):reverse():gsub('^,', '')
+        return (neg and '-' or '') .. t
+    end
+    local function span(secs)
+        secs = math.floor(secs + 0.5)
+        local h, m = math.floor(secs / 3600), math.floor((secs % 3600) / 60)
+        if h >= 100 then return 'over 100h' end
+        if h > 0 then return h .. 'h ' .. m .. 'm' end
+        if m > 0 then return m .. 'm' end
+        return secs .. 's'
+    end
+    local S = nil   -- the session
+    local function fresh(v)
+        return {name = v.name, ticks = 0, xp = 0, lv = v.lv, exp = v.exp, max = v.max,
+                money0 = v.money, money = v.money, hist = {{0, 0, v.money}}}
+    end
+    local function read()
+        local src = el('sp-track')
+        if not src then return nil end
+        local v = {name = src:GetAttribute('sp-name') or '', lv = tonumber(src:GetAttribute('sp-lv')),
+                   exp = tonumber(src:GetAttribute('sp-exp')), max = tonumber(src:GetAttribute('sp-max')),
+                   money = tonumber(src:GetAttribute('sp-money'))}
+        if not v.lv or not v.exp or not v.max or not v.money or v.name == '' then return nil end
+        return v
+    end
+    local function tick()
+        local v = read()
+        if not v then return end
+        if not S or S.name ~= v.name then S = fresh(v); return end
+        -- experience gained since the last sample, counting level-ups
+        local gain
+        if v.lv > S.lv then
+            gain = math.max(0, S.max - S.exp) + v.exp
+        elseif v.lv == S.lv then
+            gain = v.exp - S.exp
+        else
+            gain = 0
+        end
+        S.xp = S.xp + gain
+        S.lv, S.exp, S.max, S.money = v.lv, v.exp, v.max, v.money
+        S.ticks = S.ticks + 1
+        table.insert(S.hist, {S.ticks, S.xp, v.money})
+        if #S.hist > WINDOW + 1 then table.remove(S.hist, 1) end
+    end
+    local function rates()
+        local a, b = S.hist[1], S.hist[#S.hist]
+        local secs = (b[1] - a[1]) * STEP
+        if secs < 60 then return nil end
+        return (b[2] - a[2]) * 3600 / secs, (b[3] - a[3]) * 3600 / secs
+    end
+    local function set(id, text)
+        local e = el(id)
+        if e then e.inner_rml = text end
+    end
+    local function show_xp()
+        if not S then return end
+        local xph = rates()
+        if not xph then
+            set('sp-xp-rate', 'Per hour: gathering data...')
+            set('sp-xp-eta', '')
+        else
+            set('sp-xp-rate', 'Per hour: ' .. num(math.max(0, xph)))
+            if xph > 0 and S.max > 0 then
+                set('sp-xp-eta', 'Next level in: ' .. span((S.max - S.exp) * 3600 / xph))
+            else
+                set('sp-xp-eta', 'Next level in: -')
+            end
+        end
+        set('sp-xp-session', 'This session: +' .. num(math.max(0, S.xp)) .. ' (' .. span(S.ticks * STEP) .. ')')
+    end
+    local function show_zuly()
+        if not S then return end
+        local diff = S.money - S.money0
+        set('sp-zuly-session', (diff >= 0 and 'Gained: +' or 'Spent: ') .. num(diff) .. ' z')
+        local _, zph = rates()
+        set('sp-zuly-rate', zph and ('Per hour: ' .. (zph >= 0 and '+' or '') .. num(zph) .. ' z') or 'Per hour: gathering data...')
+        set('sp-zuly-time', 'Session length: ' .. span(S.ticks * STEP))
+    end
+    -- hover handlers
+    local exp_gauge = nil
+    do
+        local r = el('sp-xp-rate')
+        if r then exp_gauge = r.parent_node and r.parent_node.parent_node end
+    end
+    if exp_gauge then exp_gauge:AddEventListener('mouseover', function() pcall(show_xp) end) end
+    local z = el('sp-zulie')
+    if z then
+        z:AddEventListener('mouseover', function() pcall(show_zuly) end)
+        z:AddEventListener('dblclick', function()
+            local v = read()
+            if v then S = fresh(v) end
+            pcall(show_zuly)
+        end)
+    end
+    local timer = el('sp-track-timer')
+    local flip = false
+    if timer then
+        timer:AddEventListener('animationend', function()
+            pcall(tick)
+            flip = not flip
+            timer.style.animation = STEP .. 's ' .. (flip and 'sp-track-tick-b' or 'sp-track-tick-a')
+        end)
+    end
+end)
+		</script>
+		<script>
+-- Weapon durability refresh (steampunk add-on). The HUD's weapon slot only
+-- reads the weapon's details when the weapon changes, so durability and life
+-- lost in a fight didn't show (13/13 in the HUD, 12/13 in the inventory).
+-- Every 5 seconds this compares the live numbers; when they change it sets the
+-- slot's own values again so the slot reloads. Nothing else is touched.
+pcall(function()
+    local document = document
+    local last = nil
+    local function el(id) return document:GetElementById(id) end
+    local function check()
+        local src, slot = el('sp-weapon-src'), el('sp-weapon-slot')
+        if not src or not slot then return end
+        local key = src:GetAttribute('sp-key') or ''
+        local dur = src:GetAttribute('sp-dur') or ''
+        local life = src:GetAttribute('sp-life') or ''
+        local now = key .. '|' .. dur .. '|' .. life
+        if last and now ~= last and key == last:match('^([^|]*)') and key ~= '' and key ~= '0' then
+            slot:SetAttribute('item-durability', dur)
+            slot:SetAttribute('item-life', life)
+            slot:SetAttribute('item-key', '0')
+            slot:SetAttribute('item-key', key)
+        end
+        last = now
+    end
+    local timer = el('sp-track-timer')
+    if timer then
+        timer:AddEventListener('animationend', function() pcall(check) end)
+    end
+end)
+		</script>
+	</head>
+
+	<body id="hud" onclick="self-target">
+
+		<!-- Everything inside .sp-hud moves together when the drag bar is held -->
+		<div class="sp-hud" id="sp-hud">
+
+			<!-- Character plate -->
+			<div class="sp-plate" data-model="character">
+				<span id="sp-track" data-attr-sp-name="name" data-attr-sp-lv="level" data-attr-sp-exp="experience" data-attr-sp-max="max_experience" data-attr-sp-money="money"></span>
+				<div class="sp-title">
+					<span class="sp-name">{{name}}</span>
+					<span class="sp-job"><span class="sp-level">Lv {{level}}</span><str data-attr-job-name="job">Visitor</str></span>
+				</div>
+
+				<div class="sp-bars">
+					<div class="sp-gauge">
+						<div class="sp-cap left"></div>
+						<gauge id="health" class="horizontal-lg-lg red" data-class-low-value-animation="health_percent &lt;= 20" data-attr-gvalue="health" data-attr-gmax="max_health">
+							<template src="gauge-info-vmp" />
+						</gauge>
+						<div class="sp-cap right"></div>
+						<div class="sp-tip">
+							<span class="sp-tip-title">HP</span>
+							<span class="sp-tip-row">{{health}} / {{max_health}} ({{health_percent}}%)</span>
+							<span class="sp-tip-row">Recovery {{health_recovery}}</span>
+						</div>
+					</div>
+
+					<div class="sp-gauge">
+						<div class="sp-cap left"></div>
+						<gauge id="mana" class="horizontal-lg-lg blue" data-class-low-value-animation="mana_percent &lt;= 20" data-attr-gvalue="mana" data-attr-gmax="max_mana">
+							<template src="gauge-info-vmp" />
+						</gauge>
+						<div class="sp-cap right"></div>
+						<div class="sp-tip">
+							<span class="sp-tip-title">MP</span>
+							<span class="sp-tip-row">{{mana}} / {{max_mana}} ({{mana_percent}}%)</span>
+							<span class="sp-tip-row">Recovery {{mana_recovery}}</span>
+						</div>
+					</div>
+
+					<div class="sp-gauge exp">
+						<div class="sp-cap left"></div>
+						<gauge id="exp" class="horizontal-sm-lg yellow" data-attr-gvalue="experience" data-attr-gmax="max_experience">
+							<span class="marker"><img sprite="gauge-bg-sm-lg-markers" /></span>
+							<span class="exp-text"><label id="percent" />%</span>
+						</gauge>
+						<div class="sp-cap right"></div>
+						<div class="sp-tip">
+							<span class="sp-tip-title">Experience</span>
+							<span class="sp-tip-row">{{experience}} / {{max_experience}}</span>
+							<span class="sp-tip-row" id="sp-xp-rate">Per hour: gathering data...</span>
+							<span class="sp-tip-row" id="sp-xp-eta"></span>
+							<span class="sp-tip-row" id="sp-xp-session"></span>
+							<span class="sp-tip-warn" data-if="experience_gain_disabled">Experience gain is turned off</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Weapon / ammo slot (its own data model, so it sits beside the plate, not inside it) -->
+			<div class="weapon-slot" data-model="inventory">
+				<span id="sp-weapon-src" data-attr-sp-key="equipped_weapon.key" data-attr-sp-dur="equipped_weapon.durability" data-attr-sp-life="equipped_weapon.life"></span>
+				<img sprite="GEN_INVSLOT08"
+					data-if="equipped_weapon.id == 0 &amp;&amp; equipped_shot_item.id == 0" />
+
+				<item-slot id="sp-weapon-slot" data-if="equipped_shot_item.id == 0"
+					data-attr-item-key="equipped_weapon.key"
+					data-attr-item-id="equipped_weapon.id"
+					data-attr-item-type="equipped_weapon.type"
+					data-attr-item-quantity="equipped_weapon.quantity"
+					data-attr-item-refine-grade="equipped_weapon.refine_grade"
+					data-attr-item-life="equipped_weapon.life"
+					data-attr-item-durability="equipped_weapon.durability"
+					data-attr-item-appraisal="equipped_weapon.appraisal_no"
+					data-attr-item-refine-color="equipped_weapon.refine_color"
+					data-attr-item-slot="equipped_weapon.slot"
+					data-attr-item-appraised="equipped_weapon.appraised"
+					data-attr-item-socket-count="equipped_weapon.socket_count"
+					data-attr-item-gem="equipped_weapon.gem_no"
+					data-attr-item-gem-no="equipped_weapon.gem_no"
+					data-attr-item-gem-option3="equipped_weapon.gem_option3" />
+
+				<item-slot data-if="equipped_shot_item.id != 0"
+					data-attr-item-key="equipped_shot_item.key"
+					data-attr-item-id="equipped_shot_item.id"
+					data-attr-item-type="equipped_shot_item.type"
+					data-attr-item-quantity="equipped_shot_item.quantity" />
+			</div>
+
+			<!-- Drag bar: hold and drag to move the whole HUD -->
+			<handle class="sp-drag" move_target="#document" data-model="character">
+				<div class="sp-footer">
+					<span><str string-id="107">Weight</str>: <b>{{weight_percent}}%</b></span>
+					<span class="sp-zulie" id="sp-zulie"><b>{{money | format_number}}</b><img sprite="button-zulie-n" />
+						<div class="sp-tip">
+							<span class="sp-tip-title">Zuly this session</span>
+							<span class="sp-tip-row" id="sp-zuly-session">Gathering data...</span>
+							<span class="sp-tip-row" id="sp-zuly-rate"></span>
+							<span class="sp-tip-row" id="sp-zuly-time"></span>
+							<span class="sp-tip-note">Double-click the zuly to start a new session.</span>
+						</div>
+					</span>
+				</div>
+			</handle>
+
+			<!-- PAT Fuel -->
+			<div onclick="ignore" data-model="pat">
+				<div class="pat-fuel">
+					<gauge data-if="show" id="fuel" class="horizontal-sm-md green" data-attr-gvalue="fuel"
+						data-attr-gmax="max_fuel">
+						<span>
+							<label id="percent" />%
+						</span>
+					</gauge>
+				</div>
+			</div>
+		</div>
+
+		<div id="sp-track-timer"></div>
+
+		<!-- State Icons -->
+		<div id="state-icon-container" onclick="ignore" data-model="hud-statuses">
+			<div class="hud-status-row" data-for="group : groups" data-if="group.statuses.size > 0">
+				<span class="hud-status-icon" data-for="status : group.statuses" data-class-blink="status.blink" data-class-inactive="!status.active" data-class-warning="status.is_warning" data-attr-hud-status="status.index">
+					<img data-attr-sprite="status.sprite"/>
+				</span>
+			</div>
+		</div>
+	</body>
+</rml>

@@ -1,0 +1,113 @@
+<rml>
+    <head>
+        <title>Personal Store</title>
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/spritesheet_itemicon.css" />
+        <link type="text/rcss" href="../styles/spritesheet_socketgem.css" />
+        <link type="text/rcss" href="../styles/item_slot.css" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+        <style>
+			body { width: 332dp; max-width: 94vw; }
+			#vending-title { box-sizing: border-box; width: 100%; margin-bottom: 12dp; }
+			.vending-grid { width: 260dp; }
+			.vending-grid item-slot.listed { background-color: #80682080; }
+			.vending-selection { display: flex; flex-direction: row; align-items: center; min-height: 28dp;	}
+            /* centred: item name, then its price under it (Default UI Fixes) */
+            .vending-selection { flex-direction: column; justify-content: center; }
+            #selected-name { flex: 0 0 auto; width: 100%; min-width: 0; white-space: normal; overflow: visible; margin: 0; padding-top: 4dp; text-align: center; }
+            .vending-selection .ui-currency { justify-content: center; margin-top: 2dp; }
+            .vending-selection .ui-currency { flex: 0 0 auto; white-space: nowrap; }
+			.vending-help { margin: 8dp 0; }
+			#vending-state { margin-bottom: 8dp; }
+			.vending-edit { text-align: center; }
+			#edit-buy { margin-top: 8dp; }
+		</style>
+    </head>
+    <body id="personal-vending" template="window-fixed-size">
+        <div data-model="vending-store">
+        <input id="vending-title" type="text" class="default" maxlength="24" data-attrif-disabled="opened" />
+        <div class="ui-tabs">
+            <button id="sell-tab" class="default" onclick="sell" data-class-active="!buy">Sell</button>
+            <button id="buy-tab" class="default" onclick="buy" data-class-active="buy">Buy</button>
+        </div>
+        <div id="sell-panel" class="vending-grid ui-slot-grid ui-selectable-slots" data-if="!buy">
+            <item-slot id="vending-slot-0" data-slot="0" onclick="select" data-class-listed="slots[0].listed" data-class-selected="slots[0].selected" />
+            <item-slot id="vending-slot-1" data-slot="1" onclick="select" data-class-listed="slots[1].listed" data-class-selected="slots[1].selected" />
+            <item-slot id="vending-slot-2" data-slot="2" onclick="select" data-class-listed="slots[2].listed" data-class-selected="slots[2].selected" />
+            <item-slot id="vending-slot-3" data-slot="3" onclick="select" data-class-listed="slots[3].listed" data-class-selected="slots[3].selected" />
+            <item-slot id="vending-slot-4" data-slot="4" onclick="select" data-class-listed="slots[4].listed" data-class-selected="slots[4].selected" />
+            <item-slot id="vending-slot-5" data-slot="5" onclick="select" data-class-listed="slots[5].listed" data-class-selected="slots[5].selected" />
+            <item-slot id="vending-slot-6" data-slot="6" onclick="select" data-class-listed="slots[6].listed" data-class-selected="slots[6].selected" />
+            <item-slot id="vending-slot-7" data-slot="7" onclick="select" data-class-listed="slots[7].listed" data-class-selected="slots[7].selected" />
+            <item-slot id="vending-slot-8" data-slot="8" onclick="select" data-class-listed="slots[8].listed" data-class-selected="slots[8].selected" />
+            <item-slot id="vending-slot-9" data-slot="9" onclick="select" data-class-listed="slots[9].listed" data-class-selected="slots[9].selected" />
+            <item-slot id="vending-slot-10" data-slot="10" onclick="select" data-class-listed="slots[10].listed" data-class-selected="slots[10].selected" />
+            <item-slot id="vending-slot-11" data-slot="11" onclick="select" data-class-listed="slots[11].listed" data-class-selected="slots[11].selected" />
+            <item-slot id="vending-slot-12" data-slot="12" onclick="select" data-class-listed="slots[12].listed" data-class-selected="slots[12].selected" />
+            <item-slot id="vending-slot-13" data-slot="13" onclick="select" data-class-listed="slots[13].listed" data-class-selected="slots[13].selected" />
+            <item-slot id="vending-slot-14" data-slot="14" onclick="select" data-class-listed="slots[14].listed" data-class-selected="slots[14].selected" />
+            <item-slot id="vending-slot-15" data-slot="15" onclick="select" data-class-listed="slots[15].listed" data-class-selected="slots[15].selected" />
+            <item-slot id="vending-slot-16" data-slot="16" onclick="select" data-class-listed="slots[16].listed" data-class-selected="slots[16].selected" />
+            <item-slot id="vending-slot-17" data-slot="17" onclick="select" data-class-listed="slots[17].listed" data-class-selected="slots[17].selected" />
+            <item-slot id="vending-slot-18" data-slot="18" onclick="select" data-class-listed="slots[18].listed" data-class-selected="slots[18].selected" />
+            <item-slot id="vending-slot-19" data-slot="19" onclick="select" data-class-listed="slots[19].listed" data-class-selected="slots[19].selected" />
+            <item-slot id="vending-slot-20" data-slot="20" onclick="select" data-class-listed="slots[20].listed" data-class-selected="slots[20].selected" />
+            <item-slot id="vending-slot-21" data-slot="21" onclick="select" data-class-listed="slots[21].listed" data-class-selected="slots[21].selected" />
+            <item-slot id="vending-slot-22" data-slot="22" onclick="select" data-class-listed="slots[22].listed" data-class-selected="slots[22].selected" />
+            <item-slot id="vending-slot-23" data-slot="23" onclick="select" data-class-listed="slots[23].listed" data-class-selected="slots[23].selected" />
+            <item-slot id="vending-slot-24" data-slot="24" onclick="select" data-class-listed="slots[24].listed" data-class-selected="slots[24].selected" />
+            <item-slot id="vending-slot-25" data-slot="25" onclick="select" data-class-listed="slots[25].listed" data-class-selected="slots[25].selected" />
+            <item-slot id="vending-slot-26" data-slot="26" onclick="select" data-class-listed="slots[26].listed" data-class-selected="slots[26].selected" />
+            <item-slot id="vending-slot-27" data-slot="27" onclick="select" data-class-listed="slots[27].listed" data-class-selected="slots[27].selected" />
+            <item-slot id="vending-slot-28" data-slot="28" onclick="select" data-class-listed="slots[28].listed" data-class-selected="slots[28].selected" />
+            <item-slot id="vending-slot-29" data-slot="29" onclick="select" data-class-listed="slots[29].listed" data-class-selected="slots[29].selected" />
+        </div>
+        <div id="buy-panel" class="vending-grid ui-slot-grid ui-selectable-slots" data-if="buy">
+            <item-slot id="vending-slot-30" data-slot="0" onclick="select" data-class-listed="slots[30].listed" data-class-selected="slots[30].selected" />
+            <item-slot id="vending-slot-31" data-slot="1" onclick="select" data-class-listed="slots[31].listed" data-class-selected="slots[31].selected" />
+            <item-slot id="vending-slot-32" data-slot="2" onclick="select" data-class-listed="slots[32].listed" data-class-selected="slots[32].selected" />
+            <item-slot id="vending-slot-33" data-slot="3" onclick="select" data-class-listed="slots[33].listed" data-class-selected="slots[33].selected" />
+            <item-slot id="vending-slot-34" data-slot="4" onclick="select" data-class-listed="slots[34].listed" data-class-selected="slots[34].selected" />
+            <item-slot id="vending-slot-35" data-slot="5" onclick="select" data-class-listed="slots[35].listed" data-class-selected="slots[35].selected" />
+            <item-slot id="vending-slot-36" data-slot="6" onclick="select" data-class-listed="slots[36].listed" data-class-selected="slots[36].selected" />
+            <item-slot id="vending-slot-37" data-slot="7" onclick="select" data-class-listed="slots[37].listed" data-class-selected="slots[37].selected" />
+            <item-slot id="vending-slot-38" data-slot="8" onclick="select" data-class-listed="slots[38].listed" data-class-selected="slots[38].selected" />
+            <item-slot id="vending-slot-39" data-slot="9" onclick="select" data-class-listed="slots[39].listed" data-class-selected="slots[39].selected" />
+            <item-slot id="vending-slot-40" data-slot="10" onclick="select" data-class-listed="slots[40].listed" data-class-selected="slots[40].selected" />
+            <item-slot id="vending-slot-41" data-slot="11" onclick="select" data-class-listed="slots[41].listed" data-class-selected="slots[41].selected" />
+            <item-slot id="vending-slot-42" data-slot="12" onclick="select" data-class-listed="slots[42].listed" data-class-selected="slots[42].selected" />
+            <item-slot id="vending-slot-43" data-slot="13" onclick="select" data-class-listed="slots[43].listed" data-class-selected="slots[43].selected" />
+            <item-slot id="vending-slot-44" data-slot="14" onclick="select" data-class-listed="slots[44].listed" data-class-selected="slots[44].selected" />
+            <item-slot id="vending-slot-45" data-slot="15" onclick="select" data-class-listed="slots[45].listed" data-class-selected="slots[45].selected" />
+            <item-slot id="vending-slot-46" data-slot="16" onclick="select" data-class-listed="slots[46].listed" data-class-selected="slots[46].selected" />
+            <item-slot id="vending-slot-47" data-slot="17" onclick="select" data-class-listed="slots[47].listed" data-class-selected="slots[47].selected" />
+            <item-slot id="vending-slot-48" data-slot="18" onclick="select" data-class-listed="slots[48].listed" data-class-selected="slots[48].selected" />
+            <item-slot id="vending-slot-49" data-slot="19" onclick="select" data-class-listed="slots[49].listed" data-class-selected="slots[49].selected" />
+            <item-slot id="vending-slot-50" data-slot="20" onclick="select" data-class-listed="slots[50].listed" data-class-selected="slots[50].selected" />
+            <item-slot id="vending-slot-51" data-slot="21" onclick="select" data-class-listed="slots[51].listed" data-class-selected="slots[51].selected" />
+            <item-slot id="vending-slot-52" data-slot="22" onclick="select" data-class-listed="slots[52].listed" data-class-selected="slots[52].selected" />
+            <item-slot id="vending-slot-53" data-slot="23" onclick="select" data-class-listed="slots[53].listed" data-class-selected="slots[53].selected" />
+            <item-slot id="vending-slot-54" data-slot="24" onclick="select" data-class-listed="slots[54].listed" data-class-selected="slots[54].selected" />
+            <item-slot id="vending-slot-55" data-slot="25" onclick="select" data-class-listed="slots[55].listed" data-class-selected="slots[55].selected" />
+            <item-slot id="vending-slot-56" data-slot="26" onclick="select" data-class-listed="slots[56].listed" data-class-selected="slots[56].selected" />
+            <item-slot id="vending-slot-57" data-slot="27" onclick="select" data-class-listed="slots[57].listed" data-class-selected="slots[57].selected" />
+            <item-slot id="vending-slot-58" data-slot="28" onclick="select" data-class-listed="slots[58].listed" data-class-selected="slots[58].selected" />
+            <item-slot id="vending-slot-59" data-slot="29" onclick="select" data-class-listed="slots[59].listed" data-class-selected="slots[59].selected" />
+        </div>
+        <div class="vending-selection ui-footer">
+            <div id="selected-name" class="ui-section-title">{{ selected_name }}</div>
+            <div class="ui-currency"><img id="selected-currency" sprite="button-zulie-n" data-style-visibility="has_selection ? 'visible' : 'hidden'" /><span id="selected-price">{{ selected_price }}</span></div>
+        </div>
+        <div class="vending-edit"><button id="edit-buy" class="default" onclick="edit-buy" data-if="buy" data-attrif-disabled="!edit_enabled">{{ edit_label }}</button></div>
+        <div class="vending-help ui-status">Drag items here. Shift-click to add or remove a listing.</div>
+        <div id="vending-state" class="ui-status">{{ state_label }}</div>
+        <div class="ui-actions">
+            <button id="reset" class="default" onclick="reset" data-attrif-disabled="opened">Reset</button>
+            <button id="start" class="default" onclick="start" data-if="!opened">Start</button>
+            <button id="stop" class="default" onclick="stop" data-if="opened">Stop</button>
+        </div>
+        </div>
+    </body>
+</rml>

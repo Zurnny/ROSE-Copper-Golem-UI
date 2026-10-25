@@ -1,0 +1,326 @@
+<rml>
+
+    <head>
+        <title>Quest Tracker</title>
+
+        <link type="text/template" href="../templates/window-box.html" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            #game-quest-tracker {
+                font-effect: outline(1dp black), shadow(2dp 2dp black);
+                width: auto;
+                height: auto;
+                max-height: 100%; 
+            }
+
+            text-link {
+                cursor: hand;
+            }
+
+            .title {
+                cursor: drag;
+                text-align: center;
+                font-weight: 1000;
+            }
+
+            .title-hidden {
+                display: block;
+            }
+
+            #tracker-title.hidden {
+                display: block;
+                visibility: hidden;
+            }
+
+            #tracker-title {
+                position: relative;
+                top: 5dp;
+                margin-bottom: 5dp;
+                font-size: 14dp;
+                font-weight: 800;
+                letter-spacing: 1dp;
+                color: rgb(231, 154, 116);
+                text-align: center;
+            }
+
+            button.toggle {
+                width: 14dp;
+                height: 18dp;
+                line-height: 18dp;
+                position: absolute;
+                top: -3.5dp;
+                right: 1dp;
+                transition: opacity 0.4s;
+            }
+
+            button.title-settings {
+                position: absolute;
+                top: -1dp;
+                left: 10dp;
+            }
+
+            #quest-area {
+                min-width: 200dp;
+                min-height: 20dp;
+                display: inline-block;
+                width: auto;
+                border-radius: 3.5dp;
+                transition: background 0.4s, min-height 0.4s;
+            }
+
+            #quest-area:hover #tracker-title {
+                width: 100%;
+                visibility: visible;
+                text-align: center;
+            }
+
+            #quest-area.hidden {
+                background: rgba(42, 40, 45, 60);
+                min-height: 30dp;
+            }
+
+            #quest-area.hidden:hover {
+                background: rgba(42, 40, 45, 100);
+            }
+
+            #quest-area.visible:hover {
+                background: rgba(42, 40, 45, 100);
+                transition: background 0.2s;
+            }
+
+            .quest-item {
+                display: block;
+                width: 100%;
+                box-sizing: border-box;
+
+                padding: 4dp;
+                margin-bottom: 5dp;
+
+                border-radius: 3.5dp;
+            }
+
+            .quest-name {
+                /*white-space: nowrap;*/
+                color: rgb(231, 154, 116);
+                font-weight: 800;
+                margin-bottom: 2dp;
+                letter-spacing: 1dp;
+            }
+
+            .quest-type-hero {
+                color: rgb(162, 85, 230);
+            }
+
+            .quest-type-daily {
+                color: rgb(114, 255, 75);
+            }
+
+            .quest-type-gamearena {
+                color: rgb(114, 255, 75);
+            }
+
+            .quest-type-repeatable {
+                color: rgb(109, 163, 255);
+            }
+
+            .quest-type-event {
+                color: rgb(162, 85, 230);
+            }
+
+            .quest-objective {
+                display: inline-block;
+                color: rgb(255, 255, 255);
+                margin: 2dp 0dp;
+            }
+
+            .quest-item-item {
+                display: block;
+                width: auto;
+                color: rgb(255, 255, 255);
+                font-weight: 800;
+                letter-spacing: 0.9dp;
+                margin: 1dp;
+                white-space: nowrap;
+            }
+
+            .quest-item-completed {
+                color: rgb(150, 255, 122);
+            }
+
+            .quest-item-incomplete {
+                color: rgb(255, 255, 255);
+            }
+
+            .quest-timer {
+                width: 100%;
+                color: rgb(0, 210, 255);
+                margin-top: 2dp;
+                text-align: right;
+            }
+
+            .timer-item {
+                padding: 3dp;
+                display: inline-block;
+                box-sizing: border-box;
+            }
+
+            .timer-item > * {
+                vertical-align: middle;
+            }
+            
+            .quest-timer-expired {
+                color: rgb(255, 113, 107);
+            }
+
+            #quest-list {
+                display: block;
+                width: auto;
+                text-align: right;
+                margin: 5dp;
+                overflow-y: hidden;
+                overflow-x: hidden;
+                max-height: 1000dp;
+                transition: max-height 0.4s;
+                box-sizing: border-box;
+            }
+            
+            #quest-list > div {
+                display: block;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            
+            #quest-list.hidden {
+                display: block;
+                visibility: hidden;
+                max-height: 0dp;
+                transition: max-height 0.2s;
+            }
+
+            .settings-container {
+                margin: 5dp;
+                margin-top: 10dp;
+                display: none;
+                color: white;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                opacity: 0;
+            }
+
+            #quest-area:hover .settings-container {
+                position: absolute;
+                display: flex;
+                align-items: center;
+                opacity: 1.0;
+                transition: opacity 0.5s;
+            }
+
+            .setting-items {
+                padding: 5dp;
+                margin: 5dp;
+                width: 180dp;
+                background-color: rgba(42, 40, 45, 220);
+                border-radius: 3.5dp;
+                border: 1dp rgb(116, 53, 22);
+            }
+
+            .setting-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 5dp;
+            }
+        </style>
+    </head>
+
+    <body id="game-quest-tracker" onclick="ignore">
+        <div id="quest-area" data-class-visible="!is_hidden" data-class-hidden="is_hidden" data-model="quest-tracker">
+            <handle data-class-title-hidden="!is_hidden" class="title" move_target="#document" onclick="pass">
+                <div id="tracker-title" data-class-hidden="!is_hidden">
+                    <label>Quest Tracker</label>
+                    <button class="settings title-settings" data-event-click="show_settings = !show_settings" data-class-settings_active="show_settings"></button>
+                    <button data-class-minus="!is_hidden" data-class-plus="is_hidden" class="minus toggle"
+                        data-event-click="toggle_hidden"/>
+                    
+                    <div data-if="!is_hidden">
+                        <div class="settings-container" data-if="show_settings">
+                            <div class="setting-items">
+                                <div class="setting-item">
+                                    <label>Opacity</label>
+                                    <input type="range" min="0" max="0.75" step="0.1" data-value="opacity" style="width: 100dp;" data-event-change="apply_settings = true"/>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label>Font Size</label>
+                                    <input type="range" min="8" max="24" step="0.5" data-value="font_size" style="width: 100dp;" data-event-change="apply_settings = true"/>
+                                </div>
+
+                                <div class="setting-item">
+                                    <label>Max Items <span style="color: yellow">({{max_visible_quests}})</span></label>
+                                    <input type="range" min="1" max="10" step="1" data-value="max_visible_quests" style="width: 100dp;" data-event-change="apply_settings = true"/>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="line-splitter" style="width: 250dp;"></span>
+                    </div>
+                </div>
+            </handle>
+
+            <div id="quest-list" data-class-hidden="is_hidden" onclick="ignore" data-style-font-size="font_size_style" data-style-max-height="is_hidden ? '0dp' : list_max_height + 'dp'">
+                <div data-for="quest : active_quests" data-if="quest.id != 0 && quest.index < max_visible_quests">
+                    <div class="quest-item" data-style-background="background_color">
+                        <!-- Quest Name -->
+                        <div class="quest-name quest-item-completed" data-if="quest.is_item_objective_done">
+                            <label>{{quest.name}}</label>
+                        </div>
+                        <div class="quest-name" data-if="!quest.is_item_objective_done"
+                            data-class-quest-type-hero="quest.quest_type == 1"
+                            data-class-quest-type-daily="quest.quest_type == 2"
+                            data-class-quest-type-gamearena="quest.quest_type == 3"
+                            data-class-quest-type-repeatable="quest.quest_type == 4"
+                            data-class-quest-type-event="quest.quest_type == 5">
+                                <label>{{quest.name}}</label>
+                        </div>
+                        
+                        <!-- Quest Objectives -->
+                        <ul data-if="quest.has_item_objective && !quest.is_item_objective_done">
+                            <li data-for="item : quest.items" class="quest-item-item"
+                                data-if="item.item_id != 0"
+                                data-class-quest-item-completed="item.is_completed"
+                                data-class-quest-item-incomplete="!item.is_completed">
+                                <span>•</span>
+                                <span data-if="item.is_hidden">
+                                    [{{item.required_amount - item.current_amount}}/{{item.required_amount}}]
+                                    {{item.name}}
+                                </span>
+                                <span data-if="!item.is_hidden">
+                                    [{{item.current_amount}}/{{item.required_amount}}] {{item.name}}
+                                </span>
+                            </li>
+                        </ul>
+
+                        <div data-if="quest.has_item_objective && quest.is_item_objective_done && quest.objective != ''"
+                            class="quest-objective">
+                            {{quest.objective}}
+                        </div>
+                        <div data-if="!quest.has_item_objective && quest.objective != ''" class="quest-objective">
+                            {{quest.objective}}
+                        </div>
+
+                        <div data-if="quest.has_timer" class="quest-timer"
+                            data-class-quest-timer-expired="quest.remain_time == 0">
+                            <div class="timer-item">
+                                <img sprite="GEN_DECO39" />
+                                <span style="padding-left: 4dp" class="time-remaining" data-if="quest.remain_time > 0">{{format_quest_timer(quest.remain_time)}}</span>
+                                <span style="padding-left: 4dp;" class="time-expired" data-if="quest.remain_time <= 0"><str string-id="14" /></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</rml>

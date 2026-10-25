@@ -1,0 +1,720 @@
+<rml>
+
+    <head>
+        <title></title>
+        <link type="text/rcss" href="/data/ui/themes/rose/styles/html.css" />
+        <link type="text/rcss" href="/data/ui/themes/rose/styles/spritesheet_glassui.css" />
+        <link type="text/rcss" href="/data/ui/themes/rose/styles/button.css" />
+        <link type="text/rcss" href="/data/ui/themes/rose/styles/colors.css" />
+        <link type="text/rcss" href="../styles/spritesheet_itemicon.css" />
+        <link type="text/rcss" href="../styles/spritesheet_socketgem.css" />
+        <link type="text/rcss" href="../styles/spritesheet_elementicon.css" />
+        <link type="text/rcss" href="../styles/spritesheet_skillicon.css" />
+        <link type="text/rcss" href="../styles/item_slot.css" />
+        <link type="text/rcss" href="../styles/skill_slot.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            body#quickbar {
+                z-index: 950;
+                padding: 0;
+                margin: 0;
+                color: white;
+                font-effect: outline(1dp black);
+            }
+
+            handle.quickbar-container {
+                display: inline-flex;
+                flex-direction: row;
+                align-items: center;
+                cursor: normal;
+                padding: 0dp;
+                /* Gap fix: the invisible grab area round each hotbar was 15dp on every side, so a
+                   second hotbar placed close above or below caught the mouse and drew its frame
+                   over this one. Top and bottom are now 4dp; the sides keep room for the page
+                   buttons. */
+                border-width: 4dp 15dp 4dp 15dp;
+                border-color: rgba(0, 0, 0, 0);
+                margin: -4dp -15dp -4dp -15dp;
+                height: 41dp;
+                position: relative;
+            }
+
+            handle.quickbar-container:hover[move_target] {
+                decorator: tiled-box(qb-wnd-tl, qb-wnd-t, qb-wnd-tr,
+                        qb-wnd-l, qb-wnd-c, qb-wnd-r,
+                        qb-wnd-bl, qb-wnd-b, qb-wnd-br) border-box;
+            }
+
+            body.vertical handle.quickbar-container {
+                border-width: 15dp 4dp 15dp 4dp;   /* side by side bars: small gap left and right */
+                margin: -15dp -4dp -15dp -4dp;
+                flex-direction: column;
+                height: auto;
+                width: 41dp;
+            }
+
+            /* Vertical: separators become horizontal lines at top of each cell */
+            body.vertical .sep-v {
+                left: -1dp;
+                top: -3dp;
+                width: 40dp;
+                height: 5dp;
+                decorator: image(qb-sep-h);
+            }
+
+            body.vertical .sep-end {
+                left: -1dp;
+                right: auto;
+                top: auto;
+                bottom: -3dp;
+                width: 40dp;
+                height: 5dp;
+                decorator: image(qb-sep-h);
+            }
+
+            /* Vertical: rotate button at top, centered horizontally */
+            body.vertical .btn-rotate {
+                margin-top: -9dp;
+                margin-left: 22dp;
+            }
+
+            .btn-rotate:disabled {
+                visibility: hidden;
+            }
+
+            /* Vertical: page area at bottom instead of right */
+            body.vertical .page-area {
+                right: auto;
+                top: auto;
+                bottom: -20dp;
+                left: 1dp;
+                width: 39dp;
+                height: 18dp;
+            }
+
+            body.vertical .page-btn {
+                right: auto;
+                left: 0dp;
+                bottom: -6dp;
+                width: 38dp;
+                height: 18dp;
+                border-radius: 0dp 0dp 4dp 4dp;
+            }
+
+            body.vertical handle.quickbar-container:hover[move_target] .page-btn {
+                decorator: vertical-gradient(rgba(45, 55, 75, 150) rgba(45, 55, 75, 125));
+            }
+
+            body.vertical .page-arrow-up {
+                left: 0dp;
+                top: 0dp;
+                width: 20dp;
+                height: 40dp;
+            }
+
+            body.vertical .page-arrow-down {
+                left: auto;
+                top: 0dp;
+                right: 0dp;
+                width: 13dp;
+                height: 20dp;
+            }
+
+            body.vertical .page-indicator {
+                left: 9dp;
+                top: 4dp;
+            }
+
+            /* Slots area */
+            .slots-area {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+            }
+
+            body.vertical .slots-area {
+                flex-direction: column;
+            }
+
+            /* Each slot cell is exactly 41dp wide, contains overlapping separator + slot */
+            .slot-cell {
+                position: relative;
+                width: 41dp;
+                height: 41dp;
+            }
+
+            /* Separator positioned absolutely at left edge of cell, behind the icon */
+            .sep-v {
+                position: absolute;
+                left: -3dp;
+                top: -1dp;
+                width: 5dp;
+                height: 40dp;
+                decorator: image(qb-sep-v);
+                z-index: -1;
+            }
+
+            .last-sep {
+                display: none;
+            }
+
+            /* Trailing separator at the right edge of the last slot cell */
+            .sep-end {
+                left: auto;
+                right: -3dp;
+            }
+
+            /* Slot background - centered in the 41x41 cell */
+            .slot-bg {
+                position: absolute;
+                left: 10dp;
+                top: 10dp;
+                width: 21dp;
+                height: 21dp;
+                decorator: image(slot-icon);
+                z-index: -1;
+                opacity: 0.8;
+            }
+
+            /* Native action surface retains the existing 41dp quickbar grid. */
+            quickbar-slot.quickbar-slot {
+                position: absolute;
+                left: 0dp;
+                top: 0dp;
+                width: 41dp;
+                height: 41dp;
+                margin: 0dp;
+                border-width: 0dp;
+                border-color: rgba(0, 0, 0, 0);
+                decorator: none;
+            }
+
+            /* Gamepad trigger highlight - red border on the slot-cell background div.
+    The slot-bg is 21dp centered at (10,10). The highlight border wraps it
+    at ~35dp, larger than the bg but smaller than the 41dp cell. */
+            body.gamepad .slot-cell.highlight {
+                border-width: 3dp;
+                border-color: rgb(199, 54, 54);
+                z-index: 2;
+            }
+
+            quickbar-slot > item-slot, quickbar-slot > skill-slot, quickbar-slot > img {
+                position: absolute;
+                left: 0; top: 0;
+                width: 40dp; height: 40dp;
+                pointer-events: none;
+            }
+
+            /* Keybind label centered under slot */
+            .keybind-label {
+                position: absolute;
+                bottom: 1dp;
+                right: 3dp;
+                font-size: 12dp;
+                font-weight: 800;
+                color: white;
+                font-effect: outline(1dp black);
+                pointer-events: none;
+                text-align: right;
+                width: 41dp;
+            }
+
+            body.gamepad .keybind-label {
+                bottom: auto;
+                right: auto;
+                left: 5dp;
+                top: 25dp;
+                width: 30dp;
+                font-size: 11dp;
+                font-weight: 700;
+                text-align: center;
+            }
+
+            /* Rotate button - hidden by default, shown on hover */
+            .btn-rotate {
+                position: absolute;
+                width: 29dp;
+                height: 25dp;
+                padding: 0;
+                visibility: hidden;
+                decorator: image(qb-rotate-n);
+                margin-top: 25dp;
+                margin-left: -9dp;
+
+                z-index: 1;
+            }
+            
+            .disabled {
+                visibility: hidden;
+            }
+
+            handle.quickbar-container:hover[move_target] .btn-rotate:not(.disabled) {
+                visibility: visible;
+            }
+
+            .btn-rotate:not(.disabled):hover {
+                decorator: image(qb-rotate-o);
+            }
+
+            .btn-rotate:not(.disabled):active {
+                decorator: image(qb-rotate-d);
+            }
+
+            /* Page area - absolutely positioned to overlap the right frame border,
+    matching old TGameCtrl where page elements sat within the 23dp right border. */
+            .page-area {
+                position: absolute;
+                right: -20dp;
+                top: 1dp;
+                width: 18dp;
+                height: 39dp;
+                visibility: hidden;
+            }
+
+            handle.quickbar-container:hover[move_target] .page-area {
+                visibility: visible;
+            }
+
+            handle.quickbar-container:hover[move_target] .page-btn {
+                decorator: horizontal-gradient(rgba(45, 55, 75, 150) rgba(45, 55, 75, 125));
+            }
+
+            .page-btn {
+                position: absolute;
+                right: 0dp;
+                width: 13dp;
+                height: 38dp;
+                padding: 0;
+                border-radius: 0dp 4dp 4dp 0dp;
+            }
+
+            .page-arrow-up {
+                position: absolute;
+                left: 0dp;
+                top: 0dp;
+                width: 40dp;
+                height: 20dp;
+                decorator: image(qb-arrow-ind-up);
+                pointer-events: none;
+            }
+
+            .page-arrow-down {
+                position: absolute;
+                left: 0dp;
+                top: 37dp;
+                width: 13dp;
+                height: 20dp;
+                decorator: image(qb-arrow-ind-down);
+                pointer-events: none;
+            }
+
+            .page-indicator {
+                position: absolute;
+                left: 4dp;
+                top: 9dp;
+                width: 20dp;
+                height: 20dp;
+                pointer-events: none;
+            }
+
+            .page-indicator.page-1 {
+                decorator: image(qb-page-1);
+            }
+
+            .page-indicator.page-2 {
+                decorator: image(qb-page-2);
+            }
+
+            .page-indicator.page-3 {
+                decorator: image(qb-page-3);
+            }
+
+            /* Shift label - shown only on extension quickbar, uses sprite from spritesheet */
+            .shift-label {
+                display: none;
+            }
+
+            body.extension .shift-label {
+                display: block;
+                position: absolute;
+                right: -20dp;
+                top: 1dp;
+                width: 20dp;
+                height: 43dp;
+                decorator: image(qb-shift);
+                pointer-events: none;
+            }
+
+            /* Extension bar: hide page area (no page cycling) */
+            body.extension .page-area {
+                display: none;
+            }
+
+            /* Gamepad */
+            .gamepad-triggers {
+                display: none;
+            }
+
+            body.gamepad .gamepad-triggers {
+                display: flex;
+                flex-direction: row;
+                width: 535dp;
+                padding: 8dp 0 0 0;
+            }
+
+            body.gamepad .gamepad-triggers .trigger-label {
+                position: absolute;
+                padding-top: 10dp;
+            }
+
+            body.gamepad #trigger-lt {
+                left: 51dp;
+            }
+
+            body.gamepad #trigger-ltrt {
+                left: 243dp;
+            }
+
+            body.gamepad #trigger-rt {
+                left: 460dp;
+            }
+
+            body.gamepad .btn-rotate,
+            body.gamepad .shift-label {
+                display: none;
+            }
+
+            /* Gamepad: page area uses visibility (not display) so hover can show it */
+            body.gamepad .page-area {
+                right: -20dp;
+                top: 26dp;
+            }
+
+
+            .trigger-label {
+                font-size: 16dp;
+                font-weight: 800;
+                color: white;
+                font-effect: outline(1dp black);
+                text-align: center;
+            }
+
+            .trigger-label.highlight {
+                color: rgb(255, 255, 0);
+            }
+
+            body.gamepad handle.quickbar-container {
+                height: auto;
+                flex-direction: column;
+            }
+
+            body.gamepad .slots-area {
+                position: relative;
+                height: 91dp;
+                width: 535dp;
+            }
+
+            body.gamepad .slot-cell {
+                position: absolute;
+            }
+
+            body.gamepad .sep-v {
+                display: none;
+            }
+
+            /* Gamepad separator container - hidden by default, shown in gamepad mode */
+            .gamepad-seps {
+                display: none;
+            }
+
+            body.gamepad .gamepad-seps {
+                display: block;
+                position: absolute;
+                left: 0dp;
+                top: 0dp;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+            }
+
+            .gsep {
+                position: absolute;
+                width: 5dp;
+                height: 43dp;
+                decorator: image(qb-sep-v);
+            }
+
+            /* Group 1 separators */
+            .gsep-g1-l {
+                left: -3dp;
+                top: 22dp;
+            }
+
+            .gsep-g1-m1 {
+                left: 38dp;
+                top: -3dp;
+                height: 93dp;
+            }
+
+            .gsep-g1-m2 {
+                left: 79dp;
+                top: -3dp;
+                height: 93dp;
+            }
+
+            .gsep-g1-r {
+                left: 120dp;
+                top: 22dp;
+            }
+
+            /* Group 2 separators */
+            .gsep-g2-l {
+                left: 202dp;
+                top: 22dp;
+            }
+
+            .gsep-g2-m1 {
+                left: 243dp;
+                top: -3dp;
+                height: 93dp;
+            }
+
+            .gsep-g2-m2 {
+                left: 284dp;
+                top: -3dp;
+                height: 93dp;
+            }
+
+            .gsep-g2-r {
+                left: 325dp;
+                top: 22dp;
+            }
+
+            /* Group 3 separators */
+            .gsep-g3-l {
+                left: 407dp;
+                top: 22dp;
+            }
+
+            .gsep-g3-m1 {
+                left: 448dp;
+                top: -3dp;
+                height: 93dp;
+            }
+
+            .gsep-g3-m2 {
+                left: 489dp;
+                top: -3dp;
+                height: 93dp;
+            }
+
+            .gsep-g3-r {
+                left: 530dp;
+                top: 22dp;
+            }
+
+            body.gamepad .slot-cell:nth-child(1) {
+                left: 0dp;
+                top: 25dp;
+            }
+
+            body.gamepad .slot-cell:nth-child(2) {
+                left: 41dp;
+                top: 0dp;
+            }
+
+            body.gamepad .slot-cell:nth-child(3) {
+                left: 82dp;
+                top: 25dp;
+            }
+
+            body.gamepad .slot-cell:nth-child(4) {
+                left: 41dp;
+                top: 50dp;
+            }
+
+            body.gamepad .slot-cell:nth-child(5) {
+                left: 205dp;
+                top: 25dp;
+            }
+
+            body.gamepad .slot-cell:nth-child(6) {
+                left: 246dp;
+                top: 0dp;
+            }
+
+            body.gamepad .slot-cell:nth-child(7) {
+                left: 287dp;
+                top: 25dp;
+            }
+
+            body.gamepad .slot-cell:nth-child(8) {
+                left: 246dp;
+                top: 50dp;
+            }
+
+            body.gamepad .slot-cell:nth-child(9) {
+                left: 410dp;
+                top: 25dp;
+            }
+
+            body.gamepad .slot-cell:nth-child(10) {
+                left: 451dp;
+                top: 0dp;
+            }
+
+            body.gamepad .slot-cell:nth-child(11) {
+                left: 492dp;
+                top: 25dp;
+            }
+
+            body.gamepad .slot-cell:nth-child(12) {
+                left: 451dp;
+                top: 50dp;
+            }
+
+            body.gamepad {
+                height: 160dp;
+            }
+            /* =========================================================
+             * Steampunk quickbar (art: steampunk_ui.dds)
+             * Iron tray with a brass edge; each slot is a riveted socket.
+             * ========================================================= */
+            .slots-area {
+                padding: 3dp;
+                background-color: rgba(35, 34, 38, 200);
+                border: 2dp rgb(171, 90, 50);
+                border-radius: 3dp;
+            }
+            /* Full-size riveted socket instead of the small grey square */
+            .slot-bg {
+                left: 0dp;
+                top: 0dp;
+                width: 41dp;
+                height: 41dp;
+                decorator: image(sp-slot);
+                opacity: 1;
+            }
+            /* Sockets have their own rims, so the glass separators go */
+            .sep-v, .gsep { visibility: hidden; }
+            .keybind-label { color: rgb(255, 236, 190); }
+
+            /* Hover frame, page dial and rotate button: tinted brass */
+            handle.quickbar-container:hover[move_target] { image-color: rgb(223, 150, 114); }
+            .page-arrow-up, .page-arrow-down, .page-indicator, .btn-rotate, .shift-label {
+                image-color: rgb(228, 159, 124);
+            }
+            handle.quickbar-container:hover[move_target] .page-btn,
+            body.vertical handle.quickbar-container:hover[move_target] .page-btn {
+                decorator: none;
+                background-color: rgba(116, 53, 22, 170);
+            }
+
+            /* Gamepad: brass highlight instead of red, brass active trigger */
+            body.gamepad .slot-cell.highlight { border-color: rgb(203, 117, 74); }
+            .trigger-label.highlight { color: rgb(231, 154, 116); }
+        </style>
+    </head>
+
+    <!-- The owning widget attaches this document to the "quickbar" or "quickbar-ext" data model. -->
+    <body id="quickbar" data-class-horizontal="!quickbar_gamepad && quickbar_layout == 1"
+        data-class-vertical="!quickbar_gamepad && quickbar_layout == 0" data-class-gamepad="quickbar_gamepad"
+        data-class-extension="quickbar_extension">
+        <handle move_target="#document" class="quickbar-container">
+            <button class="btn-rotate" id="btn-rotate" onclick="rotate" data-class-disabled="quickbar_locked"></button>
+            <div class="slots-area">
+                <div class="slot-cell" data-class-highlight="quickbar_highlight_group == 0">
+                    <div class="sep-v"></div>
+                    <div class="slot-bg"></div>
+                    <quickbar-slot id="slot-0" class="quickbar-slot default" /><span class="keybind-label">{{ quickbar_keybind_labels[0] }}</span>
+                </div>
+                <div class="slot-cell" data-class-highlight="quickbar_highlight_group == 0">
+                    <div class="sep-v"></div>
+                    <div class="slot-bg"></div>
+                    <quickbar-slot id="slot-1" class="quickbar-slot default" /><span class="keybind-label">{{ quickbar_keybind_labels[1] }}</span>
+                </div>
+                <div class="slot-cell" data-class-highlight="quickbar_highlight_group == 0">
+                    <div class="sep-v"></div>
+                    <div class="slot-bg"></div>
+                    <quickbar-slot id="slot-2" class="quickbar-slot default" /><span class="keybind-label">{{ quickbar_keybind_labels[2] }}</span>
+                </div>
+                <div class="slot-cell" data-class-highlight="quickbar_highlight_group == 0">
+                    <div class="sep-v"></div>
+                    <div class="slot-bg"></div>
+                    <quickbar-slot id="slot-3" class="quickbar-slot default" /><span class="keybind-label">{{ quickbar_keybind_labels[3] }}</span>
+                </div>
+                <div class="slot-cell" data-class-highlight="quickbar_highlight_group == 1">
+                    <div class="sep-v"></div>
+                    <div class="slot-bg"></div>
+                    <quickbar-slot id="slot-4" class="quickbar-slot default" /><span class="keybind-label">{{ quickbar_keybind_labels[4] }}</span>
+                </div>
+                <div class="slot-cell" data-class-highlight="quickbar_highlight_group == 1">
+                    <div class="sep-v"></div>
+                    <div class="slot-bg"></div>
+                    <quickbar-slot id="slot-5" class="quickbar-slot default" /><span class="keybind-label">{{ quickbar_keybind_labels[5] }}</span>
+                </div>
+                <div class="slot-cell" data-class-highlight="quickbar_highlight_group == 1">
+                    <div class="sep-v"></div>
+                    <div class="slot-bg"></div>
+                    <quickbar-slot id="slot-6" class="quickbar-slot default" /><span class="keybind-label">{{ quickbar_keybind_labels[6] }}</span>
+                </div>
+                <div class="slot-cell" data-class-highlight="quickbar_highlight_group == 1">
+                    <div class="sep-v"></div>
+                    <div class="slot-bg"></div>
+                    <quickbar-slot id="slot-7" class="quickbar-slot default" /><span class="keybind-label">{{ quickbar_keybind_labels[7] }}</span>
+                </div>
+                <div class="slot-cell" data-class-highlight="quickbar_highlight_group == 2">
+                    <div class="sep-v"></div>
+                    <div class="slot-bg"></div>
+                    <quickbar-slot id="slot-8" class="quickbar-slot default" /><span class="keybind-label">{{ quickbar_keybind_labels[8] }}</span>
+                </div>
+                <div class="slot-cell" data-class-highlight="quickbar_highlight_group == 2">
+                    <div class="sep-v"></div>
+                    <div class="slot-bg"></div>
+                    <quickbar-slot id="slot-9" class="quickbar-slot default" /><span class="keybind-label">{{ quickbar_keybind_labels[9] }}</span>
+                </div>
+                <div class="slot-cell" data-class-highlight="quickbar_highlight_group == 2">
+                    <div class="sep-v"></div>
+                    <div class="slot-bg"></div>
+                    <quickbar-slot id="slot-10" class="quickbar-slot default" /><span class="keybind-label">{{ quickbar_keybind_labels[10] }}</span>
+                </div>
+                <div class="slot-cell" data-class-highlight="quickbar_highlight_group == 2">
+                    <div class="sep-v"></div>
+                    <div class="slot-bg"></div>
+                    <quickbar-slot id="slot-11" class="quickbar-slot default" /><span class="keybind-label">{{ quickbar_keybind_labels[11] }}</span>
+                    <div class="sep-v sep-end"></div>
+                </div>
+                <div class="gamepad-seps">
+                    <div class="gsep gsep-g1-l"></div>
+                    <div class="gsep gsep-g1-m1"></div>
+                    <div class="gsep gsep-g1-m2"></div>
+                    <div class="gsep gsep-g1-r"></div>
+                    <div class="gsep gsep-g2-l"></div>
+                    <div class="gsep gsep-g2-m1"></div>
+                    <div class="gsep gsep-g2-m2"></div>
+                    <div class="gsep gsep-g2-r"></div>
+                    <div class="gsep gsep-g3-l"></div>
+                    <div class="gsep gsep-g3-m1"></div>
+                    <div class="gsep gsep-g3-m2"></div>
+                    <div class="gsep gsep-g3-r"></div>
+                </div>
+            </div>
+            <div class="page-area">
+                <div class="page-arrow-up"></div>
+                <button class="page-btn" id="btn-next" onclick="page-next"></button>
+                <div class="page-indicator" data-class-page-1="quickbar_page == 0" data-class-page-2="quickbar_page == 1"
+                    data-class-page-3="quickbar_page == 2"></div>
+                <div class="page-arrow-down"></div>
+            </div>
+            <div class="shift-label"></div>
+        </handle>
+
+        <div class="gamepad-triggers">
+            <span class="trigger-label" id="trigger-lt" data-class-highlight="quickbar_highlight_group == 0">{{ quickbar_trigger_l1 }}</span>
+            <span class="trigger-label" id="trigger-ltrt" data-class-highlight="quickbar_highlight_group == 1">{{ quickbar_trigger_l1l2 }}</span>
+            <span class="trigger-label" id="trigger-rt" data-class-highlight="quickbar_highlight_group == 2">{{ quickbar_trigger_l2 }}</span>
+        </div>
+    </body>
+</rml>

@@ -1,0 +1,151 @@
+<rml>
+    <head>
+        <title>Community</title>
+
+        <link type="text/template" href="../templates/window-resizeable.html" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            #game-friend-list
+            {
+                width: 300dp;
+                height: 380dp;
+                min-width: 280dp;
+                min-height: 200dp;
+            }
+
+            listbox {
+                padding-right: 15dp;
+            }
+
+            listbox-item {
+                padding: 4dp;
+            }
+
+            button.default {
+                min-width: 110dp;
+            }
+
+            tabset {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+
+            tab.default {
+                min-width: 0dp;
+                flex: 1;
+                box-sizing: border-box;
+            }
+
+            tabset > panels {
+                flex: 1;
+            }
+
+            /* Steampunk: action buttons in one even row under the list */
+            /* Remembered level next to each friend (script below) */
+            .sp-friend-level { width: 52dp; flex-shrink: 0; text-align: right; margin-right: 10dp; color: rgb(191, 145, 122); font-size: 13dp; }
+            .sp-button-row { display: flex; flex-direction: row; gap: 4dp; margin-top: 4dp; }
+            .sp-button-row > button.default { flex: 1; min-width: 0dp; white-space: nowrap; font-size: 13dp; padding-left: 2dp; padding-right: 2dp; }
+        </style>
+        <script>
+-- Friend levels (steampunk add-on). Shows each friend's level as remembered by
+-- the Group Manager (sp_level_cache.txt): levels seen in your group and clan.
+-- Friends it has never seen show no level. Updates when the window opens and
+-- when the mouse moves over it (never on a timer, so no mid-frame text).
+pcall(function()
+    local document = document
+    local cache, last_read = {}, -1
+    local function read_cache()
+        local now = 0
+        pcall(function() now = os.time() end)
+        if now ~= 0 and now - last_read < 2 then return end   -- re-read at most every 2 seconds
+        last_read = now
+        local fresh = {}
+        pcall(function()
+            local f = io.open('sp_level_cache.txt', 'r')
+            if not f then return end
+            for line in f:lines() do
+                local name, lvl = line:match('^(.-)=(%d+)%s*$')
+                if name and name ~= '' then fresh[name] = tonumber(lvl) end
+            end
+            f:close()
+        end)
+        cache = fresh
+    end
+    local function each(list, fn)
+        if not list then return end
+        local i = list[0] and 0 or 1
+        while list[i] do fn(list[i]); i = i + 1 end
+    end
+    local function refresh()
+        read_cache()
+        each(document:QuerySelectorAll('.sp-friend-level'), function(e)
+            local lvl = cache[e:GetAttribute('sp-name') or ''] or 0
+            local text = lvl > 1 and ('Lv ' .. lvl) or ''
+            if e:GetAttribute('sp-shown') ~= text then
+                e.inner_rml = text
+                e:SetAttribute('sp-shown', text)
+            end
+        end)
+    end
+    document:AddEventListener('show', function() last_read = -1; pcall(refresh) end)
+    document:AddEventListener('mouseover', function() pcall(refresh) end)
+end)
+        </script>
+    </head>
+
+    <body id="game-friend-list" template="window-resizeable">
+        <tabset id="community-tabs">
+            <tab class="default" id="friends-tab">Friends</tab>
+            <panel>
+                <div data-model="friend-list" style="width: 100%; height: 100%; display: flex; flex-direction: column;">
+                    <div style="flex: 1" class="content-box">
+                        <div style="width: 100%; height: 100%; overflow: hidden auto;">
+                            <listbox id="friend-list">
+                                <listbox-item
+                                    data-for="friend : friends"
+                                    data-attr-value="friend.name"
+                                    ondblclick="mail_or_message_friend"
+                                    style="display: flex; flex-direction: row; column-gap: 4dp; width: 100%; height: 20dp">
+                                    <img data-attr-sprite="(friend.status == 8 || friend.status == 10 || friend.status == 80 || friend.status == 81) ? 'clan-member-offline' : 'clan-member-online'" />
+                                    <span style="flex: 1">{{friend.name}}</span><span class="sp-friend-level" data-attr-sp-name="friend.name"></span>
+                                    <span><str data-attr-friend-status="friend.status" /></span>
+                                </listbox-item>
+                            </listbox>
+                        </div>
+                    </div>
+                    <div class="sp-button-row">
+                        <button class="default" onclick="add_friend">Add Friend</button>
+                        <button class="default" onclick="mail_or_message_friend">Message</button>
+                        <button class="default" onclick="delete_friend">Delete Friend</button>
+                    </div>
+            </div>
+            </panel>
+            <tab class="default" id="ignore-tab">Ignore</tab>
+            <panel>
+                <div data-model="ignore-list" style="width: 100%; height: 100%; display: flex; flex-direction: column;">
+                    <div style="flex: 1" class="content-box">
+                        <div style="width: 100%; height: 100%; overflow: hidden auto;">
+                            <listbox id="ignore-list">
+                                <listbox-item
+                                    data-for="ignore : ignore_list"
+                                    data-attr-value="ignore.name"
+                                    style="display: flex; flex-direction: row; column-gap: 4dp; width: 100%; height: 20dp"
+                                >
+                                    <span>{{ignore.name}}</span>
+                                </listbox-item>
+                            </listbox>
+                        </div>
+                    </div>
+                    <div class="sp-button-row">
+                        <button class="default" onclick="add_ignore">Add Ignore</button>
+                        <button class="default" onclick="delete_ignore">Delete Ignore</button>
+                    </div>
+                </div>
+            </panel>
+        </tabset>
+    </body>
+</rml>

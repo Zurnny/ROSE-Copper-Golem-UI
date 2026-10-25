@@ -1,0 +1,179 @@
+<rml>
+    <head>
+        <title>Avatar Selection</title>
+
+        <link type="text/template" href="../templates/window-fixed.html" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            body {
+                width: 100%;
+                height: 100%;
+            }
+
+            #avatar-selection-window
+            {
+                width: 250dp;
+                height: 80%;
+                right: 20dp;
+                margin: auto 0;
+                display: flex;
+                position: absolute;
+            }
+
+            button
+            {
+                width: 100%;
+            }
+
+            scrollbarvertical
+            {
+                width: 0;
+                margin-top: 0;
+                margin-bottom: 0;
+                margin-right: 0;
+            }
+
+            #window-content
+            {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: center;
+            }
+
+            #avatar-list
+            {
+                display: block;
+                width: 95%;
+                overflow-y: auto;
+                flex: 2;
+                margin-right: 16dp;
+            }
+
+            #sort-container
+            {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                width: 95%;
+                margin: 3dp 0;
+                z-index: 3;
+            }
+
+            #sort-container select
+            {
+                flex: 1;
+                width: auto;
+            }
+
+            #sort-container span
+            {
+                margin-right: 5dp;
+                color: white;
+            }
+
+            #button-container
+            {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 150dp;
+                margin: 3dp 0;
+            }
+
+            .delete
+            {
+                font-effect: outline(1dp black);
+            }
+
+            .enter-btn
+            {
+                position: absolute;
+
+                width: 200dp;
+
+                bottom: 1%;
+                left: 50%;
+
+                margin-left: -100dp;
+            }
+
+            .avatar-item
+            {
+                width: 100%;
+                height: 60dp;
+            }
+
+            .avatar-name
+            {
+                font-size: 1.1em;
+                font-weight: bold;
+                color: rgb(231, 154, 116);
+            }
+
+            .avatar-info
+            {
+                color: white;
+            }
+        </style>
+    </head>
+
+    <body id="external-avatar-selection" onkeyup="navigate">
+        <div id="avatar-selection-window" class="window-fixed-size">
+            <handle class="window-title" style="cursor: default">Avatar Selection</handle>
+
+            <div id="window-content" data-model="uiavtselection-data">
+                <div id="sort-container">
+                    <span>Sort:</span>
+                    <select data-value="sort_order" data-event-change="sort_changed()">
+                        <option value="0" selected>Last Login</option>
+                        <option value="1">Name</option>
+                        <option value="2">Level</option>
+                        <option value="3">Job</option>
+                    </select>
+                </div>
+
+                <button id="up" onclick="up" class="default" disabled>
+                    <icon class="arrow-up"></icon>
+                </button>
+
+                <listbox id="avatar-list" button_up="up" button_down="down">
+                    <listbox-item
+                        data-for="avatar, avatar_index : avatars"
+                        data-attr-id="avatar.name"
+                        data-event-click="select_avatar(avatar_index)"
+                        data-event-dblclick="enter_avatar(avatar_index)"
+                        class="avatar-item"
+                    >
+                        <span class="avatar-name">{{avatar.name}}</span><br />
+                        <span class="avatar-info">Level {{avatar.level}} {{avatar.job}}</span><br />
+                        <span class="avatar-info" data-if="avatar.delete_time == 0">{{avatar.map}}</span>
+                        <span data-if="avatar.delete_time > 0" class="delete">
+                            <fc_orange><b>{{format_time(avatar.delete_time)}}</b></fc_orange>
+                        </span>
+                    </listbox-item>
+                </listbox>
+
+                <button id="down" onclick="down" class="default" disabled>
+                    <icon class="arrow-down"></icon>
+                </button>
+
+                <div id="button-container">
+                    <button class="default" onclick="create-avt">
+                        <b>Create Character</b>
+                    </button>
+                    <button class="default" id="delete-avatar" onclick="delete-avt">
+                        <b>Delete Character</b>
+                    </button>
+                    <button class="default" onclick="back"><b>Back</b></button>
+                </div>
+            </div>
+        </div>
+
+        <button id="enter-avatar" onclick="enter-avt" class="default enter-btn">
+            <b>Enter World</b>
+        </button>
+    </body>
+</rml>

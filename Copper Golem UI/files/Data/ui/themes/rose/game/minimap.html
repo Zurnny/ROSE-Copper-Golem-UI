@@ -1,0 +1,496 @@
+<rml>
+
+    <head>
+        <title></title>
+        <link type="text/template" href="../templates/window-resizeable.html" />
+        <link type="text/rcss" href="../styles/spritesheet_elementicon.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            /* =================================================================
+             * Steampunk minimap: "Brass Porthole"
+             * Round map in a brass compass bezel, gear knobs around the rim,
+             * zone name on a plate above, coordinates and time on a plaque below.
+             * Art: imgs/steampunk_minimap.dds (listed in styles/spritesheet_steampunk.css)
+             * Bezel centre is (125, 112); the map hole is 168dp across.
+             * ================================================================= */
+            body { width: 250dp; }
+
+            .title { position: absolute; display: inline-block; width: 100%; height: 30dp; top: 0dp; left: 0dp; }
+            .hidden { display: none; }
+            #minimap-root { position: relative; width: 250dp; }
+
+            /* ── Minimized state: a brass-edged iron bar ── */
+            #minimap-minimized {
+                position: relative; width: 206dp; height: 40dp;
+                background-color: rgba(35, 34, 38, 230);
+                border: 2dp rgb(171, 90, 50);
+            }
+            #minimap-minimized .btn-restore {
+                position: absolute; right: 6dp; top: 6dp; width: 26dp; height: 26dp;
+                decorator: image(mm-plus-n);
+            }
+            #minimap-minimized .btn-restore:hover { decorator: image(mm-plus-h); }
+            #minimap-minimized .btn-restore:active { decorator: image(mm-plus-a); }
+            #minimap-minimized #zone-name-min {
+                position: absolute; left: 8dp; top: 4dp; width: 150dp; height: 18dp;
+                font-weight: 800; font-effect: outline(1dp black); color: rgb(231, 154, 116);
+                text-align: center; overflow: hidden; white-space: nowrap;
+            }
+            #minimap-minimized #time-min {
+                position: absolute; left: 43dp; top: 21dp; width: 80dp; height: 14dp;
+                font-size: 12dp; color: rgb(226, 208, 170); font-effect: outline(1dp black); text-align: center;
+            }
+            #minimap-minimized .day-night-icon-min { position: absolute; right: 40dp; top: 2dp; }
+
+            /* ── Element chart (steampunk add-on): an iron panel under the minimized bar ── */
+            #sp-el-chart {
+                position: absolute; left: -2dp; top: 42dp; width: 210dp; box-sizing: border-box;
+                padding: 4dp 6dp 5dp 6dp;
+                background-color: rgba(35, 34, 38, 215); border: 2dp rgb(171, 90, 50); border-top-width: 0dp;
+                font-size: 11dp; color: rgb(241, 227, 196); font-effect: outline(1dp black);
+                pointer-events: none;
+            }
+            #sp-el-chart.off { display: none; }
+            .sp-el-row { display: flex; flex-direction: row; align-items: center; height: 18dp; border-top: 1dp rgba(171, 90, 50, 70); }
+            .sp-el-head { border-top: 0; height: 18dp; font-weight: 800; color: rgb(231, 154, 116); }
+            .sp-el-head .sp-el-col.strong { color: rgb(150, 220, 110); }
+            .sp-el-head .sp-el-col.weak { color: rgb(240, 120, 90); }
+            .sp-el-who { display: flex; flex-direction: row; align-items: center; width: 66dp; flex-shrink: 0; }
+            .sp-el-name { font-weight: 800; white-space: nowrap; }
+            .sp-el-name.elementicon-l-4 { color: rgb(190, 103, 59); }
+            .sp-el-name.elementicon-l-8 { color: rgb(170, 170, 170); }
+            .sp-el-col { display: flex; flex-direction: row; align-items: center; width: 57dp; flex-shrink: 0; }
+            .sp-el-split { width: 1dp; height: 14dp; margin: 0 4dp 0 2dp; background-color: rgba(171, 90, 50, 160); flex-shrink: 0; }
+            .sp-el-head .sp-el-split { background-color: transparent; }
+            .sp-el-none { color: rgb(191, 145, 122); }
+            .sp-el-ic { display: inline-block; width: 13dp; height: 13dp; margin-right: 1dp; flex-shrink: 0; }
+            .sp-el-ic.big { width: 16dp; height: 15dp; margin-right: 3dp; }
+            .sp-el-0 { decorator: image(elementicon-l-0); }
+            .sp-el-1 { decorator: image(elementicon-l-1); }
+            .sp-el-2 { decorator: image(elementicon-l-2); }
+            .sp-el-3 { decorator: image(elementicon-l-3); }
+            .sp-el-4 { decorator: image(elementicon-l-4); }
+            .sp-el-5 { decorator: image(elementicon-l-5); }
+            .sp-el-6 { decorator: image(elementicon-l-6); }
+            .sp-el-7 { decorator: image(elementicon-l-7); }
+            .sp-el-8 { decorator: image(elementicon-l-8); }
+            @keyframes sp-el-tick-a { from { opacity: 0; } to { opacity: 0; } }
+            @keyframes sp-el-tick-b { from { opacity: 0; } to { opacity: 0; } }
+            #sp-el-timer { position: absolute; width: 1dp; height: 1dp; opacity: 0; pointer-events: none; animation: 2s sp-el-tick-a; }
+
+            /* ── Normal state ── */
+            #minimap-normal { position: relative; width: 250dp; height: 294dp; }
+
+            /* Map: the game lays it out at 142dp; it is magnified to fill the
+               168dp round hole, so the player arrow stays centred. */
+            #minimap-viewport {
+                position: absolute; left: 41dp; top: 28dp; width: 142dp; height: 142dp;
+                overflow: hidden; clip: always;
+                transform: scale(1.1831); transform-origin: 0 0;
+            }
+            #minimap-map { position: relative; }
+            #minimap-map img.map-image { position: absolute; }
+            #minimap-map img.npc-icon,
+            #minimap-map img.party-icon,
+            #minimap-map img.coord-indicator,
+            #minimap-map img.avatar-icon { position: absolute; transform: translate(-50%, -50%); }
+            #minimap-map img.player-arrow { position: absolute; }
+
+            /* Brass compass bezel over the edge of the map */
+            #minimap-frame {
+                position: absolute; left: 15dp; top: 2dp; width: 220dp; height: 220dp;
+                decorator: image(mm-bezel); pointer-events: none;
+            }
+
+            /* Zone name plate across the top of the bezel */
+            /* Zone name plate under the porthole, joined to the coordinates/time
+               plaque below it. It is also a drag handle for the minimap. */
+            #minimap-normal .title { left: 33dp; top: 238dp; width: 184dp; height: 24dp; }
+            #zone-name {
+                position: absolute; left: 0dp; top: 0dp; width: 184dp; height: 24dp;
+                line-height: 21dp; box-sizing: border-box; display: block;
+                font-size: 13dp; font-weight: 800; color: rgb(231, 154, 116);
+                font-effect: outline(1dp rgb(35, 34, 38)); text-align: center;
+                overflow: hidden; white-space: nowrap;
+                padding: 0dp 22dp;
+                background-color: rgb(60, 58, 65);
+                border: 2dp rgb(171, 90, 50);
+                border-bottom-width: 0dp;
+                border-radius: 8dp 8dp 0dp 0dp;
+            }
+
+            /* ── Knobs around the rim ── */
+            .btn-minimize {
+                position: absolute; left: 194dp; top: 240dp; width: 20dp; height: 20dp;   /* right end of the name plate */
+                decorator: image(mm-minimize-n);
+            }
+            .btn-minimize:hover { decorator: image(mm-minimize-h); }
+            .btn-minimize:active { decorator: image(mm-minimize-a); }
+
+            /* 10:30 */
+            .btn-worldmap { position: absolute; left: 38dp; top: 25dp; width: 34dp; height: 34dp; decorator: image(mm-map-n); }
+            .btn-worldmap:hover { decorator: image(mm-map-h); }
+            .btn-worldmap:active { decorator: image(mm-map-a); }
+
+            /* Brass sun / moon knob (replaces the game's glass sky picture) */
+            .day-night-icon { position: absolute; left: 178dp; top: 25dp; width: 34dp; height: 34dp; }
+
+            /* 8 o'clock */
+            .btn-gamearena { position: absolute; left: 22dp; top: 144dp; width: 34dp; height: 34dp; decorator: image(mm-arena-n); }
+            .btn-gamearena:hover { decorator: image(mm-arena-h); }
+            .btn-gamearena:active { decorator: image(mm-arena-a); }
+
+            /* 9 o'clock */
+            .btn-giftbox { position: absolute; left: 9dp; top: 95dp; width: 34dp; height: 34dp; decorator: image(mm-gift-n); }
+            .btn-giftbox:hover { decorator: image(mm-gift-h); }
+            .btn-giftbox:active { decorator: image(mm-gift-a); }
+            @keyframes giftbox-blink {
+                0% { decorator: image(mm-gift-n); }
+                50% { decorator: image(mm-gift-b); }
+                100% { decorator: image(mm-gift-n); }
+            }
+            .btn-giftbox.blink { animation: giftbox-blink 1s infinite; }
+
+            #giftbox-tooltip { position: absolute; left: -175dp; top: 98dp; width: 182dp; height: 29dp; }
+            #giftbox-tooltip-bg { width: 182dp; height: 29dp; decorator: image(GEN_DECO65); }
+            #giftbox-tooltip-text {
+                position: absolute; top: 0; left: 0; width: 178dp; height: 29dp;
+                font-size: 12dp; font-weight: 800; color: white; text-align: center; line-height: 29dp;
+            }
+
+            /* 6 o'clock */
+            .btn-itemmall { position: absolute; left: 106dp; top: 193dp; width: 38dp; height: 38dp; decorator: image(mm-mall-n); }
+            .btn-itemmall:hover { decorator: image(mm-mall-h); }
+            .btn-itemmall:active { decorator: image(mm-mall-a); }
+
+            /* Zoom lever at 4 and 5 o'clock */
+            .btn-zoomin { position: absolute; left: 204dp; top: 132dp; width: 28dp; height: 28dp; decorator: image(mm-plus-n); }
+            .btn-zoomin:hover { decorator: image(mm-plus-h); }
+            .btn-zoomin:active { decorator: image(mm-plus-a); }
+            .btn-zoomout { position: absolute; left: 176dp; top: 175dp; width: 28dp; height: 28dp; decorator: image(mm-minus-n); }
+            .btn-zoomout:hover { decorator: image(mm-minus-h); }
+            .btn-zoomout:active { decorator: image(mm-minus-a); }
+
+            /* ── Plaque under the porthole: coordinates · time ── */
+            #sp-plaque {
+                position: absolute; left: 33dp; top: 262dp; width: 184dp; height: 26dp; box-sizing: border-box;
+                background-color: rgb(35, 34, 38);
+                border: 2dp rgb(171, 90, 50);
+                border-radius: 0dp 0dp 3dp 3dp;
+            }
+            .sp-plaque-rivet { position: absolute; top: 270dp; width: 9dp; height: 9dp; decorator: image(sp-rivet); }
+            #sp-plaque-divider { position: absolute; left: 120dp; top: 267dp; width: 1dp; height: 16dp; background-color: rgb(116, 53, 22); }
+            #coordinates-text {
+                position: absolute; left: 42dp; top: 266dp; width: 76dp; height: 18dp; line-height: 18dp; white-space: nowrap;
+                font-size: 12dp; font-weight: 800; color: rgb(231, 154, 116);
+                font-effect: outline(1dp black); text-align: center;
+            }
+            #time-area { position: absolute; left: 122dp; top: 266dp; width: 82dp; height: 18dp; line-height: 18dp; text-align: center; white-space: nowrap; }
+            #time-text {
+                display: block; width: 82dp; height: 18dp; font-size: 12dp; font-weight: 800; white-space: nowrap; overflow: hidden;
+                color: rgb(226, 208, 170); font-effect: outline(1dp black); text-align: center;
+            }
+
+            /* ── Tooltips ── */
+            .minimap-tooltip {
+                display: none; position: absolute;
+                background-color: rgba(35, 34, 38, 240);
+                border: 1dp rgb(171, 90, 50);
+                padding: 3dp 6dp; color: rgb(241, 227, 196);
+                white-space: nowrap; font-effect: none;
+            }
+            .btn-worldmap:hover > .minimap-tooltip,
+            .btn-itemmall:hover > .minimap-tooltip,
+            #time-area:hover > .minimap-tooltip { display: block; }
+            .minimap-tooltip-left { top: 50%; left: 0; transform: translate(-100%, -50%); margin-left: -4dp; width: 104dp; box-sizing: border-box; }   /* fixed widths: the game measures this text too narrow when sizing to fit */
+            #time-tooltip {
+                width: 210dp; bottom: 22dp; left: 50%; transform: translateX(-50%);
+                font-size: 13dp; text-align: left;
+            }
+            .time-tooltip-label { color: rgb(231, 154, 116); }
+
+            /* Heading-up mode (script below; switched in Options > Interface) */
+            #sp-mm-source { display: none; }
+            @keyframes sp-mm-tick-a { from { opacity: 0; } to { opacity: 0; } }
+            @keyframes sp-mm-tick-b { from { opacity: 0; } to { opacity: 0; } }
+            #sp-mm-timer { position: absolute; width: 1dp; height: 1dp; opacity: 0; pointer-events: none; animation: 0.05s sp-mm-tick-a; }
+            #minimap-frame { transform-origin: 50% 50%; }
+        </style>
+        <script>
+-- Heading-up minimap (steampunk add-on). When switched on (Options > Interface,
+-- saved in sp_minimap.txt) the map turns around the player so the way you face
+-- is always up; the compass bezel turns with it, so N still points north. Your
+-- arrow then points straight up, and map icons are turned back upright.
+-- Runs about 20 times a second from a short repeating animation.
+pcall(function()
+    local document = document
+    local function el(id) return document:GetElementById(id) end
+    local SAVE_FILE = 'sp_minimap.txt'
+    local heading_up = false
+    pcall(function()
+        local f = io.open(SAVE_FILE, 'r')
+        if not f then return end
+        heading_up = (f:read('*l') or ''):match('heading_up%s*=%s*1') ~= nil
+        f:close()
+    end)
+    local last = nil
+    local function each(list, fn)
+        if not list then return end
+        local i = list[0] and 0 or 1
+        while list[i] do fn(list[i]); i = i + 1 end
+    end
+    -- The game's arrow art points down at direction 0, so the map turns an extra
+    -- half circle (pi) to put the way you face at the top.
+    local OFFSET = math.pi
+    local ICONS = '#minimap-map img.npc-icon, #minimap-map img.party-icon, #minimap-map img.coord-indicator, #minimap-map img.avatar-icon'
+    local function clear()
+        local map, frame = el('minimap-map'), el('minimap-frame')
+        if map then map.style.transform = 'none' end
+        if frame then frame.style.transform = 'none' end
+        each(document:QuerySelectorAll(ICONS), function(i) i.style.transform = 'translate(-50%, -50%)' end)
+        last = nil
+    end
+    local function update()
+        if not heading_up then return end
+        local src, map, frame = el('sp-mm-source'), el('minimap-map'), el('minimap-frame')
+        if not src or not map then return end
+        local dir = tonumber(src:GetAttribute('sp-dir'))
+        if not dir then return end
+        -- the turning centre (transform-origin) is kept on the player by the game's
+        -- own data binding, so zooming never shows the map turning around an old spot
+        local key = string.format('%.3f', dir)
+        local turn = string.format('%.4f', OFFSET - dir)
+        if key ~= last then
+            map.style.transform = 'rotate(' .. turn .. 'rad)'
+            if frame then frame.style.transform = 'rotate(' .. turn .. 'rad)' end
+            last = key
+        end
+        -- icons come and go, so keep them upright every tick
+        local upright = 'translate(-50%, -50%) rotate(' .. string.format('%.4f', dir - OFFSET) .. 'rad)'
+        each(document:QuerySelectorAll(ICONS), function(i) i.style.transform = upright end)
+    end
+    local function set(on)
+        heading_up = on and true or false
+        pcall(function()
+            local f = io.open(SAVE_FILE, 'w')
+            if f then f:write('heading_up=', heading_up and 1 or 0, '\n'); f:close() end
+        end)
+        if heading_up then last = nil; pcall(update) else pcall(clear) end
+    end
+    if _G then
+        _G.SP_MINIMAP_SET = set
+        _G.SP_MINIMAP_GET = function() return heading_up end
+    end
+    -- Zoom buttons: the game re-centres the map on mouse-up, which comes just
+    -- before the zoom itself, so for a moment the map sat off-centre (very
+    -- visible when it is turned). Ask for the re-centre again right after.
+    for _, id in ipairs({'sp-zoom-in', 'sp-zoom-out'}) do
+        local b = el(id)
+        if b then
+            b:AddEventListener('click', function()
+                pcall(function() b:DispatchEvent('mouseup', {button = 0}) end)
+                last = nil
+            end)
+        end
+    end
+    local timer, flip = el('sp-mm-timer'), false
+    if timer then
+        timer:AddEventListener('animationend', function()
+            pcall(update)
+            flip = not flip
+            timer.style.animation = '0.05s ' .. (flip and 'sp-mm-tick-b' or 'sp-mm-tick-a')
+        end)
+    end
+end)
+        </script>
+        <script>
+-- Element chart (steampunk add-on). Under the minimized minimap: every element
+-- with the elements it is strong and weak against (the game's own lists).
+-- Options > UI > Minimap turns it on and off; that is saved in
+-- sp_element_chart.txt, which this reads every 2 seconds.
+pcall(function()
+    local document = document
+    local function on()
+        local v = true
+        pcall(function()
+            local f = io.open('sp_element_chart.txt', 'r')
+            if not f then return end
+            v = (f:read('*l') or ''):match('show%s*=%s*0') == nil
+            f:close()
+        end)
+        return v
+    end
+    local function apply()
+        local c = document:GetElementById('sp-el-chart')
+        if c then c:SetClass('off', not on()) end
+    end
+    apply()
+    pcall(function() if type(_G) == 'table' then _G.SP_ELEMENT_CHART_APPLY = apply end end)
+    local timer = document:GetElementById('sp-el-timer')
+    local flip = false
+    if timer then
+        timer:AddEventListener('animationend', function()
+            pcall(apply)
+            flip = not flip
+            timer.style.animation = '2s ' .. (flip and 'sp-el-tick-b' or 'sp-el-tick-a')
+        end)
+    end
+end)
+        </script>
+    </head>
+
+    <body id="game-minimap">
+        <div id="minimap-root" data-model="minimap">
+            <!-- ─── Minimized state ─── -->
+            <div id="minimap-minimized" data-class-hidden="!is_minimized">
+                <handle move_target="#document" style="position: absolute; left: 0; top: 0; width: 100%; height: 100%;"></handle>
+                <span id="zone-name-min">{{zone_name}}</span>
+                <span id="time-min">{{server_time}}</span>
+                <button class="btn-restore" data-event-click="toggle_minimize"></button>
+                <!-- Element chart (steampunk add-on): shown under the minimized bar; Options > UI turns it off -->
+                <div id="sp-el-chart">
+                    <div class="sp-el-row sp-el-head"><div class="sp-el-who"><span>Element</span></div><div class="sp-el-col strong"><span>Strong</span></div><div class="sp-el-split"></div><div class="sp-el-col weak"><span>Weak</span></div></div>
+                    <div class="sp-el-row"><div class="sp-el-who"><span class="sp-el-ic big sp-el-5"></span><span class="sp-el-name elementicon-l-5">Wind</span></div><div class="sp-el-col"><span class="sp-el-ic sp-el-3"></span><span class="sp-el-ic sp-el-7"></span></div><div class="sp-el-split"></div><div class="sp-el-col"><span class="sp-el-ic sp-el-1"></span><span class="sp-el-ic sp-el-4"></span><span class="sp-el-ic sp-el-6"></span></div></div>
+                    <div class="sp-el-row"><div class="sp-el-who"><span class="sp-el-ic big sp-el-4"></span><span class="sp-el-name elementicon-l-4">Earth</span></div><div class="sp-el-col"><span class="sp-el-ic sp-el-5"></span><span class="sp-el-ic sp-el-6"></span></div><div class="sp-el-split"></div><div class="sp-el-col"><span class="sp-el-ic sp-el-1"></span><span class="sp-el-ic sp-el-2"></span><span class="sp-el-ic sp-el-8"></span></div></div>
+                    <div class="sp-el-row"><div class="sp-el-who"><span class="sp-el-ic big sp-el-2"></span><span class="sp-el-name elementicon-l-2">Fire</span></div><div class="sp-el-col"><span class="sp-el-ic sp-el-4"></span><span class="sp-el-ic sp-el-8"></span></div><div class="sp-el-split"></div><div class="sp-el-col"><span class="sp-el-ic sp-el-3"></span><span class="sp-el-ic sp-el-6"></span><span class="sp-el-ic sp-el-7"></span></div></div>
+                    <div class="sp-el-row"><div class="sp-el-who"><span class="sp-el-ic big sp-el-3"></span><span class="sp-el-name elementicon-l-3">Water</span></div><div class="sp-el-col"><span class="sp-el-ic sp-el-1"></span><span class="sp-el-ic sp-el-2"></span></div><div class="sp-el-split"></div><div class="sp-el-col"><span class="sp-el-ic sp-el-5"></span><span class="sp-el-ic sp-el-7"></span><span class="sp-el-ic sp-el-8"></span></div></div>
+                    <div class="sp-el-row"><div class="sp-el-who"><span class="sp-el-ic big sp-el-0"></span><span class="sp-el-name elementicon-l-0">Neutral</span></div><div class="sp-el-col"><span class="sp-el-none">None</span></div><div class="sp-el-split"></div><div class="sp-el-col"><span class="sp-el-ic sp-el-1"></span><span class="sp-el-ic sp-el-8"></span><span class="sp-el-ic sp-el-6"></span><span class="sp-el-ic sp-el-7"></span></div></div>
+                    <div class="sp-el-row"><div class="sp-el-who"><span class="sp-el-ic big sp-el-7"></span><span class="sp-el-name elementicon-l-7">Poison</span></div><div class="sp-el-col"><span class="sp-el-ic sp-el-0"></span><span class="sp-el-ic sp-el-2"></span><span class="sp-el-ic sp-el-3"></span><span class="sp-el-ic sp-el-6"></span></div><div class="sp-el-split"></div><div class="sp-el-col"><span class="sp-el-ic sp-el-1"></span><span class="sp-el-ic sp-el-5"></span></div></div>
+                    <div class="sp-el-row"><div class="sp-el-who"><span class="sp-el-ic big sp-el-1"></span><span class="sp-el-name elementicon-l-1">Sorcery</span></div><div class="sp-el-col"><span class="sp-el-ic sp-el-0"></span><span class="sp-el-ic sp-el-4"></span><span class="sp-el-ic sp-el-5"></span><span class="sp-el-ic sp-el-7"></span></div><div class="sp-el-split"></div><div class="sp-el-col"><span class="sp-el-ic sp-el-3"></span><span class="sp-el-ic sp-el-8"></span></div></div>
+                    <div class="sp-el-row"><div class="sp-el-who"><span class="sp-el-ic big sp-el-8"></span><span class="sp-el-name elementicon-l-8">Ghost</span></div><div class="sp-el-col"><span class="sp-el-ic sp-el-0"></span><span class="sp-el-ic sp-el-1"></span><span class="sp-el-ic sp-el-3"></span><span class="sp-el-ic sp-el-4"></span></div><div class="sp-el-split"></div><div class="sp-el-col"><span class="sp-el-ic sp-el-2"></span><span class="sp-el-ic sp-el-6"></span></div></div>
+                    <div class="sp-el-row"><div class="sp-el-who"><span class="sp-el-ic big sp-el-6"></span><span class="sp-el-name elementicon-l-6">Holy</span></div><div class="sp-el-col"><span class="sp-el-ic sp-el-0"></span><span class="sp-el-ic sp-el-2"></span><span class="sp-el-ic sp-el-5"></span><span class="sp-el-ic sp-el-8"></span></div><div class="sp-el-split"></div><div class="sp-el-col"><span class="sp-el-ic sp-el-4"></span><span class="sp-el-ic sp-el-7"></span></div></div>
+                </div>
+                <div id="sp-el-timer"></div>
+            </div>
+
+            <!-- ─── Normal state ─── -->
+            <div id="minimap-normal" data-class-hidden="is_minimized">
+                <!-- Map Viewport -->
+                <masked id="minimap-viewport" mask-radius="50%">
+                    <div id="minimap-map" data-style-width="map_width + 'dp'" data-style-height="map_height + 'dp'"
+                         data-style-transform-origin="round(zoom_level * player.map_position.x) + 'dp ' + round(zoom_level * player.map_position.y) + 'dp'"
+                         data-style-left="map_left + 'px'" data-style-top="map_top + 'px'">
+                        <img id="minimap-map-image"
+                             class="map-image"
+                             data-attr-src="map_texture_source"
+                             data-style-width="map_width + 'dp'" data-style-height="map_height + 'dp'"
+                        ></img>
+
+                        <img
+                             id="npc-icon"
+                             class="npc-icon"
+                             data-for="npc : npc_indicators"
+                             data-attr-sprite="npc.icon_sprite"
+                             data-attr-npc_id="npc.npc_id"
+                             data-attr-quest_signal="npc.quest_signal"
+                             data-style-left="round(zoom_level * npc.map_position.x) + 'dp'"
+                             data-style-top="round(zoom_level * npc.map_position.y) + 'dp'"
+                             style="position: absolute; transform: translate(-50%, -50%);"
+                        ></img>
+
+                        <img 
+                             id="party-member"
+                             class="party-icon"
+                             data-for="member : party_members"
+                             data-if="member.is_visible"
+                             data-attr-name="member.name"
+                             sprite="map-party-member"
+                             data-style-left="round(zoom_level * member.map_position.x) + 'dp'"
+                             data-style-top="round(zoom_level * member.map_position.y) + 'dp'"
+                             style="position: absolute; transform: translate(-50%, -50%);"
+                        ></img>
+
+                        <img class="coord-indicator"
+                             data-for="coord : coordinate_indicators"
+                             sprite="map-highlight"
+                             data-style-left="round(zoom_level * coord.map_position.x) + 'dp'"
+                             data-style-top="round(zoom_level * coord.map_position.y) + 'dp'"
+                             style="position: absolute; transform: translate(-50%, -50%);"
+                        ></img>
+
+                        <img class="avatar-icon"
+                             data-for="avatar : avatars"
+                             data-attr-sprite="avatar.icon_sprite"
+                             data-style-left="round(zoom_level * avatar.map_position.x) + 'dp'"
+                             data-style-top="round(zoom_level * avatar.map_position.y) + 'dp'"
+                             style="position: absolute; transform: translate(-50%, -50%);"
+                        ></img>
+
+                        <img class="player-arrow"
+                             src="/3DData/Control/Res/MiniMap_Arrow.tga"
+                             data-style-left="round(zoom_level * player.map_position.x) + 'dp'"
+                             data-style-top="round(zoom_level * player.map_position.y) + 'dp'"
+                             data-style-transform="'translate(-50%, -50%) rotate(' + player.direction + ' rad)'"
+                        ></img>
+                    </div>
+                </masked>
+
+                <!-- Heading-up mode: the player's facing and map position for the script, and its timer -->
+                <span id="sp-mm-source" data-attr-sp-dir="player.direction"></span>
+                <div id="sp-mm-timer"></div>
+
+                <!-- Decorative frame overlay -->
+                <div id="minimap-frame"></div>
+
+                <handle class="title" move_target="#document">
+                    <span id="zone-name">{{zone_name}}</span>
+                </handle>
+
+                <!-- Minimize button -->
+                <button class="btn-minimize" data-event-click="toggle_minimize"></button>
+
+                <!-- World Map button -->
+                <button class="btn-worldmap" onclick="open_worldmap">
+                    <span class="minimap-tooltip minimap-tooltip-left" style="width: 92dp; text-align: center;">World Map</span>
+                </button>
+
+                <!-- Day/Night -->
+                <img data-if="!is_day" sprite="mm-moon-n" class="day-night-icon"/>
+                <img data-if="is_day" sprite="mm-sun-n" class="day-night-icon"/>
+
+                <!-- Game Arena button -->
+                <button id="game-arena" class="btn-gamearena" data-if="show_game_arena" onclick="open_gamearena"></button>
+                <!-- Giftbox Notice button -->
+                <button class="btn-giftbox blink" data-if="show_giftbox" onclick="open_giftbox"></button>
+
+                <!-- Giftbox tooltip -->
+                <div id="giftbox-tooltip" data-if="show_giftbox_tooltip">
+                    <div id="giftbox-tooltip-bg"></div>
+                    <span id="giftbox-tooltip-text"><str string-id="1253"></str></span>
+                </div>
+
+                <!-- Item Mall button -->
+                <button class="btn-itemmall" onclick="open_itemmall">
+                    <div class="minimap-tooltip minimap-tooltip-left">
+                        <span style="color: rgb(131, 147, 202)"><b><str string-id="795">Item Mall</str></b></span><br/>
+                        <span>Alt + B</span>
+                    </div>
+                </button>
+
+                <!-- Zoom controls -->
+                <button id="sp-zoom-in" class="btn-zoomin" data-event-click="zoom_in" onmouseup="update_map_position"></button>
+                <button id="sp-zoom-out" class="btn-zoomout" data-event-click="zoom_out" onmouseup="update_map_position"></button>
+
+                <!-- Coordinates and time plaque -->
+                <div id="sp-plaque"></div>
+                <div class="sp-plaque-rivet" style="left: 37dp;"></div>
+                <div class="sp-plaque-rivet" style="left: 204dp;"></div>
+                <div id="sp-plaque-divider"></div>
+                <!-- Coordinates -->
+                <span id="coordinates-text">{{player_coordinates}}</span>
+
+                <!-- Time -->
+                <div id="time-area">
+                    <span id="time-text">{{server_time}}</span>
+                    <div id="time-tooltip" class="minimap-tooltip">
+                        <span class="time-tooltip-label">Local Time: </span><span>{{local_time}}</span><br/>
+                        <span class="time-tooltip-label">Server Time: </span><span>{{server_time}} {{server_time_gap_text}}</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </body>
+</rml>

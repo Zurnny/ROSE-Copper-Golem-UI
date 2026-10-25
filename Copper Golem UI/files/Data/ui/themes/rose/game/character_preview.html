@@ -1,0 +1,208 @@
+<rml>
+    <head>
+        <title>Character Preview</title>
+
+        <link type="text/template" href="../templates/window-resizeable.html" />
+        <link type="text/rcss" href="../styles/spritesheet_itemicon.css" />
+        <link type="text/rcss" href="../styles/spritesheet_socketgem.css" />
+        <link type="text/rcss" href="../styles/item_slot.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            #game-character-preview {
+                width: 400dp;
+                height: 450dp;
+                min-width: 400dp;
+                min-height: 450dp;
+            }
+
+            character-preview {
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+                flex: 1;
+            }
+
+            #armor-panel {
+                height: 100%;
+                box-sizing: border-box;
+                padding: 10dp;
+                display: flex;
+                flex-direction: column;
+                row-gap: 10dp;
+                align-items: center;
+                justify-content: flex-end;
+                position: absolute;
+                left: 0dp;
+                top: 0dp;
+            }
+
+            #weapon-panel {
+                height: 100%;
+                box-sizing: border-box;
+                padding: 10dp;
+                display: flex;
+                flex-direction: column;
+                row-gap: 10dp;
+                align-items: center;
+                justify-content: flex-end;
+                position: absolute;
+                right: 0dp;
+                top: 0dp;
+            }
+
+            #armor-panel > item-slot > input {
+                position: relative;
+                top: 10dp;
+                margin: 0dp;
+                margin-left: 30dp;
+            }
+
+            #weapon-panel > item-slot > input {
+                position: relative;
+                top: 10dp;
+                margin: 0dp;
+                margin-left: -5dp;
+            }
+
+            #reset-button-container {
+                position: absolute;
+                width: 100%;
+                left: 0dp;
+                bottom: 10dp;
+                text-align: center;
+            }
+
+            #reset-button-container > button {
+                min-width: 100dp;
+            }
+        </style>
+    </head>
+
+    <body id="game-character-preview" template="window-resizeable" data-model="character-preview">
+        <character-preview id="preview-model"
+            yaw="20" pitch="15" distance="3.5" offset-z="0.9"
+            data-attr-gender="character.gender"
+            data-attr-face="character.face"
+            data-attr-hair-style="character.hair_style"
+            data-attr-hair-color="character.hair_color"
+
+            data-attr-helmet="view.show_helmet ? character.helmet : 0"
+            data-attr-helmet-refine-grade="view.show_helmet ? character.helmet_refine_grade : 0"
+            data-attr-helmet-refine-color="view.show_helmet ? character.helmet_refine_color : 0"
+
+            data-attr-armor="view.show_armor ? character.armor : 0"
+            data-attr-armor-refine-grade="view.show_armor ? character.armor_refine_grade : 0"
+            data-attr-armor-refine-color="view.show_armor ? character.armor_refine_color : 0"
+
+            data-attr-gloves="view.show_gloves ? character.gloves : 0"
+            data-attr-gloves-refine-grade="view.show_gloves ? character.gloves_refine_grade : 0"
+            data-attr-gloves-refine-color="view.show_gloves ? character.gloves_refine_color : 0"
+
+            data-attr-boots="view.show_boots ? character.boots : 0"
+            data-attr-boots-refine-grade="view.show_boots ? character.boots_refine_grade : 0"
+            data-attr-boots-refine-color="view.show_boots ? character.boots_refine_color : 0"
+
+            data-attr-face-item="view.show_face_item ? character.face_item : 0"
+            data-attr-face-item-refine-grade="view.show_face_item ? character.face_item_refine_grade : 0"
+            data-attr-face-item-refine-color="view.show_face_item ? character.face_item_refine_color : 0"
+
+            data-attr-back-item="view.show_back_item ? character.back_item : 0"
+            data-attr-back-item-refine-grade="view.show_back_item ? character.back_item_refine_grade : 0"
+            data-attr-back-item-refine-color="view.show_back_item ? character.back_item_refine_color : 0"
+
+            data-attr-weapon="view.show_weapon ? character.weapon : 0"
+            data-attr-weapon-refine-grade="view.show_weapon ? character.weapon_refine_grade : 0"
+            data-attr-weapon-refine-color="view.show_weapon ? character.weapon_refine_color : 0"
+            data-attr-weapon-gem="view.show_weapon ? character.weapon_gem : 0"
+
+            data-attr-subweapon="view.show_subweapon ? character.subweapon : 0"
+            data-attr-subweapon-refine-grade="view.show_subweapon ? character.subweapon_refine_grade : 0"
+            data-attr-subweapon-refine-color="view.show_subweapon ? character.subweapon_refine_color : 0"
+            data-attr-subweapon-gem="view.show_subweapon ? character.subweapon_gem : 0"
+
+            data-attr-mount="view.show_mount ? character.mount : 0"
+            />
+
+        <div id="reset-button-container">
+            <button id="preview-reset" class="default" onclick="reset">Reset</button>
+        </div>
+
+        <div id="armor-panel">
+            <item-slot item-actions id="slot-helmet"
+                data-attr-item="item_key(2, character.helmet)"
+                data-attr-item-refine-grade="character.helmet_refine_grade"
+                data-attr-item-refine-color="character.helmet_refine_color"
+            >
+                <input id="show-helmet" type="checkbox" data-checked="view.show_helmet" />
+            </item-slot>
+
+            <item-slot item-actions id="slot-face-item"
+                data-attr-item="item_key(1, character.face_item)"
+                data-attr-item-refine-grade="character.face_item_refine_grade"
+                data-attr-item-refine-color="character.face_item_refine_color"
+            >
+                <input id="show-face_item" type="checkbox" data-checked="view.show_face_item" />
+            </item-slot>
+
+            <item-slot item-actions id="slot-armor"
+                data-attr-item="item_key(3, character.armor)"
+                data-attr-item-refine-grade="character.armor_refine_grade"
+                data-attr-item-refine-color="character.armor_refine_color"
+            >
+                <input id="show-armor" type="checkbox" data-checked="view.show_armor" />
+            </item-slot>
+
+            <item-slot item-actions id="slot-back-item"
+                data-attr-item="item_key(6, character.back_item)"
+                data-attr-item-refine-grade="character.back_item_refine_grade"
+                data-attr-item-refine-color="character.back_item_refine_color"
+            >
+                <input id="show-back_item" type="checkbox" data-checked="view.show_back_item" />
+            </item-slot>
+
+            <item-slot item-actions id="slot-gloves"
+                data-attr-item="item_key(4, character.gloves)"
+                data-attr-item-refine-grade="character.gloves_refine_grade"
+                data-attr-item-refine-color="character.gloves_refine_color"
+            >
+                <input id="show-gloves" type="checkbox" data-checked="view.show_gloves" />
+            </item-slot>
+
+            <item-slot item-actions id="slot-boots"
+                data-attr-item="item_key(5, character.boots)"
+                data-attr-item-refine-grade="character.boots_refine_grade"
+                data-attr-item-refine-color="character.boots_refine_color"
+            >
+                <input id="show-boots" type="checkbox" data-checked="view.show_boots" />
+            </item-slot>
+        </div>
+
+        <div id="weapon-panel">
+            <item-slot item-actions id="slot-mount"
+                data-attr-item="item_key(15, character.mount)"
+            >
+                <input id="show-mount" type="checkbox" data-checked="view.show_mount" />
+            </item-slot>
+
+            <item-slot item-actions id="slot-weapon"
+                data-attr-item="item_key(8, character.weapon)"
+                data-attr-item-refine-grade="character.weapon_refine_grade"
+                data-attr-item-refine-color="character.weapon_refine_color"
+                data-attr-item-gem="character.weapon_gem"
+            >
+                <input id="show-weapon" type="checkbox" data-checked="view.show_weapon" />
+            </item-slot>
+
+            <item-slot item-actions id="slot-subweapon"
+                data-attr-item="item_key(9, character.subweapon)"
+                data-attr-item-refine-grade="character.subweapon_refine_grade"
+                data-attr-item-refine-color="character.subweapon_refine_color"
+                data-attr-item-gem="character.subweapon_gem"
+            >
+                <input id="show-subweapon" type="checkbox" data-checked="view.show_subweapon" />
+            </item-slot>
+        </div>
+    </body>
+</rml>

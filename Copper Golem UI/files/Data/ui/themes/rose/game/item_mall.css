@@ -1,0 +1,110 @@
+/* Keep the ROSE window, atlas buttons and item-slot renderer. Dimensions are in UI dp. */
+body#item-mall { width: 1080dp; height: 700dp; max-width: 96vw; max-height: 94vh; box-sizing: border-box; padding-top: 34dp; }
+body#item-mall #window-content { height: 100%; max-height: none; padding: 6dp; overflow: visible; }
+#mall-shell { display: flex; flex-direction: column; height: 100%; }
+#mall-balance { position: absolute; right: 30dp; top: -28dp; height: 26dp; box-sizing: border-box; padding: 2dp 10dp; border-radius: 12dp; }
+#mall-balance img { width: 18dp; min-width: 18dp; height: 18dp; }
+#mall-balance span { font-size: 11dp; }
+#mall-toolbar { display: flex; align-items: center; gap: 8dp; height: 38dp; flex-shrink: 0; }
+#mall-search { width: 260dp; min-width: 100dp; flex-shrink: 1; box-sizing: border-box; }
+.mall-segments { display: flex; gap: 2dp; flex-shrink: 0; }
+.mall-layout { margin-left: auto; }
+/* RmlUI cannot infer an intrinsic button width from the block glyphs. */
+#mall-toolbar .mall-layout button { width: 32dp; height: 28dp; flex: 0 0 32dp; }
+.mall-grid-glyph, .mall-list-glyph { display: block; position: relative; width: 14dp; height: 14dp; margin: 4dp auto; pointer-events: none; }
+.mall-grid-glyph i, .mall-list-glyph i { position: absolute; display: block; background-color: #dddddd; pointer-events: none; }
+.mall-grid-glyph i { width: 6dp; height: 6dp; }
+.mall-grid-glyph i:nth-child(2) { left: 8dp; }
+.mall-grid-glyph i:nth-child(3) { top: 8dp; }
+.mall-grid-glyph i:nth-child(4) { top: 8dp; left: 8dp; }
+.mall-list-glyph i { width: 14dp; height: 2dp; top: 1dp; }
+.mall-list-glyph i:nth-child(2) { top: 6dp; }
+.mall-list-glyph i:nth-child(3) { top: 11dp; }
+#mall-toolbar button { flex: none; min-width: 32dp; }
+#mall-toolbar button.active { color: rgb(231, 154, 116); decorator: tiled-horizontal(button-disabled-l, button-disabled-c, button-disabled-r); image-color: rgb(127, 61, 185); }
+#mall-body { display: flex; gap: 4dp; flex: 1; min-height: 0; padding-top: 6dp; }
+#mall-sidebar { display: flex; flex-direction: column; width: 176dp; flex-shrink: 0; min-height: 0; }
+#mall-nav { flex: 1; min-height: 0; overflow-y: auto; }
+#mall-premium-card { flex-shrink: 0; margin-top: 8dp; padding: 10dp; border-top: 2dp rgb(171, 90, 50); }
+#mall-premium-title, #mall-premium-banner > b { display: block; color: rgb(231, 154, 116); font-size: 14dp; }
+#mall-premium-copy, #mall-premium-banner > div { font-size: 12dp; line-height: 16dp; margin: 5dp 0 8dp; color: #cccccc; }
+#mall-premium-card button { display: block; width: 100%; min-width: 0; }
+#mall-premium-banner { display: none; flex-shrink: 0; padding: 10dp; margin: 0 0 8dp; border-left: 2dp rgb(171, 90, 50); }
+#mall-premium-banner.visible { display: block; }
+#mall-premium-banner button { width: 150dp; min-width: 0; }
+.mall-nav-row { display: flex; align-items: center; justify-content: space-between; width: 100%; height: 28dp; box-sizing: border-box; padding: 0 8dp 0 12dp; border-left: 3dp transparent; decorator: none; text-align: left; font-size: 14dp; }
+.mall-nav-row.sub { height: 24dp; padding-left: 22dp; font-size: 12dp; }
+.mall-nav-row.active { border-left-color: rgb(231, 154, 116); background-color: rgba(203, 117, 74, 45); color: rgb(231, 154, 116); }
+.mall-nav-row:hover { background-color: rgba(203, 117, 74, 25); }
+.mall-nav-row span { overflow: hidden; white-space: nowrap; }
+.mall-nav-row small { font-size: 10dp; margin-left: 4dp; }
+#mall-catalog { display: flex; flex-direction: column; flex: 1 1 0dp; min-width: 0; }
+#mall-heading { display: flex; align-items: center; gap: 10dp; min-height: 28dp; flex-shrink: 0; }
+#mall-count { font-size: 12dp; color: #bbbbbb; }
+#mall-state:empty { display: none; }
+#mall-items-area { position: relative; flex: 1; min-height: 0; }
+#mall-items { position: absolute; top: 0; right: 0; bottom: 0; left: 0; overflow-y: auto; overflow-x: hidden; }
+#mall-more { display: none; position: absolute; bottom: 4dp; left: 20dp; right: 30dp; height: 26dp; z-index: 3; }
+#mall-more.visible { display: block; }
+#mall-purchases-side { display: flex; align-items: center; justify-content: center; gap: 10dp; flex-shrink: 0; width: 100%; height: 40dp; margin-top: 8dp; }
+#mall-purchases-side.active { color: rgb(231, 154, 116); decorator: tiled-horizontal(button-disabled-l, button-disabled-c, button-disabled-r); image-color: rgb(127, 61, 185); }
+#mall-grid-content { position: relative; width: 100%; }
+.mall-card { display: block; position: absolute; box-sizing: border-box; width: 92dp; height: 100dp; border: 1dp rgb(116, 53, 22); border-radius: 3dp; background-color: rgba(42, 40, 45, 170); cursor: hand; }
+.mall-card.selected { border-color: rgb(231, 154, 116); }
+.mall-card { tab-index: auto; }
+.mall-card:hover { background-color: rgba(81, 79, 88, 170); }
+.mall-card item-slot { position: absolute; top: 6dp; left: 25dp; width: 40dp; height: 40dp; drag: none; }
+.mall-name { position: absolute; left: 5dp; right: 5dp; top: 50dp; height: 28dp; line-height: 14dp; overflow: hidden; word-break: break-word; text-align: center; font-size: 11.5dp; }
+.mall-price { display: flex; align-items: center; gap: 3dp; color: rgb(231, 154, 116); font-size: 13.5dp; }
+.mall-price img { width: 12dp; height: 12dp; flex-shrink: 0; }
+.mall-card > .mall-price { position: absolute; top: 80dp; left: 0; right: 0; justify-content: center; }
+.mall-card .mall-buy { display: none; }
+#mall-items.list .mall-card { width: 100%; height: 57dp; }
+#mall-items.list item-slot { width: 34dp; height: 34dp; left: 10dp; top: 10dp; }
+#mall-items.list .mall-name { left: 54dp; right: 174dp; top: 13dp; text-align: left; }
+#mall-items.list .mall-price { left: auto; right: 72dp; top: 19dp; }
+#mall-items.list .mall-buy { display: block; position: absolute; top: 13dp; right: 8dp; width: 58dp; }
+.mall-empty { width: 100%; padding: 30dp 8dp; text-align: center; color: #bbbbbb; }
+#mall-detail { width: 258dp; flex-shrink: 0; padding: 12dp; overflow-y: auto; }
+#mall-detail item-slot { display: block; width: 40dp; height: 40dp; margin: 0 auto 12dp; drag: none; }
+.mall-detail-name { font-size: 22dp; line-height: 25dp; margin-bottom: 6dp; }
+.mall-detail-path { font-size: 11dp; color: #bbbbbb; margin-bottom: 12dp; }
+.mall-description { font-size: 12.5dp; line-height: 18dp; margin-bottom: 12dp; }
+.mall-description:empty, .mall-detail-path:empty { display: none; }
+#mall-set-pieces { margin-top: 12dp; padding-top: 8dp; border-top: 1dp rgba(116, 53, 22, 160); font-size: 12dp; }
+.mall-set-piece { display: block; width: 100%; padding: 4dp 0; text-align: left; decorator: none; color: #bbbbbb; }
+.mall-set-piece:hover { color: rgb(231, 154, 116); }
+.mall-detail-price { padding: 8dp; margin-bottom: 10dp; }
+.mall-detail-actions { display: flex; gap: 8dp; margin-bottom: 8dp; }
+.mall-detail-actions button { flex: 1; min-width: 0; }
+.mall-after, #mall-result { font-size: 11dp; line-height: 16dp; margin-top: 8dp; }
+.mall-placeholder { width: 64dp; height: 64dp; border: 1dp #bbbbbb; margin: 40dp auto 12dp; }
+#mall-footer { display: flex; align-items: center; gap: 8dp; height: 38dp; flex-shrink: 0; margin: 0; padding-top: 4dp; }
+#mall-total { flex: 1; text-align: left; }
+#mall-footer button { flex: none; }
+/* Lua sets this from the actual scaled document width. List buying stays accessible. */
+#mall-premium-info { display: none; height: 100%; box-sizing: border-box; padding: 8dp 18dp 18dp; overflow-y: auto; }
+body#item-mall.premium-open #mall-shell { display: none; }
+body#item-mall.premium-open #mall-premium-info { display: block; }
+#mall-premium-info h1 { color: rgb(231, 154, 116); margin: 12dp 0 6dp; font-size: 26dp; }
+.premium-intro { margin-bottom: 14dp; font-size: 14dp; }
+.premium-benefit { padding: 10dp; margin-bottom: 8dp; border-left: 2dp rgb(171, 90, 50); }
+.premium-benefit b { display: block; color: rgb(231, 154, 116); margin-bottom: 4dp; font-size: 16dp; }
+.premium-benefit div, .premium-terms { font-size: 13dp; line-height: 18dp; }
+.premium-terms { margin: 12dp 0; color: #cccccc; }
+.premium-terms b { display: block; margin-bottom: 4dp; }
+#mall-premium-back { width: 150dp; }
+#mall-premium-shop { width: 230dp; }
+body#item-mall.mall-narrow #mall-detail { display: none; }
+body#item-mall.mall-narrow #mall-sidebar { width: 150dp; }
+
+/* Balance badge visibility against the icon size, including the atlas padding. */
+item-slot .mall-overlay { position: absolute; left: -6dp; top: -4dp; width: 56dp; height: 56dp; z-index: 2; pointer-events: none; }
+
+/* ---- Wishlist (steampunk add-on; the script lives in item_mall.html) ---- */
+.mall-card.wished { border-color: rgb(127, 61, 185); }
+.mall-card.wished.selected { border-color: rgb(231, 154, 116); }
+#mall-wish { display: block; width: 100%; margin-bottom: 8dp; }
+#mall-wish.on { image-color: rgb(127, 61, 185); }
+.mall-nav-row.wishlist { color: rgb(152, 83, 211); border-bottom: 1dp rgb(116, 53, 22); margin-bottom: 4dp; }
+.mall-nav-row.wishlist.active { color: rgb(231, 154, 116); }

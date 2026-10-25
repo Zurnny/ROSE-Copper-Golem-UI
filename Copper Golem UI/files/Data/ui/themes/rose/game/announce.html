@@ -1,0 +1,58 @@
+<rml>
+    <head>
+        <title>Announcement</title>
+
+        <link type="text/template" href="../templates/window-box.html" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            body
+            {
+                width: 100%;
+                text-align: center;
+                background: rgba(42, 40, 45, 235);
+                border-top: 2dp rgb(171, 90, 50);
+                border-bottom: 2dp rgb(171, 90, 50);
+            }
+
+            #content
+            {
+                width: 100%;
+
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+
+                font-size: 18dp;
+                font-weight: 1000;
+                font-effect: outline(1dp black);
+                margin: 15dp;
+            }
+
+            #icon-container
+            {
+                max-width: 32px;
+                max-height: 32px;
+            }
+
+            img
+            {
+                margin-right: 5dp;
+            }
+        </style>
+    </head>
+
+    <body id="game-announce" onkeyup="exit-next" data-model="announce" data-class-fade-in="!fading_out" data-class-fade-out="fading_out">
+        <div id="content">
+            <div class="icon-container">
+                <img id="icon" data-if="icon != ''" data-attr-sprite="icon"/>
+            </div>
+
+            <label id="message" data-rml="message"></label>
+        </div>
+
+        <span class="window-title-close" onclick="close"></span>
+    </body>
+</rml>

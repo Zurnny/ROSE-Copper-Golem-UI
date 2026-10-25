@@ -1,0 +1,174 @@
+<rml>
+    <head>
+        <title>Login</title>
+
+        <link type="text/template" href="../templates/window-box.html" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            body {
+                width: 100%;
+                height: 100%;
+                text-align: center;
+                font-effect: outline(1px black);
+            }
+
+            #build-version-container {
+                position: absolute;
+                top: 10dp;
+                left: 10dp;
+                font-size: 12dp;
+            }
+
+            .window-box
+            {
+                width: 100%;
+                padding: 25dp;
+                height: auto;
+            }
+
+            #login-container {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                width: 270dp;
+                height: 100%;
+                margin: 0 auto;
+            }
+
+            #login-container > button {
+                width: 180dp;
+                padding: 0;
+            }
+
+            #remember-email-label {
+                font-size: 12dp;
+            }
+
+            #tos {
+                font-size: 10dp;
+            }
+            #tos:hover {
+                color: rgb(231, 154, 116);
+            }
+
+            input.credentials {
+                text-align: center;
+                width: 245dp;
+            }
+
+            .email-field {
+                position: relative;
+                display: inline-block;
+                width: 100%;
+                text-align: center;
+            }
+
+            .email-suggestions {
+                display: flex;
+                justify-content: center;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                z-index: 10;
+            }
+
+            .email-suggestions-list {
+                overflow-y: auto;
+                width: 245dp;
+                max-height: 95dp;
+                background-color: rgba(42, 40, 45, 235);
+                border: 1dp rgb(116, 53, 22);
+            }
+
+            .email-suggestion-item {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                padding: 2dp 4dp;
+            }
+
+            .email-suggestion-item:hover {
+                background-color: rgba(127, 61, 185, 140);
+            }
+
+            .email-suggestion-item > span {
+                flex: 1;
+                text-align: left;
+                cursor: hand;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+
+            .email-remove {
+                min-width: 16dp;
+                width: 16dp;
+                padding: 0;
+                cursor: hand;
+            }
+
+            .email-remove:hover {
+                color:rgb(92, 29, 147);
+            }
+
+            button#suggestions {
+                position: absolute;
+                right: -10dp;
+                top: 2dp;
+            }
+        </style>
+    </head>
+
+    <body id="external-login" onkeyup="enter-submit">
+        <div id="build-version-container" data-model="login">
+            <b>Early Access Build (version: {{ build_version }})</b>
+        </div>
+
+        <div id="login-container" data-model="login">
+            <div class="window-box">
+                <p string-id="1092"><b>Email Address</b></p>
+                <div class="email-field">
+                    <input id="username" type="email" class="credentials" data-value="email" data-event-click="toggle_email_list" retains-focus />
+                    <button id="suggestions" class="down-arrow" 
+                        data-event-click="toggle_email_list"
+                        data-attrif-active="show_email_list"
+                        data-attrif-disabled="saved_emails.size == 0"></button>
+
+                    <div class="email-suggestions" data-if="show_email_list && saved_emails.size > 0">
+                        <div id="email-list" class="email-suggestions-list">
+                            <div
+                                class="email-suggestion-item"
+                                data-for="saved, saved_idx : saved_emails"
+                                >
+                                <span data-event-click="select_saved_email(saved_idx)">{{ saved }}</span>
+                                <button class="email-remove" data-event-click="remove_saved_email(saved_idx)"><b>x</b></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p string-id="1093"><b>Password</b></p>
+                <input id="password" type="password" class="credentials" data-value="password" data-event-focus="show_email_list = false" retains-focus />
+
+                <div id="remember-email-container">
+                    <input id="remember-email" type="checkbox" data-value="remember_email" data-checked="remember_email" />
+                    <label id="remember-email-label" for="remember-email" string-id="1094"><b>Remember Email</b></label>
+                </div>
+
+                <br />
+                <br />
+
+                <button class="default" onclick="login"><b>Log In</b></button>
+                <button class="default" onclick="quit"><b>Quit</b></button>
+
+                <br />
+
+                <a id="tos" onclick="tos"><b>Terms of Service</b></a>
+            </div>
+        </div>
+    </body>
+</rml>

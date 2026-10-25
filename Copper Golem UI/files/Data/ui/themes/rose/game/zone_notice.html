@@ -1,0 +1,25 @@
+<rml>
+    <head>
+        <title>Zone notice</title>
+        <link type="text/rcss" href="../styles/html.css" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+        <style>
+            body {
+                left: 5%; top: 150dp; width: 90%; z-index: -50;
+                pointer-events: none;
+                text-align: center;
+                font-effect: outline(1dp black);
+                color: white;
+            }
+            #zone-name { font-size: 18dp; line-height: 24dp; margin-bottom: 8dp; }
+        </style>
+    </head>
+    <body id="game-zone-notice">
+        <div data-model="zone-notice">
+            <div id="zone-name" class="ui-section-title">{{ name }}</div>
+            <div id="zone-description" class="ui-banner-text">{{ description }}</div>
+        </div>
+    </body>
+</rml>

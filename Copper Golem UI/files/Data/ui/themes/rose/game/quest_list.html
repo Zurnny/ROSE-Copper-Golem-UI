@@ -1,0 +1,148 @@
+<rml>
+    <head>
+        <title>Quest List</title>
+
+        <link type="text/template" href="../templates/window-resizeable.html" />
+        <link type="text/rcss" href="../styles/spritesheet_itemicon.css" />
+        <link type="text/rcss" href="../styles/spritesheet_socketgem.css" />
+        <link type="text/rcss" href="../styles/item_slot.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            #game-quest-list
+            {
+                width: 410dp;
+                height: 457dp;
+                min-width: 320dp;
+                min-height: 457dp;
+            }
+
+            listbox-item {
+                padding: 1dp;
+            }
+
+            label.text {
+                width: 70dp;
+            }
+
+            .num-quests {
+                color: rgb(231, 154, 116);
+            }
+
+            .num-daily {
+                color: rgb(115, 229, 40);
+            }
+
+            .time-remaining {
+                color: rgb(0, 210, 255);
+            }
+
+            .time-expired {
+                color: rgb(255, 100, 100);
+            }
+
+            .tooltip .tooltiptext {
+                position: absolute;
+                left: -180dp;
+            }
+        </style>
+    </head>
+
+    <body id="game-quest-list" template="window-resizeable">
+        <div data-model="quest-list" style="width: 100%; height: 100%; display: flex; flex-direction: column;">
+            <div class="content-box">
+                <div style="display: flex; flex-direction: row; margin: 1dp;">
+                    <span>Quests: <label class="text num-quests">{{num_active_quests}} / {{max_active_quests}}</label></span>
+                    <span style="flex: 1">&nbsp;</span>
+                    <span>Daily Quests: <label class="text num-daily">{{num_daily_quests}} / {{max_daily_quests}}</label></span>
+                </div>
+            </div>
+            <br style="height: 4dp" />
+            <div class="content-box">
+                <div style="overflow: hidden auto; height: 110dp;">
+                    <listbox id="quest-list" data-event-change="selected_quest_index = ev.value != '' ? ev.value : 0">
+                        <listbox-item
+                            data-for="quest, quest_index : quest_list"
+                            data-value="quest_index"
+                            data-if="quest.id != 0"
+                        >
+                            <div style="display: flex; flex-direction: row; column-gap: 4dp; width: 100%; height: 20dp">
+                                <img data-attr-sprite="'stateicon-' + quest_icon(quest.id)" />
+                                <span style="flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis"><str data-attr-quest-name="quest.id" /></span>
+                                <div class="tooltip">
+                                    <button
+                                        class="checkbox"
+                                        data-attrif-checked="quest.show_in_tracker"
+                                        data-event-click="toggle_show_in_tracker(quest_index)"></button>
+                                    <span class="tooltiptext" data-if="quest.show_in_tracker == true">Hide from Quest Tracker</span>
+                                    <span class="tooltiptext" data-if="quest.show_in_tracker == false">Show in Quest Tracker</span>
+                                </div>
+                            </div>
+                        </listbox-item>
+                    </listbox>
+                </div>
+            </div>
+            <br style="height: 4dp" />
+            <div style="flex: 1; display: flex; flex-direction: row; column-gap: 2dp" data-alias-selected_quest="quest_list[selected_quest_index]">
+                <div style="display: flex; flex-direction: column; padding: 1dp; padding-top: 0dp; row-gap: 4dp;">
+                    <item-slot id="quest-item-0" item-actions
+                        data-attr-item-id="selected_quest.items[0].id"
+                        data-attr-item-type="selected_quest.items[0].type"
+                        data-attr-item-quantity="selected_quest.items[0].quantity"
+                        ondblclick="open_item" />
+                    <item-slot id="quest-item-1" item-actions
+                        data-attr-item-id="selected_quest.items[1].id"
+                        data-attr-item-type="selected_quest.items[1].type"
+                        data-attr-item-quantity="selected_quest.items[1].quantity"
+                        ondblclick="open_item" />
+                    <item-slot id="quest-item-2" item-actions
+                        data-attr-item-id="selected_quest.items[2].id"
+                        data-attr-item-type="selected_quest.items[2].type"
+                        data-attr-item-quantity="selected_quest.items[2].quantity"
+                        ondblclick="open_item" />
+                    <item-slot id="quest-item-3" item-actions
+                        data-attr-item-id="selected_quest.items[3].id"
+                        data-attr-item-type="selected_quest.items[3].type"
+                        data-attr-item-quantity="selected_quest.items[3].quantity"
+                        ondblclick="open_item" />
+                    <item-slot id="quest-item-4" item-actions
+                        data-attr-item-id="selected_quest.items[4].id"
+                        data-attr-item-type="selected_quest.items[4].type"
+                        data-attr-item-quantity="selected_quest.items[4].quantity"
+                        ondblclick="open_item" />
+                    <item-slot id="quest-item-5" item-actions
+                        data-attr-item-id="selected_quest.items[5].id"
+                        data-attr-item-type="selected_quest.items[5].type"
+                        data-attr-item-quantity="selected_quest.items[5].quantity"
+                        ondblclick="open_item" />
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; padding-top: 1dp">
+                    <div style="flex: 1; overflow: hidden auto; padding: 4dp" class="content-box">
+                        <b style="color: rgb(231, 154, 116)"><str data-attr-quest-name="selected_quest.id" /></b>
+                        <div style="height: 0.5em" />
+                        <str data-attr-quest-description="selected_quest.id" style="display: block" />
+                        <div data-if="quest_has_start_message(selected_quest.id)">
+                            <br />
+                            <div style="color: rgb(203, 117, 74)">Objective:</div>
+                            <str data-attr-quest-start-message="selected_quest.id" />
+                        </div>
+                        <div data-if="quest_has_end_message(selected_quest.id)">
+                            <br /><b>Reward:</b><br/>
+                            <str data-attr-quest-end-message="selected_quest.id" />
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; height: 40dp;">
+                        <label class="text" style="width: 120dp" data-if="selected_quest.expiration_time != 0">
+                            <img sprite="GEN_DECO39" />
+                            <span style="padding-left: 4dp" class="time-remaining" data-if="selected_quest.expiration_time > world_time">{{format_world_time_duration(selected_quest.expiration_time - world_time)}}</span>
+                            <span style="padding-left: 4dp;" class="time-expired" data-if="selected_quest.expiration_time <= world_time"><str string-id="14" /></span>
+                        </label>
+                        <span style="flex: 1">&nbsp;</span>
+                        <button class="default" style="vertical-align: middle;" onclick="abandon_quest">Abandon Quest</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</rml>

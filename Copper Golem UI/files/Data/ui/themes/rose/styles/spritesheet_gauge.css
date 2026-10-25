@@ -1,0 +1,41 @@
+@spritesheet theme
+{
+    /* Steampunk: brass-rimmed bars. Change back to gauge.dds to revert. */
+    src: /data/ui/themes/rose/imgs/gauge_steampunk.dds;
+    
+    /* Sprite name caption: *gauge-<color>-<width size>-<height size> */
+
+    /* Background */
+    gauge-bg-sm-md: 1px 1px 99px 11px;
+    gauge-bg-sm-sm: 1px 13px 99px 4px;
+    gauge-bg-sm-lg-markers: 321px 66px 185px 9px;
+    gauge-bg-sm-lg-yellow: 321px 56px 185px 9px;
+    gauge-bg-lg-lg-red: 324px 79px 185px 22px;
+    gauge-bg-lg-lg-blue: 324px 105px 185px 22px;
+    
+    glowgauge-bg-lg-sm: 288px 1px 223px 13px;
+    glowgauge-bg-sm-lg: 105px 0px 104px 29px;
+    glowgauge-bg-sm-sm: 1px 494px 103px 16px;
+    
+    /* Medium height */
+    gauge-pink-sm-md: 1px 18px 99px 11px;
+    gauge-red-sm-md: 1px 30px 99px 11px;
+    gauge-green-sm-md: 1px 57px 99px 11px;
+    
+    /* Large height */
+    glowgauge-red-sm-lg: 105px 27px 104px 29px;
+    glowgauge-green-sm-lg: 105px 55px 104px 29px;
+
+    /* Small height gauge */
+    gauge-red-sm-sm: 1px 42px 99px 4px;
+    gauge-blue-sm-sm: 1px 47px 99px 4px;
+    gauge-purple-sm-sm: 1px 52px 99px 4px;
+    
+    glowgauge-blue-lg-sm: 288px 16px 223px 13px;
+    glowgauge-blue-sm-sm: 1px 477px 103px 16px;
+
+    /* Large width */
+    gauge-sm-lg-yellow: 321px 35px 185px 9px;
+    gauge-lg-lg-red: 324px 131px 185px 22px;
+    gauge-lg-lg-blue: 324px 157px 185px 22px;
+}

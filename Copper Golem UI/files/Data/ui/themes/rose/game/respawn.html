@@ -1,0 +1,36 @@
+<rml>
+    <head>
+        <title>Respawn Point</title>
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+        <style>
+            body { width: 264dp; max-width: 95vw; }
+            .window-title-close { display: none; }
+            #respawn-description { display: block; margin-bottom: 0; line-height: 20dp; text-align: center; }
+            #respawn-choices { flex-direction: column; }
+            #respawn-choices button { width: 100%; min-height: 34dp; height: auto; padding: 7dp 8dp; line-height: 20dp; word-break: break-word; }
+            #respawn-wait { display: none; text-align: center; }
+            #respawn-countdown { font-weight: 820; font-size: 20dp; font-effect: outline(1dp black); }
+            #respawn-preview-close { display: none; width: 150dp; margin: 8dp auto 0dp; }
+            body.preview #respawn-preview-close { display: block; }
+            body.waiting { width: 600dp; min-height: 0dp; padding: 0dp; decorator: none; pointer-events: none; }
+            body.waiting #window-content { padding: 0dp; decorator: none; pointer-events: none; background: transparent; border-width: 0dp; }
+            body.waiting .window-title, body.waiting #respawn-choices { display: none; }
+            body.waiting #respawn-wait { display: block; }
+            body.waiting #respawn-preview-close { display: none; }
+        </style>
+    </head>
+    <body template="window-fixed-size" id="respawn" data-model="respawn" data-class-waiting="waiting" data-class-preview="preview">
+        <div id="respawn-choices" class="ui-actions">
+            <str class="ui-section-title ui-section-heading" id="respawn-description" string-id="903">Please choose where you would like to respawn.</str>
+            <button id="respawn-save" class="default" onclick="save" data-if="!underground" data-attrif-disabled="!can_save"><str string-id="900">Save Town</str></button>
+            <button id="respawn-dungeon" class="default" onclick="dungeon" data-if="underground" data-attrif-disabled="!can_save"><str string-id="902">Dungeon Entrance</str></button>
+            <button id="respawn-field" class="default" onclick="field" data-attrif-disabled="!can_field"><str string-id="901">Current Field</str></button>
+            <button id="respawn-item" class="default" onclick="item" data-attrif-disabled="!can_item">{{ item_label }}</button>
+        </div>
+        <div id="respawn-wait"><div id="respawn-countdown">{{ countdown }}</div></div>
+        <button id="respawn-preview-close" class="default" onclick="close"><str string-id="919">Close</str></button>
+    </body>
+</rml>

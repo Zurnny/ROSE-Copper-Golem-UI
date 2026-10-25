@@ -1,0 +1,275 @@
+<rml>
+    <head>
+        <title>Scoreboard</title>
+
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            body {
+                width: 1065dp;
+                height: 580dp;
+            }
+
+            #scoreboard {
+                padding-left: 10dp;
+                width: 1050dp;
+            }
+
+            #headers {
+                display: flex;
+                height: 36dp;
+                text-align: center;
+                color: rgb(231, 154, 116);
+                font-weight: bold;
+                margin-bottom: 15dp;
+            }
+
+            #headers-left {
+                width: 235dp; /* 150dp col + 85dp col */
+                flex: none;
+            }
+
+            #headers-center {
+                display: flex;
+                overflow-x: hidden;
+                max-width: 680dp; /* 85dp x 8 cols */
+            }
+
+            #headers-right {
+                flex: none;
+            }
+
+            #data-container {
+                overflow-y: scroll;
+                height: 475dp;
+            }
+
+            #data {
+                display: flex;
+                text-align: center;
+                padding-bottom: 10dp;
+            }
+
+            #data-left {
+                width: 235dp; /* 150dp col + 85dp col */
+                display: flex;
+                flex-direction: column;
+                flex: none;
+            }
+
+            #data-left:first-child > span {
+                text-align: left;
+            }
+
+            #data-center {
+                overflow-x: auto;
+                height: 460dp;
+                max-width: 680dp; /* 85dp x 8 cols */
+            }
+
+            #data-right {
+                flex: none;
+            }
+
+            .header-row {
+                height: 36dp;
+                display: flex;
+                vertical-align: center;
+            }
+
+            .data-row {
+                display: flex;
+                flex-direction: row;
+                vertical-align: middle;
+                height: 28dp;
+            }
+
+            .data-row-selected {
+                background-color: rgba(203, 117, 74, 50);
+            }
+
+            .header-val,
+            .data-val {
+                height: auto;
+                width: 85dp;
+                margin: 0;
+                padding: 0;
+                flex-shrink: 0;
+            }
+
+            .data-val-wide,
+            .header-val-wide {
+                width: 150dp;
+                text-align: left;
+            }
+
+            .header-val span,
+            .data-val span {
+                vertical-align: center;
+            }
+
+            .header-val:hover {
+                cursor: hand;
+                color: rgb(228, 126, 75);
+            }
+
+            hr {
+                opacity: 0.2;
+                width: 100%;
+                color: #222;
+                margin: auto;
+            }
+
+            #teams {
+                height: 22dp;
+                margin-top: 5dp;
+            }
+
+            .team-btn {
+                border-top: 2dp rgb(116, 53, 22);
+                border-left: 2dp rgb(116, 53, 22);
+                border-right: 2dp rgb(116, 53, 22);
+                border-top-left-radius: 4dp;
+                border-top-right-radius: 4dp;
+                padding: 4dp 15dp;
+                height: 20dp;
+                margin-right: 2dp;
+            }
+
+            .team-btn:hover {
+                background-color: rgb(67, 65, 72);
+            }
+
+            .team-btn-selected {
+                border-top: 2dp rgb(203, 117, 74);
+                border-left: 2dp rgb(203, 117, 74);
+                border-right: 2dp rgb(203, 117, 74);
+            }
+        </style>
+    </head>
+    <body id="ui_gamearena_scoreboard" template="window-fixed-size">
+        <!-- Content-->
+        <div id="scoreboard" data-model="gamearena_scoreboard_data">
+            <!-- Teams -->
+            <div id="teams">
+                <a
+                    class="team-btn"
+                    index="-1"
+                    data-class-team-btn-selected="selected_team_id == -1"
+                    onclick="scoreboard_select_team"
+                >
+                    <str string-id="1068">All</str>
+                </a>
+                <a
+                    class="team-btn"
+                    data-for="team: teams"
+                    data-attr-index="team.id"
+                    data-class-team-btn-selected="selected_team_id == team.id"
+                    onclick="scoreboard_select_team"
+                >
+                    {{ team.name }}
+                </a>
+            </div>
+
+            <hr style="margin-bottom: 15dp" />
+
+            <!-- Headers-->
+            <div id="headers">
+                <div id="headers-left" class="header-row">
+                    <div
+                        class="header-val"
+                        data-class-header-val-wide="header_idx == 0"
+                        data-for="header, header_idx: headers_left"
+                        data-attr-index="header.col_idx"
+                        onclick="scoreboard_sort"
+                    >
+                        <span>{{ header.name }}</span>
+                    </div>
+                </div>
+                <sticky-scroll
+                    id="headers-center"
+                    class="header-row"
+                    target="#data-center"
+                    sync-scroll-left="true"
+                >
+                    <div
+                        class="header-val"
+                        data-for="header, header_idx: headers_center"
+                        data-attr-index="header.col_idx"
+                        onclick="scoreboard_sort"
+                    >
+                        <span>{{ header.name }}</span>
+                    </div>
+                </sticky-scroll>
+                <div id="headers-right" class="header-row">
+                    <div
+                        class="header-val"
+                        data-for="header, header_idx: headers_right"
+                        data-attr-index="header.col_idx"
+                        onclick="scoreboard_sort"
+                    >
+                        <span>{{ header.name }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+
+            <!-- Data-->
+            <div id="data-container">
+                <div id="data">
+                    <div id="data-left">
+                        <div
+                            class="data-row"
+                            data-for="data: scores_left"
+                            data-if="selected_team_id == -1 || data.team_id == selected_team_id"
+                            data-class-data-row-selected="data.highlight"
+                        >
+                            <div
+                                class="data-val"
+                                data-class-data-val-wide="it_index == 0"
+                                data-for="score: data.scores"
+                            >
+                                <span>{{ score }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <sticky-scroll
+                        id="data-center"
+                        target="#data-container"
+                        sticky-top="true"
+                        sync-scroll-top="true"
+                    >
+                        <div
+                            class="data-row"
+                            data-for="data: scores_center"
+                            data-if="selected_team_id == -1 || data.team_id == selected_team_id"
+                        >
+                            <div
+                                class="data-val"
+                                data-for="score: data.scores"
+                                data-class-data-row-selected="data.highlight"
+                            >
+                                <span>{{ score }}</span>
+                            </div>
+                        </div>
+                    </sticky-scroll>
+                    <div id="data-right">
+                        <div
+                            class="data-row"
+                            data-for="data: scores_right"
+                            data-if="selected_team_id == -1 || data.team_id == selected_team_id"
+                            data-class-data-row-selected="data.highlight"
+                        >
+                            <div class="data-val" data-for="score: data.scores">
+                                <span>{{ score }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</rml>

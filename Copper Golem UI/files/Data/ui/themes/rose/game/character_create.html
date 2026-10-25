@@ -1,0 +1,86 @@
+<rml>
+    <head>
+        <link type="text/template" href="../templates/window-fixed.html" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <title>Create Character</title>
+
+        <style>
+            #external-character-create
+            {
+                width: 250dp;
+            }
+
+            .button-container {
+                padding-left: 10dp;
+                padding-right: 10dp;
+            }
+            .button-container > .textarea {
+                display: inline-block;
+                width: 140dp;
+                text-align: center;
+            }
+
+            h3 {
+                margin-bottom: 5dp;
+            }
+
+            #character_name {
+                border: 1dp transparent;
+            }
+
+            #character_name.invalid {
+                color: #fbb;
+                border-color: #fbb;
+            }
+        </style>
+    </head>
+
+    <body id="external-character-create" template="window-fixed">
+        <div style="display: flex; flex-direction: column; align-items: center;" data-model="character-create">
+            <h3>Name</h3>
+            <div class="button-container">
+                <input type="text" id="character_name" style="width: 100%; text-align: center;" maxlength="20" data-value="name" data-class-invalid="!is_valid_name(name)" />
+            </div>
+
+            <h3>Gender</h3>
+            <div class="button-container">
+                <button class="left-sm" data-event-click="gender_index = (gender_index == 0) ? (gender.size - 1) : (gender_index - 1); set_model_gender(gender[gender_index].value)" />
+                <label class="textarea">{{gender[gender_index].name}}</label>
+                <button class="right-sm" data-event-click="gender_index = (gender_index + 1 == gender.size) ? 0 : (gender_index + 1); set_model_gender(gender[gender_index].value)" />
+            </div>
+
+            <h3>Face</h3>
+            <div class="button-container">
+                <button class="left-sm" data-event-click="face_index = (face_index == 0) ? (face.size - 1) : (face_index - 1); set_model_face(face[face_index].value)" />
+                <label class="textarea">{{face[face_index].name}}</label>
+                <button class="right-sm" data-event-click="face_index = (face_index + 1 == face.size) ? 0 : (face_index + 1); set_model_face(face[face_index].value)" />
+            </div>
+
+            <h3>Hair</h3>
+            <div class="button-container">
+                <button class="left-sm" data-event-click="hair_index = (hair_index == 0) ? (hair.size - 1) : (hair_index - 1); set_model_hair(hair[hair_index].value)" />
+                <label class="textarea">{{hair[hair_index].name}}</label>
+                <button class="right-sm" data-event-click="hair_index = (hair_index + 1 == hair.size) ? 0 : (hair_index + 1); set_model_hair(hair[hair_index].value)" />
+            </div>
+
+            <h3>Hair Color</h3>
+            <div class="button-container">
+                <button class="left-sm" data-event-click="hair_color_index = (hair_color_index == 0) ? (hair_color.size - 1) : (hair_color_index - 1); set_model_hair_color(hair_color[hair_color_index].value)" />
+                <label class="textarea">{{hair_color[hair_color_index].name}}</label>
+                <button class="right-sm" data-event-click="hair_color_index = (hair_color_index + 1 == hair_color.size) ? 0 : (hair_color_index + 1); set_model_hair_color(hair_color[hair_color_index].value)" />
+            </div>
+
+            <br />
+
+            <div style="text-align: center;">
+                <div class="tooltip">
+                    <button class="default" data-attrif-disabled="!is_valid_name(name)" data-event-click="create_character(name, gender[gender_index].value, face[face_index].value, hair[hair_index].value, hair_color[hair_color_index].value)">Create</button>
+                    <span class="tooltiptext" data-visible="!is_valid_name(name)"><str string-id="1175" /></span>
+                </div>
+                <button class="default" onclick="close">Cancel</button>
+            </div>
+        </div>
+    </body>
+</rml>

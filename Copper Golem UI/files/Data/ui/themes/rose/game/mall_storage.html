@@ -1,0 +1,75 @@
+<rml>
+    <head>
+        <title>Item Mall Purchase</title>
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/spritesheet_itemicon.css" />
+        <link type="text/rcss" href="../styles/spritesheet_socketgem.css" />
+        <link type="text/rcss" href="../styles/item_slot.css" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+        <style>
+            body { width: 372dp; max-width: 94vw; }
+            .mall-grid { width: 348dp; }
+            #mall-state { margin-top: 8dp; }
+            #mall-state:empty { display: none; }
+            #mall-selection { text-align: center; }
+            .mall-help { margin-bottom: 12dp; }
+        </style>
+    </head>
+    <body template="window-fixed-size" id="mall-storage">
+        <div data-model="mall-storage">
+        <div class="mall-grid ui-slot-grid ui-selectable-slots">
+            <item-slot id="mall-slot-0" data-class-selected="slots[0].selected" />
+            <item-slot id="mall-slot-1" data-class-selected="slots[1].selected" />
+            <item-slot id="mall-slot-2" data-class-selected="slots[2].selected" />
+            <item-slot id="mall-slot-3" data-class-selected="slots[3].selected" />
+            <item-slot id="mall-slot-4" data-class-selected="slots[4].selected" />
+            <item-slot id="mall-slot-5" data-class-selected="slots[5].selected" />
+            <item-slot id="mall-slot-6" data-class-selected="slots[6].selected" />
+            <item-slot id="mall-slot-7" data-class-selected="slots[7].selected" />
+            <item-slot id="mall-slot-8" data-class-selected="slots[8].selected" />
+            <item-slot id="mall-slot-9" data-class-selected="slots[9].selected" />
+            <item-slot id="mall-slot-10" data-class-selected="slots[10].selected" />
+            <item-slot id="mall-slot-11" data-class-selected="slots[11].selected" />
+            <item-slot id="mall-slot-12" data-class-selected="slots[12].selected" />
+            <item-slot id="mall-slot-13" data-class-selected="slots[13].selected" />
+            <item-slot id="mall-slot-14" data-class-selected="slots[14].selected" />
+            <item-slot id="mall-slot-15" data-class-selected="slots[15].selected" />
+            <item-slot id="mall-slot-16" data-class-selected="slots[16].selected" />
+            <item-slot id="mall-slot-17" data-class-selected="slots[17].selected" />
+            <item-slot id="mall-slot-18" data-class-selected="slots[18].selected" />
+            <item-slot id="mall-slot-19" data-class-selected="slots[19].selected" />
+            <item-slot id="mall-slot-20" data-class-selected="slots[20].selected" />
+            <item-slot id="mall-slot-21" data-class-selected="slots[21].selected" />
+            <item-slot id="mall-slot-22" data-class-selected="slots[22].selected" />
+            <item-slot id="mall-slot-23" data-class-selected="slots[23].selected" />
+            <item-slot id="mall-slot-24" data-class-selected="slots[24].selected" />
+            <item-slot id="mall-slot-25" data-class-selected="slots[25].selected" />
+            <item-slot id="mall-slot-26" data-class-selected="slots[26].selected" />
+            <item-slot id="mall-slot-27" data-class-selected="slots[27].selected" />
+            <item-slot id="mall-slot-28" data-class-selected="slots[28].selected" />
+            <item-slot id="mall-slot-29" data-class-selected="slots[29].selected" />
+            <item-slot id="mall-slot-30" data-class-selected="slots[30].selected" />
+            <item-slot id="mall-slot-31" data-class-selected="slots[31].selected" />
+            <item-slot id="mall-slot-32" data-class-selected="slots[32].selected" />
+            <item-slot id="mall-slot-33" data-class-selected="slots[33].selected" />
+            <item-slot id="mall-slot-34" data-class-selected="slots[34].selected" />
+            <item-slot id="mall-slot-35" data-class-selected="slots[35].selected" />
+            <item-slot id="mall-slot-36" data-class-selected="slots[36].selected" />
+            <item-slot id="mall-slot-37" data-class-selected="slots[37].selected" />
+            <item-slot id="mall-slot-38" data-class-selected="slots[38].selected" />
+            <item-slot id="mall-slot-39" data-class-selected="slots[39].selected" />
+        </div>
+        <div id="mall-state" class="ui-status">{{ state }}</div>
+        <div class="ui-footer">
+            <div id="mall-selection" class="ui-section-title">{{ selection }}</div>
+            <div class="mall-help ui-status">Retrieve the full stack, or drag it to your inventory.</div>
+            <div class="ui-actions">
+                <button id="retrieve" class="default" onclick="retrieve" data-attrif-disabled="!retrieve_enabled">Retrieve</button>
+                <button id="refresh" class="default" onclick="refresh" data-attrif-disabled="!refresh_enabled">Refresh</button>
+            </div>
+        </div>
+        </div>
+    </body>
+</rml>

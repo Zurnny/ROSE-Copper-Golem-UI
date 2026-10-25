@@ -1,0 +1,43 @@
+<rml>
+    <head>
+        <title>Dialogue</title>
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+        <style>
+            body { width: 640dp; max-width: 92vw; }
+            .npc-message.content-box { display: flex; align-items: flex-start; gap: 8dp; margin-bottom: 8dp; }
+            .npc-portrait { flex: 0 0 128dp; width: 128dp; max-width: 25vw; }
+            .npc-portrait img { width: 100%; height: auto; }
+            #npc-script-scroll { flex: 1; min-width: 0; max-height: 32vh; overflow-y: auto; }
+            #npc-script { display: block; line-height: 20dp; word-break: break-word; }
+            #npc-choices { max-height: 36vh; overflow-y: auto; }
+            #npc-choices button.npc-answer { height: auto; min-width: 0; width: 100%; align-items: flex-start; text-align: left; line-height: 20dp; }
+            #npc-choices button.npc-answer:disabled { decorator: none; color: #bbbbbb; }
+            .npc-number { flex: 0 0 24dp; width: 24dp; text-align: right; }
+            .npc-icon { flex: 0 0 20dp; width: 20dp; height: 20dp; }
+            /* Block, not inline: an inline image adds descender space below the 20dp span, which
+               made the list scrollable whenever the last answer had an icon. */
+            .npc-icon img { display: block; width: 20dp; height: 20dp; }
+            .npc-answer-text { display: block; flex: 1; min-width: 0; word-break: break-word; }
+        </style>
+    </head>
+    <body template="window-fixed-size" id="npc-dialog">
+        <div data-model="npc-dialog">
+            <div class="npc-message content-box ui-section">
+                <div class="npc-portrait" data-if="portrait != ''"><img id="npc-portrait" data-attr-src="portrait" /></div>
+                <div id="npc-script-scroll"><str id="npc-script" data-attr-legacy-text="text" /></div>
+            </div>
+            <div class="content-box ui-section">
+                <div id="npc-choices">
+                    <button class="ui-list-row npc-answer" data-for="answer : answers" data-attr-id="'npc-answer-' + answer.index" data-attr-onclick="answer.action" data-class-selected="selected == answer.index" data-attrif-disabled="!ready">
+                        <span class="npc-number">{{answer.index + 1}}.</span>
+                        <span class="npc-icon"><img data-if="answer.sprite != ''" data-attr-sprite="answer.sprite" /></span>
+                        <str class="npc-answer-text" data-attr-legacy-text="answer.text" />
+                    </button>
+                </div>
+            </div>
+        </div>
+    </body>
+</rml>

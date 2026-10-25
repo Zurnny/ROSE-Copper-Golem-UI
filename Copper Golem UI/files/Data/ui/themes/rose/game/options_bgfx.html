@@ -1,0 +1,1879 @@
+<rml>
+    <head>
+        <title>Options</title>
+
+        <link type="text/template" href="../templates/window-resizeable.html" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            #game-options
+            {
+                min-width: 650dp;
+                min-height: 350dp;
+                width: 870dp;
+                height: 570dp;
+            }
+
+            tabset
+            {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: row;
+                gap: 4dp;
+                box-sizing: border-box;
+            }
+
+            tabset > tabs
+            {
+                width: 140dp;
+                display: block;
+            }
+
+            tabset > panels
+            {
+                flex: 1;
+            }
+
+            panel
+            {
+                height: 100%;
+                padding: 4dp;
+                box-sizing: border-box;
+            }
+
+            .options-panel
+            {
+                display: block;
+                width: 100%;
+                height: 100%;
+                overflow: hidden auto;
+                box-sizing: border-box;
+                padding: 2dp 2dp 2dp 4dp;
+            }
+
+            tab.default
+            {
+                display: inline-block;
+                font-weight: 800;
+                font-effect: outline(1dp black);
+                width: 100%;
+            }
+
+            /* ── Section group boxes ── */
+            .settings-group
+            {
+                display: block;
+                padding: 8dp 10dp;
+                margin-bottom: 6dp;
+                background: rgba(28, 27, 30, 150);
+                border: 1dp rgb(116, 53, 22);
+                border-radius: 4dp;
+                box-sizing: border-box;
+            }
+
+            .settings-group > h3
+            {
+                margin-top: 0;
+                margin-bottom: 4dp;
+                font-size: 1.05em;
+                color: rgb(231, 154, 116);
+                font-effect: outline(1dp black);
+            }
+
+            /* ── Collapsible advanced sections ── */
+            .options-panel details
+            {
+                display: block;
+                margin-bottom: 6dp;
+                padding: 4dp 6dp 8dp 6dp;
+                background: rgba(28, 27, 30, 150);
+                border: 1dp rgb(116, 53, 22);
+                border-radius: 4dp;
+                box-sizing: border-box;
+            }
+
+            .options-panel details > summary
+            {
+                margin-bottom: 4dp;
+            }
+
+            .options-panel details > summary > summary-text
+            {
+                color: rgb(231, 154, 116);
+                font-weight: 800;
+                font-effect: outline(1dp black);
+            }
+
+            /* ── Table layout ── */
+            table.main tr
+            {
+                margin: 3dp 0dp;
+            }
+
+            tr
+            {
+                min-height: 10dp;
+            }
+
+            tr > td:nth-child(1)
+            {
+                width: 185dp;
+                text-align: left;
+            }
+
+            table.sub tr
+            {
+                margin: 0dp;
+            }
+
+            table.sub td
+            {
+                vertical-align: middle;
+            }
+
+            tr.container td
+            {
+                vertical-align: top;
+            }
+
+            /* ── Shortcut sub ── */
+            table.shortcut-sub td
+            {
+                margin-left: 25dp;
+            }
+
+            tr.shortcut-sub > td:nth-child(1)
+            {
+                width: 100%;
+            }
+
+            /* ── Form controls ── */
+            select
+            {
+                width: 180dp;
+            }
+
+            select.small
+            {
+                width: 100dp;
+            }
+
+            select.medium,
+            select.medium#text
+            {
+                width: 130dp;
+            }
+
+            input.range.big
+            {
+                width: 230dp;
+            }
+
+            input.range.full
+            {
+                width: 100%;
+            }
+
+            /* ── Slider row layout ── */
+            .slider-row
+            {
+                display: flex;
+                flex-direction: row;
+                gap: 4dp;
+                padding-right: 4dp;
+            }
+
+            .slider-row input.range
+            {
+                flex: 1;
+            }
+
+            .slider-value
+            {
+                display: inline-block;
+                min-width: 38dp;
+                text-align: right;
+            }
+
+            /* ── Checkbox grid ── */
+            .checkbox-grid
+            {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 2dp 0dp;
+            }
+
+            .checkbox-grid > span
+            {
+                width: 100dp;
+            }
+
+            .checkbox-grid > span.wide
+            {
+                width: 200dp;
+            }
+
+            /* ── Key Bindings ── */
+            .keybind-table
+            {
+                width: 100%;
+            }
+
+            .keybind-table tr
+            {
+                margin: 2dp 0dp;
+            }
+
+            .keybind-table thead td
+            {
+                font-weight: 800;
+                font-size: 0.9em;
+                color: #ccc;
+                font-effect: outline(1dp black);
+                padding-bottom: 2dp;
+            }
+
+            .keybind-table td:nth-child(1)
+            {
+                width: auto;
+                line-height: 34dp;
+            }
+
+            .keybind-table td:nth-child(2),
+            .keybind-table td:nth-child(3)
+            {
+                width: 140dp;
+                text-align: center;
+            }
+
+            .keybind-table button.default
+            {
+                min-width: 0dp;
+                width: 130dp;
+            }
+
+            /* ── Misc ── */
+            h3
+            {
+                margin-bottom: 3dp;
+            }
+
+            .button-row
+            {
+                display: flex;
+                justify-content: flex-end;
+                margin-top: 6dp;
+            }
+            /* Message colour picker */
+            .sp-swatch-row { display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 3dp; }
+            .sp-swatch { display: inline-block; width: 16dp; height: 16dp; box-sizing: border-box; border: 1dp rgb(69, 68, 75); cursor: hand; }
+            .sp-swatch:hover { border-color: rgb(231, 154, 116); }
+            .sp-swatch.selected { border: 2dp rgb(255, 240, 200); }
+            .sp-swatch-default { min-width: 5dp; margin-right: 4dp; }
+            .sp-chat-sample { font-weight: 800; font-effect: outline(1dp black); }
+        </style>
+    <script>
+-- Dropped item label background: a 0-10 slider (0 = clear, 10 = solid).
+-- Shared by options_bgfx.html (the slider) and dropped_item_labels.html
+-- (the labels). The value is saved to a small text file when the game's
+-- Lua allows file access. Written inline because the game ignores edited .lua files.
+local SAVE_FILE = 'sp_label_alpha.txt'
+local DEFAULT = 0
+local LABELS_ID = 'dropped-item-labels'
+local ROOT_ID = 'dropped-item-labels-root'
+
+local function load_value()
+    local ok, v = pcall(function()
+        local f = io.open(SAVE_FILE, 'r')
+        if not f then return nil end
+        local n = tonumber(f:read('*l'))
+        f:close()
+        return n
+    end)
+    if ok and v then return math.max(0, math.min(10, math.floor(v))) end
+    if _G and type(_G.SP_LABEL_ALPHA) == 'number' then return _G.SP_LABEL_ALPHA end
+    return DEFAULT
+end
+
+local function save_value(v)
+    if _G then _G.SP_LABEL_ALPHA = v end
+    pcall(function()
+        local f = io.open(SAVE_FILE, 'w')
+        if f then f:write(tostring(v)); f:close() end
+    end)
+end
+
+-- Put class sp-alpha-<v> on the labels root (and remove the others)
+local function apply_to(doc, v)
+    if not doc then return false end
+    local root = doc:GetElementById(ROOT_ID)
+    if not root then return false end
+    for i = 0, 10 do root:SetClass('sp-alpha-' .. i, i == v) end
+    return true
+end
+
+local value = load_value()
+
+if document:GetElementById(ROOT_ID) then
+    ------------------------------------------------ labels document
+    apply_to(document, value)
+    local me = document
+    if _G then _G.SP_LABELS_APPLY = function(v) apply_to(me, v) end end
+else
+    ------------------------------------------------ options document
+  local ok, err = pcall(function()
+    local slider = document:GetElementById('sp-label-alpha')
+    local readout = document:GetElementById('sp-label-alpha-value')
+    local function show(v) if readout then readout.inner_rml = string.format('%d', math.floor(v * 10 + 0.5)) .. '%' end end
+
+    local function push(v)
+        -- 1) the labels document registered a function
+        local dbg = document:GetElementById('sp-label-alpha-debug')
+        if _G and type(_G.SP_LABELS_APPLY) == 'function' and pcall(_G.SP_LABELS_APPLY, v) then
+            if dbg then dbg.inner_rml = '' end
+            return
+        end
+        local reached = false
+        -- 2) find the labels document through the context
+        pcall(function()
+            local ctx = document.context
+            local doc = ctx.documents[LABELS_ID]
+            reached = apply_to(doc, v)
+            if not reached then
+                for i = 0, #ctx.documents - 1 do
+                    local d = ctx.documents[i]
+                    if d and d.id == LABELS_ID then reached = apply_to(d, v) break end
+                end
+            end
+        end)
+        if dbg then dbg.inner_rml = reached and '' or 'Saved. The labels will update after a restart (could not reach them live).' end
+    end
+
+    if slider then
+        slider:SetAttribute('value', tostring(value))
+        show(value)
+        slider:AddEventListener('change', function(event)
+            local v = tonumber(event.parameters and event.parameters.value)
+            if v == nil then pcall(function() v = tonumber(slider.value) end) end
+            if v == nil then pcall(function() v = tonumber(event.current_element:GetAttribute('value')) end) end
+            if v == nil then v = tonumber(slider:GetAttribute('value')) or value end
+            v = math.max(0, math.min(10, math.floor(v + 0.5)))
+            value = v
+            show(v)
+            save_value(v)
+            push(v)
+        end)
+    end
+    push(value)
+  end)
+  if not ok then
+    local r = document:GetElementById('sp-label-alpha-value')
+    if r then r.inner_rml = 'Lua error' end
+    local d = document:GetElementById('sp-label-alpha-debug')
+    if d then d.inner_rml = tostring(err):gsub('&','&amp;'):gsub('<','&lt;') end
+  end
+end
+
+    </script>
+    <script>
+
+-- Chat message colours (steampunk add-on). Shared by options_bgfx.html (the
+-- picker) and chat_box.html (the messages). Written inline because the game
+-- ignores edited .lua files. Choices are saved to sp_chat_colors.txt.
+local CHANNELS = {{id='chat', name='Chat', default='rgb(255, 255, 255)'}, {id='shout', name='Shout', default='rgb(255, 105, 105)'}, {id='whisper', name='Whisper', default='rgb(255, 158, 232)'}, {id='trade', name='Trade', default='rgb(0, 210, 50)'}, {id='party', name='Party', default='rgb(189, 250, 255)'}, {id='clan', name='Clan', default='rgb(255, 228, 122)'}, {id='group', name='Group', default='rgb(156, 175, 243)'}, {id='quest', name='Quest', default='rgb(151, 221, 241)'}, {id='system', name='System', default='rgb(255, 224, 229)'}}
+local PALETTE = {{name='White', rgb='rgb(255, 255, 255)'}, {name='Parchment', rgb='rgb(226, 208, 170)'}, {name='Brass', rgb='rgb(203, 117, 74)'}, {name='Gold', rgb='rgb(242, 122, 62)'}, {name='Copper', rgb='rgb(127, 61, 185)'}, {name='Orange', rgb='rgb(152, 63, 230)'}, {name='Red', rgb='rgb(255, 90, 80)'}, {name='Pink', rgb='rgb(255, 150, 220)'}, {name='Purple', rgb='rgb(190, 150, 255)'}, {name='Blue', rgb='rgb(120, 170, 255)'}, {name='Cyan', rgb='rgb(120, 230, 240)'}, {name='Green', rgb='rgb(110, 220, 110)'}}
+local SAVE_FILE = 'sp_chat_colors.txt'
+local CHAT_ID = 'game-chat-box'
+local picks = {}   -- channel id -> palette index (0 = game default)
+pcall(function()
+    local f = io.open(SAVE_FILE, 'r')
+    if not f then return end
+    for line in f:lines() do
+        local k, v = line:match('^%s*([%w_]+)%s*=%s*(%d+)')
+        if k then picks[k] = math.max(0, math.min(#PALETTE, tonumber(v))) end
+    end
+    f:close()
+end)
+if _G and type(_G.SP_CHAT_PICKS) == 'table' then
+    for k, v in pairs(_G.SP_CHAT_PICKS) do if picks[k] == nil then picks[k] = v end end
+end
+local function save()
+    if _G then _G.SP_CHAT_PICKS = picks end
+    pcall(function()
+        local f = io.open(SAVE_FILE, 'w')
+        if not f then return end
+        for _, c in ipairs(CHANNELS) do f:write(c.id, '=', tostring(picks[c.id] or 0), '\n') end
+        f:close()
+    end)
+end
+-- Put class sp-<channel>-<n> on the chat window body
+local function apply_to(doc)
+    if not doc then return false end
+    local body = doc:GetElementById(CHAT_ID)
+    if not body then return false end
+    for _, c in ipairs(CHANNELS) do
+        for i = 1, #PALETTE do body:SetClass('sp-' .. c.id .. '-' .. i, (picks[c.id] or 0) == i) end
+    end
+    return true
+end
+
+local ok, err = pcall(function()
+    local box = document:GetElementById('sp-chat-colors')
+    if not box then return end
+    local function colour_of(c)
+        local i = picks[c.id] or 0
+        return i > 0 and PALETTE[i].rgb or c.default
+    end
+    local function render()
+        local rows = {}
+        for _, c in ipairs(CHANNELS) do
+            local cells = {'<button class="default ui-compact sp-swatch-default' .. (((picks[c.id] or 0) == 0) and ' selected' or '') ..
+                '" sp-chan="' .. c.id .. '" sp-col="0">Default</button>'}
+            for i, p in ipairs(PALETTE) do
+                cells[#cells + 1] = '<span class="sp-swatch' .. ((picks[c.id] == i) and ' selected' or '') ..
+                    '" sp-chan="' .. c.id .. '" sp-col="' .. i .. '" style="background-color: ' .. p.rgb .. ';" tooltip="' .. p.name .. '"></span>'
+            end
+            rows[#rows + 1] = '<tr><td><span class="sp-chat-sample" style="color: ' .. colour_of(c) .. ';">' .. c.name ..
+                '</span></td><td><div class="sp-swatch-row">' .. table.concat(cells) .. '</div></td></tr>'
+        end
+        box.inner_rml = '<table class="main"><tbody>' .. table.concat(rows) .. '</tbody></table>'
+    end
+    local function push()
+        local dbg = document:GetElementById('sp-chat-colors-status')
+        local reached = false
+        if _G and type(_G.SP_CHAT_APPLY) == 'function' then reached = pcall(_G.SP_CHAT_APPLY, picks) end
+        if not reached then
+            pcall(function()
+                local ctx = document.context
+                reached = apply_to(ctx.documents[CHAT_ID])
+                if not reached then
+                    for i = 0, #ctx.documents - 1 do
+                        if apply_to(ctx.documents[i]) then reached = true break end
+                    end
+                end
+            end)
+        end
+        if dbg then dbg.inner_rml = reached and '' or 'Saved. The chat will use these colours after a restart.' end
+    end
+    box:AddEventListener('click', function(event)
+        local t = event.target_element
+        while t and t ~= box do
+            local chan, col = t:GetAttribute('sp-chan'), tonumber(t:GetAttribute('sp-col'))
+            if chan and col then
+                picks[chan] = col
+                save()
+                render()
+                push()
+                event:StopPropagation()
+                return
+            end
+            t = t.parent_node
+        end
+    end)
+    render()
+    push()
+end)
+if not ok then
+    local d = document:GetElementById('sp-chat-colors-status')
+    if d then d.inner_rml = ('Lua error: ' .. tostring(err)):gsub('&', '&amp;'):gsub('<', '&lt;') end
+end
+
+    </script>
+    <script>
+-- "Bring all windows on screen" (steampunk add-on). Moves any window that sits
+-- partly or fully outside the game window back inside it. Windows already on
+-- screen, and full-screen layers (names, labels), are left alone.
+local ok, err = pcall(function()
+    local button = document:GetElementById('sp-windows-onscreen')
+    local status = document:GetElementById('sp-windows-status')
+    if not button then return end
+    local function each(list, fn)
+        if not list then return end
+        local i = list[0] and 0 or 1
+        while list[i] do fn(list[i]); i = i + 1 end
+    end
+    button:AddEventListener('click', function()
+        local moved, checked = 0, 0
+        local ok2, err2 = pcall(function()
+            local ctx = document.context
+            local W, H = ctx.dimensions.x, ctx.dimensions.y
+            each(ctx.documents, function(doc)
+                local w, h = doc.offset_width or 0, doc.offset_height or 0
+                if w <= 0 or h <= 0 or w >= W * 0.9 or h >= H * 0.9 then return end   -- skip empty and full-screen layers
+                checked = checked + 1
+                local x, y = doc.offset_left or 0, doc.offset_top or 0
+                local nx = math.max(0, math.min(W - w, x))
+                local ny = math.max(0, math.min(H - h, y))
+                if nx ~= x or ny ~= y then
+                    doc.style.left = math.floor(nx) .. 'px'
+                    doc.style.top = math.floor(ny) .. 'px'
+                    moved = moved + 1
+                end
+            end)
+        end)
+        if status then
+            if not ok2 then status.inner_rml = ('Could not move windows: ' .. tostring(err2)):gsub('&', '&amp;'):gsub('<', '&lt;')
+            elseif moved == 0 then status.inner_rml = 'All ' .. checked .. ' windows are already on screen.'
+            else status.inner_rml = 'Moved ' .. moved .. (moved == 1 and ' window' or ' windows') .. ' back on screen.' end
+        end
+    end)
+end)
+    </script>
+    <script>
+-- Heading-up minimap switch (steampunk add-on). The minimap window does the
+-- turning; this checkbox tells it to (through _G.SP_MINIMAP_SET) and the choice
+-- is saved in sp_minimap.txt, which the minimap reads when it loads.
+pcall(function()
+    local document = document
+    local box = document:GetElementById('sp-mm-heading-up')
+    local status = document:GetElementById('sp-mm-status')
+    if not box then return end
+    local on = false
+    pcall(function()
+        if _G and type(_G.SP_MINIMAP_GET) == 'function' then on = _G.SP_MINIMAP_GET() and true or false; return end
+        local f = io.open('sp_minimap.txt', 'r')
+        if f then on = (f:read('*l') or ''):match('heading_up%s*=%s*1') ~= nil; f:close() end
+    end)
+    if on then box:SetAttribute('checked', '') else box:RemoveAttribute('checked') end
+    box:AddEventListener('change', function()
+        local want = box:HasAttribute('checked')
+        if _G and type(_G.SP_MINIMAP_SET) == 'function' then
+            _G.SP_MINIMAP_SET(want)
+            if status then status.inner_rml = '' end
+        else
+            pcall(function()
+                local f = io.open('sp_minimap.txt', 'w')
+                if f then f:write('heading_up=', want and 1 or 0, '\n'); f:close() end
+            end)
+            if status then status.inner_rml = 'Saved. The minimap will use this after a restart.' end
+        end
+    end)
+end)
+    </script>
+    <script>
+-- Element chart switch (steampunk add-on). Saved in sp_element_chart.txt; the
+-- minimap reads it every 2 seconds (and straight away when windows can share).
+pcall(function()
+    local document = document
+    local box = document:GetElementById('sp-el-chart-on')
+    if not box then return end
+    local on = true
+    pcall(function()
+        local f = io.open('sp_element_chart.txt', 'r')
+        if f then on = (f:read('*l') or ''):match('show%s*=%s*0') == nil; f:close() end
+    end)
+    if on then box:SetAttribute('checked', '') else box:RemoveAttribute('checked') end
+    box:AddEventListener('change', function()
+        local want = box:HasAttribute('checked')
+        pcall(function()
+            local f = io.open('sp_element_chart.txt', 'w')
+            if f then f:write('show=', want and 1 or 0, '\n'); f:close() end
+        end)
+        pcall(function() if type(_G) == 'table' and type(_G.SP_ELEMENT_CHART_APPLY) == 'function' then _G.SP_ELEMENT_CHART_APPLY() end end)
+    end)
+end)
+    </script>
+    </head>
+
+    <body id="game-options" template="window-resizeable">
+        <tabset id="options-tabs">
+            <!-- ===================== VIDEO ===================== -->
+            <tab class="default"><str string-id="478">Video</str></tab>
+            <panel class="content-box">
+                <div class="options-panel" data-model="options-data">
+
+                    <!-- Display -->
+                    <div class="settings-group">
+                        <h3>Display</h3>
+                        <table class="main">
+                            <tbody>
+                                <tr>
+                                    <td><str string-id="471">Screen Mode</str></td>
+                                    <td>
+                                        <select id="screen-mode" data-value="video.mode" onchange="screen-mode">
+                                            <option value="0" selected>Windowed</option>
+                                            <option value="3">Borderless</option>
+                                            <option value="2">Fullscreen</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Display</td>
+                                    <td>
+                                        <select id="display" data-value="video.display_index" data-attrif-disabled="video.mode == 0" onchange="display-index">
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><str string-id="766">Resolution</str></td>
+                                    <td>
+                                        <select id="resolution" data-value="video.resolution" data-attrif-disabled="video.mode == 3">
+                                            <option value="-1" selected> </option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td><button class="default" onclick="apply_display_mode">Apply</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- General -->
+                    <div class="settings-group">
+                        <h3>General</h3>
+                        <table class="main">
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id="can-resize-window" type="checkbox" data-checked="video.can_resize_window" onchange="can-resize-window"/>
+                                        <label for="can-resize-window">Enable window resizing</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id="background-rendering" type="checkbox" data-checked="video.background_render" onchange="background-render"/>
+                                        <label for="background-rendering"><str string-id="1376">Display rendering when window is not active</str></label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id="show-fps" type="checkbox" data-checked="video.show_fps" onchange="show-fps"/>
+                                        <label for="show-fps">Display FPS</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id="use-vsync" type="checkbox" data-checked="video.use_vsync" onchange="use-vsync"/>
+                                        <label for="use-vsync">Enable Vertical Sync</label>
+                                    </td>
+                                </tr>
+                                <tr data-if="video.use_vsync == false">
+                                    <td>Limit FPS</td>
+                                    <td>
+                                        <div class="slider-row">
+                                            <input id="max-fps" type="range" min="15" max="500" data-value="video.max_fps" onchange="max-fps" style="flex: 1" />
+                                            <label class="slider-value" for="max-fps">{{video.max_fps}}</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Performance -->
+                    <div class="settings-group">
+                        <h3><str string-id="771">Performance</str></h3>
+                        <table class="main">
+                            <tbody>
+                                <tr>
+                                    <td>Quality</td>
+                                    <td>
+                                        <select data-value="video.graphics_quality" onchange="graphics-quality">
+                                            <option value="0" selected>Minimum</option>
+                                            <option value="1" selected>Low</option>
+                                            <option value="2" selected>Medium</option>
+                                            <option value="3" selected>High</option>
+                                            <option value="4" selected>Ultra</option>
+                                            <option value="5" selected>Custom</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Draw Distance</td>
+                                    <td>
+                                        <div class="slider-row">
+                                            <input id="view-range" type="range" min="0" max="4" data-value="video.view_range" onchange="view-range" style="flex: 1" />
+                                            <label class="slider-value" for="view-range">{{video.view_range}}</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Advanced (collapsible) -->
+                    <details>
+                        <summary>Advanced</summary>
+                        <table class="main">
+                            <tbody>
+                                <tr>
+                                    <td><str string-id="1135">Anti Aliasing</str></td>
+                                    <td>
+                                        <select id="anti-aliasing" data-value="video.anti_aliasing" onchange="anti-aliasing">
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Shadow Quality</td>
+                                    <td>
+                                        <select data-value="video.shadow_quality" onchange="shadow-quality">
+                                            <option value="0" selected>Off</option>
+                                            <option value="1" selected>Low</option>
+                                            <option value="2" selected>Medium</option>
+                                            <option value="3" selected>High</option>
+                                            <option value="4" selected>Ultra</option>
+                                            <option value="5" selected>Custom</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Glow Quality</td>
+                                    <td>
+                                        <select data-value="video.glow_quality" onchange="glow-quality">
+                                            <option value="0" selected>Off</option>
+                                            <option value="1" selected>Low</option>
+                                            <option value="2" selected>Medium</option>
+                                            <option value="3" selected>High</option>
+                                            <option value="4" selected>Ultra</option>
+                                            <option value="5" selected>Custom</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Glow Brightness</td>
+                                    <td>
+                                        <div class="slider-row">
+                                            <input type="range" min="1" max="20" data-value="video.glow_brightness" onchange="glow-brightness" style="flex: 1"/>
+                                            <button class="close" onclick="reset_glow_brightness" />
+                                            <label class="slider-value">{{video.glow_brightness * 10 + '%'}}</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Particle Brightness</td>
+                                    <td>
+                                        <div class="slider-row">
+                                            <input type="range" min="0" max="20" data-value="video.particle_brightness" onchange="particle-brightness" style="flex: 1"/>
+                                            <button class="close" onclick="reset_particle_brightness" />
+                                            <label class="slider-value">{{video.particle_brightness * 10 + '%'}}</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id="particle-invert" type="checkbox" data-checked="video.particle_invert" onchange="particle-brightness"/>
+                                        <label for="particle-invert">Invert particles</label>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </details>
+
+                    <!-- Limits (collapsible) -->
+                    <details>
+                        <summary>Limits</summary>
+                        <table class="main">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="tooltip">
+                                            Max Dynamic Models
+                                            <span class="tooltiptext">Max amount of characters, mounts and PAT displayed.</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="slider-row">
+                                            <input type="range" min="20" max="1000" data-value="video.max_dynamic_models" onchange="max-limits" style="flex: 1"/>
+                                            <label class="slider-value">{{video.max_dynamic_models}}</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="tooltip">
+                                            Max Shadow Models
+                                            <span class="tooltiptext">Max amount of character, mount and pat's shadows displayed.</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="slider-row">
+                                            <input type="range" min="10" max="1000" data-value="video.max_shadow_models" onchange="max-limits" style="flex: 1"/>
+                                            <label class="slider-value">{{video.max_shadow_models}}</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="tooltip">
+                                            Max Effects
+                                            <span class="tooltiptext">Max amount of effects displayed.</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="slider-row">
+                                            <input type="range" min="10" max="2000" data-value="video.max_effects" onchange="max-limits" style="flex: 1"/>
+                                            <label class="slider-value">{{video.max_effects}}</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="tooltip">
+                                            Max Glow Render Units
+                                            <span class="tooltiptext">Max amount of glows displayed.</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="slider-row">
+                                            <input type="range" min="500" max="10000" data-value="video.max_glow_render_units" onchange="max-limits" style="flex: 1"/>
+                                            <label class="slider-value">{{video.max_glow_render_units}}</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </details>
+
+                </div>
+            </panel>
+
+            <!-- ===================== AUDIO ===================== -->
+            <tab class="default"><str string-id="479">Audio</str></tab>
+            <panel class="content-box">
+                <div class="options-panel" data-model="options-data">
+                    <form>
+
+                        <!-- General Audio -->
+                        <div class="settings-group">
+                            <h3>General</h3>
+                            <table class="main">
+                                <tbody>
+                                    <tr>
+                                        <td>Master Volume</td>
+                                        <td>
+                                            <div class="slider-row">
+                                                <input type="range" min="0" max="100" data-value="audio.volume_master" onchange="audio-master" style="flex: 1"/>
+                                                <label class="slider-value">{{audio.volume_master + '%'}}</label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <input id="enable-sound" type="checkbox" data-value="audio.enable_sound" onchange="audio-enable" data-checked="audio.enable_sound"/>
+                                            <label for="enable-sound"><str string-id="1360">Enable sound</str></label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <input id="background-music" type="checkbox" data-checked="audio.background_player" onchange="audio-background-player"/>
+                                            <label for="background-music"><str string-id="1361">Enable Sound when window is not active</str></label>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Music Type -->
+                        <div class="settings-group">
+                            <h3><str string-id="1362">Music Type</str></h3>
+                            <table class="main">
+                                <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <input id="music-1" type="radio" value="0" data-checked="audio.music_type" onchange="audio-type"/>
+                                            <label for="music-1"><str string-id="1363">Default</str></label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <input id="music-2" type="radio" value="1" data-checked="audio.music_type" onchange="audio-type"/>
+                                            <label for="music-2"><str string-id="1364">Legacy</str></label>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Volume Levels (collapsible) -->
+                        <details>
+                            <summary>Volume Levels</summary>
+                            <table class="main">
+                                <tbody>
+                                    <tr>
+                                        <td>Music Volume</td>
+                                        <td>
+                                            <div class="slider-row">
+                                                <input type="range" min="0" max="100" data-value="audio.volume_background_music" onchange="audio-bgm" style="flex: 1"/>
+                                                <label class="slider-value">{{audio.volume_background_music + '%'}}</label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Effects Volume</td>
+                                        <td>
+                                            <div class="slider-row">
+                                                <input type="range" min="0" max="100" data-value="audio.volume_effects" onchange="audio-effects" style="flex: 1"/>
+                                                <label class="slider-value">{{audio.volume_effects + '%'}}</label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Footsteps Volume</td>
+                                        <td>
+                                            <div class="slider-row">
+                                                <input type="range" min="0" max="100" data-value="audio.volume_footsteps" onchange="audio-effects" style="flex: 1"/>
+                                                <label class="slider-value">{{audio.volume_footsteps + '%'}}</label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <input id="other-player-footsteps" type="checkbox" data-checked="audio.other_player_footsteps" onchange="audio-other-player-footsteps"/>
+                                            <label for="other-player-footsteps">Enable other players footsteps</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Vehicles Volume</td>
+                                        <td>
+                                            <div class="slider-row">
+                                                <input type="range" min="0" max="100" data-value="audio.volume_vehicles" onchange="audio-effects" style="flex: 1"/>
+                                                <label class="slider-value">{{audio.volume_vehicles + '%'}}</label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>NPC Volume</td>
+                                        <td>
+                                            <div class="slider-row">
+                                                <input type="range" min="0" max="100" data-value="audio.volume_ambient_npc" onchange="audio-effects" style="flex: 1"/>
+                                                <label class="slider-value">{{audio.volume_ambient_npc + '%'}}</label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Environment Volume</td>
+                                        <td>
+                                            <div class="slider-row">
+                                                <input type="range" min="0" max="100" data-value="audio.volume_ambient_zone" onchange="audio-effects" style="flex: 1"/>
+                                                <label class="slider-value">{{audio.volume_ambient_zone + '%'}}</label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>UI Volume</td>
+                                        <td>
+                                            <div class="slider-row">
+                                                <input type="range" min="0" max="100" data-value="audio.volume_user_interface" onchange="audio-effects" style="flex: 1"/>
+                                                <label class="slider-value">{{audio.volume_user_interface + '%'}}</label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="button-row">
+                                <button class="default" onclick="reset_audio_volumes">Reset volumes to default</button>
+                            </div>
+                        </details>
+
+                    </form>
+                </div>
+            </panel>
+
+            <!-- ===================== INTERFACE ===================== -->
+            <tab class="default"><str string-id="480">Interface</str></tab>
+            <panel class="content-box">
+                <div class="options-panel" data-model="options-data">
+                    <form>
+
+                        <!-- Language & Scaling -->
+                        <div class="settings-group">
+                            <h3>General</h3>
+                            <table class="main">
+                                <tbody>
+                                    <tr>
+                                        <td><str string-id="921">Language</str></td>
+                                        <td>
+                                            <select id="language" data-value="interface.language" onchange="interface-language" class="medium">
+                                                <option value="0" selected>English</option>
+                                                <option value="1">Portugu&#234;s</option>
+                                                <option value="2">Fran&#231;ais</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>UI scaling</td>
+                                        <td>
+                                            <select data-value="interface.scaling" onchange="interface-size" class="small">
+                                                <option value="0" selected>System</option>
+                                                <option value="2" selected>0.5x</option>
+                                                <option value="3" selected>0.75x</option>
+                                                <option value="4" selected>1x</option>
+                                                <option value="5" selected>1.25x</option>
+                                                <option value="6" selected>1.5x</option>
+                                                <option value="7" selected>1.75x</option>
+                                                <option value="8" selected>2x</option>
+                                                <option value="9" selected>2.25x</option>
+                                                <option value="10" selected>2.5x</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Gameplay -->
+                        <div class="settings-group">
+                            <h3><str string-id="776">Gameplay</str></h3>
+                            <table class="main">
+                                <tbody>
+                                    <tr>
+                                        <td><str string-id="772">Targeting</str></td>
+                                        <td>
+                                            <input name="target" id="target-1" type="radio" value="0" data-checked="interface.targeting" onchange="interface-target"/>
+                                            <label for="target-1"><str string-id="773">1st click: Target, 2nd click: Attack</str></label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <input name="target" id="target-2" type="radio" value="1" data-checked="interface.targeting" onchange="interface-target"/>
+                                            <label for="target-2"><str string-id="775">1 click: Target and Attack</str></label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mode</td>
+                                        <td>
+                                            <input name="gameplay" id="gameplay-1" type="radio" data-checked="interface.gameplay" value="0" onchange="interface-gameplay"/>
+                                            <label for="gameplay-1"><str string-id="777">Normal Mode</str></label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <input name="gameplay" id="gameplay-2" type="radio" data-checked="interface.gameplay" value="1" onchange="interface-gameplay"/>
+                                            <label for="gameplay-2"><str string-id="778">Legacy Mode</str></label>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Block -->
+                        <div class="settings-group">
+                            <h3><str string-id="784">Block</str></h3>
+                            <table class="sub">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <input id="block-whisper" type="checkbox" data-checked="interface.block_whisper" onchange="interface-block"/>
+                                            <label for="block-whisper"><str string-id="779">Whisper</str></label>
+                                        </td>
+                                        <td>
+                                            <input id="block-friend" type="checkbox" data-checked="interface.block_friend" onchange="interface-block"/>
+                                            <label for="block-friend"><str string-id="780">Friend</str></label>
+                                        </td>
+                                        <td>
+                                            <input id="block-trade" type="checkbox" data-checked="interface.block_trade" onchange="interface-block"/>
+                                            <label for="block-trade"><str string-id="781">Trade</str></label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input id="block-party" type="checkbox" data-checked="interface.block_party" onchange="interface-block"/>
+                                            <label for="block-party"><str string-id="782">Party</str></label>
+                                        </td>
+                                        <td>
+                                            <input id="block-message" type="checkbox" data-checked="interface.block_message" onchange="interface-block"/>
+                                            <label for="block-message"><str string-id="783">Message</str></label>
+                                        </td>
+                                        <td>
+                                            <input id="block-pat-ride" type="checkbox" data-checked="interface.block_ride" onchange="interface-block"/>
+                                            <label for="block-pat-ride"><str string-id="410">PAT Ride</str></label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input id="block-group" type="checkbox" data-checked="interface.block_group" onchange="interface-block"/>
+                                            <label for="block-group"><str string-id="253">Group</str></label>
+                                        </td>
+                                        <td>
+                                            <input id="block-clan" type="checkbox" data-checked="interface.block_clan" onchange="interface-block"/>
+                                            <label for="block-clan"><str string-id="36">Clan</str></label>
+                                        </td>
+                                        <td>
+                                            <input id="block-duel" type="checkbox" data-checked="interface.block_duel" onchange="interface-block"/>
+                                            <label for="block-duel"><str string-id="1378">Duel</str></label>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Hotbar -->
+                        <div class="settings-group">
+                            <h3>Hotbar</h3>
+                            <table class="main">
+                                <tbody>
+                                    <tr>
+                                        <td>1st Hotbar</td>
+                                        <td>
+                                            <table class="sub">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <input id="show-1st-hotbar" type="checkbox" data-checked="interface.show_1st_hotbar" onchange="interface-hotbar"/>
+                                                            <label for="show-1st-hotbar"><str string-id="786">Show</str></label>
+                                                        </td>
+                                                        <td>
+                                                            <input id="lock-1st-hotbar" type="checkbox" data-checked="interface.lock_1st_hotbar" onchange="interface-hotbar"/>
+                                                            <label for="lock-1st-hotbar"><str string-id="407">Lock</str></label>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2nd Hotbar</td>
+                                        <td>
+                                            <table class="sub">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <input id="show-2nd-hotbar" type="checkbox" data-checked="interface.show_2nd_hotbar" onchange="interface-hotbar"/>
+                                                            <label for="show-2nd-hotbar"><str string-id="786">Show</str></label>
+                                                        </td>
+                                                        <td>
+                                                            <input id="lock-2nd-hotbar" type="checkbox" data-checked="interface.lock_2nd_hotbar" onchange="interface-hotbar"/>
+                                                            <label for="lock-2nd-hotbar"><str string-id="407">Lock</str></label>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Display & Names -->
+                        <details>
+                            <summary>Display</summary>
+                            <table class="main">
+                                <tbody>
+                                    <tr>
+                                        <td>Quest Tracker</td>
+                                        <td>
+                                            <table>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <input id="show-quest-tracker" type="checkbox" data-checked="interface.show_quest_tracker" onchange="interface-show-quest-tracker"/>
+                                                            <label for="show-quest-tracker"><str string-id="786">Show</str></label>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><str string-id="1449">Proximity Filter</str></td>
+                                        <td>
+                                            <input id="shortcut-proximity" type="checkbox" data-checked="interface.shortcut_proximity" onchange="interface-shortcuts"/>
+                                            <div class="tooltip">
+                                                <label for="shortcut-proximity"><str string-id="1450">Proximity Filter</str></label>
+                                                <span class="tooltiptext"><str string-id="1451">Fades chars near NPCs and Shops to improve visibility.</str></span>
+                                            </div>
+                                            <table data-if="interface.shortcut_proximity" class="shortcut-sub" style="margin-top: 4dp">
+                                                <tbody>
+                                                    <tr class="shortcut-sub">
+                                                        <td>
+                                                            <input id="shortcut-proximity-alt" type="checkbox" data-checked="interface.shortcut_proximity_alt" onchange="interface-shortcuts"/>
+                                                            <label for="shortcut-proximity-alt"><str string-id="1452">Enable only when [ALT] is held</str></label>
+                                                        </td>
+                                                    </tr>
+                                                    <tr class="shortcut-sub">
+                                                        <td>
+                                                            <input id="shortcut-proximity-shop" type="checkbox" data-checked="interface.shortcut_proximity_shop" onchange="interface-shortcuts"/>
+                                                            <label for="shortcut-proximity-shop"><str string-id="1453">Fades chars near Personal Stores</str></label>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Icons</td>
+                                        <td>
+                                            <input id="show-element-icon" type="checkbox" data-checked="interface.show_element_icon" onchange="interface-show-element-icon"/>
+                                            <label for="show-element-icon"><str string-id="1446">Show elements on item icons</str></label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <input id="show-element-icon-skills" type="checkbox" data-checked="interface.show_element_icon_skills" onchange="interface-show-element-icon-skills"/>
+                                            <label for="show-element-icon-skills"><str string-id="1447">Show elements on skill icons</str></label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Character Names</td>
+                                        <td>
+                                            <table class="sub">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <select data-attrif-disabled="!interface.show_avatar_names" data-value="interface.font_size_character_names" onchange="interface-size" class="small">
+                                                                <option value="0" selected>Small</option>
+                                                                <option value="1" selected>Medium</option>
+                                                                <option value="2" selected>Large</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <div class="tooltip">
+                                                                <input id="show-avatar-names" type="checkbox" data-checked="interface.show_avatar_names" onchange="interface-show-avatar-names"/>
+                                                                <label for="show-avatar-names"><str string-id="786">Show</str></label>
+                                                                <span class="tooltiptext"><fc_yellow>[Alt]</fc_yellow> + <fc_yellow>[Z]</fc_yellow></span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>NPC Names</td>
+                                        <td>
+                                            <select data-value="interface.font_size_npc_names" onchange="interface-size" class="small">
+                                                <option value="0" selected>Small</option>
+                                                <option value="1" selected>Medium</option>
+                                                <option value="2" selected>Large</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Monster Names</td>
+                                        <td>
+                                            <select data-value="interface.font_size_monster_names" onchange="interface-size" class="small">
+                                                <option value="0" selected>Small</option>
+                                                <option value="1" selected>Medium</option>
+                                                <option value="2" selected>Large</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Developer Settings</td>
+                                        <td>
+                                            <input id="enable-ui-tools" type="checkbox" data-checked="interface.enable_ui_tools" onchange="interface-enable-ui-tools"/>
+                                            <div class="tooltip">
+                                                <label for="enable-ui-tools"><str string-id="1455">Enable UI tools</str></label>
+                                                <span class="tooltiptext"><str string-id="1456">Enables developer tools for UI development</str></span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </details>
+
+                    </form>
+                </div>
+            </panel>
+
+            <!-- ===================== GAME ===================== -->
+            <tab class="default"><str string-id="1366">Game</str></tab>
+            <panel class="content-box">
+                <div class="options-panel" data-model="options-data">
+
+                    <!-- Controls -->
+                    <div class="settings-group">
+                        <h3>Controls</h3>
+                        <table class="main">
+                            <tbody>
+                                <tr>
+                                    <td><str string-id="1370">Analog Sensitivity</str></td>
+                                    <td>
+                                        <div class="slider-row">
+                                            <input type="range" min="1" max="101" data-value="game.gamepad_sensitivity" onchange="game-sensitivity" style="flex: 1"/>
+                                            <label class="slider-value">{{game.gamepad_sensitivity}}</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><str string-id="470">Smoothing</str></td>
+                                    <td>
+                                        <div class="slider-row">
+                                            <input type="range" min="1" max="200" data-value="video.smoothing" onchange="smoothing" style="flex: 1"/>
+                                            <label class="slider-value">{{video.smoothing}}</label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id="disable-wasd" type="checkbox" data-checked="game.disable_wasd" onchange="game-disablewasd"/>
+                                        <label for="disable-wasd"><str string-id="1372">Disable WASD</str></label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id="enable-gamepad" type="checkbox" data-checked="game.enable_gamepad" onchange="game-enablegamepad"/>
+                                        <label for="enable-gamepad"><str string-id="1368">Enable Gamepad</str></label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id="enable-gamepad-vibration" type="checkbox" data-checked="game.gamepad_vibration" onchange="game-vibration"/>
+                                        <label for="enable-gamepad-vibration"><str string-id="1369">Enable Gamepad Vibration</str></label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id="disable-camera-shake" type="checkbox" data-checked="game.disable_camera_shake" onchange="game-disable-camera-shake"/>
+                                        <label for="disable-camera-shake">Disable camera shake</label>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Gameplay -->
+                    <div class="settings-group">
+                        <h3><str string-id="776">Gameplay</str></h3>
+                        <table class="main">
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id="hide-shop-names" type="checkbox" data-checked="game.hide_shop_names" onchange="game-hideshopnames"/>
+                                        <label for="hide-shop-names"><str string-id="1373">Hide shop names</str></label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id="show-shop-viewed" type="checkbox" data-checked="game.show_shop_viewed" onchange="game-shopviewed"/>
+                                        <label for="show-shop-viewed"><str string-id="1374">Show shop viewed</str></label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id="auto-accept-res" type="checkbox" data-checked="interface.auto_accept_res" onchange="interface-auto-accept-res"/>
+                                        <label for="auto-accept-res">Automatically accept Resurrection</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id="target-enemy-summon" type="checkbox" data-checked="game.target_enemy_summon" onchange="game-target-enemy-summon"/>
+                                        <label for="target-enemy-summon">Target Enemy Summons</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id="enable-avatar-menu" type="checkbox" data-checked="game.avatar_menu" onchange="game-avatarmenu"/>
+                                        <label for="enable-avatar-menu">Enable avatar menu</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id="show-self-effects" type="checkbox" data-checked="game.show_self_effects" onchange="game-show-self-effects"/>
+                                        <label for="show-self-effects">Show self effects</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id="show-other-effects" type="checkbox" data-checked="game.show_other_effects" onchange="game-show-other-effects"/>
+                                        <label for="show-other-effects">Show other players effects</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id="skip-planet-cutscene" type="checkbox" data-checked="game.skip_planet_cutscene" onchange="game-skip-planet-cutscene"/>
+                                        <label for="skip-planet-cutscene">Skip planet cutscene.</label>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Integration -->
+                    <div class="settings-group">
+                        <h3>Integration</h3>
+                        <table class="main">
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id="enable-discord-integration" type="checkbox" data-checked="game.enable_discord_integration" onchange="game-enable-discord-integration"/>
+                                        <label for="enable-discord-integration">Enable Discord integration (restart required)</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id="screenshot-enabled" type="checkbox" data-checked="video.screenshot_enabled" onchange="screenshot-enabled"/>
+                                        <label for="screenshot-enabled"><str string-id="1448">Enable Screenshots</str></label>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </panel>
+
+            <!-- ===================== KEY BINDINGS ===================== -->
+            <tab class="default">Key Bindings</tab>
+            <panel class="content-box">
+                <div class="options-panel" data-model="options-data">
+
+                    <details open>
+                        <summary>Movement</summary>
+                        <table class="keybind-table">
+                            <thead><tr><td></td><td>Primary</td><td>Secondary</td></tr></thead>
+                            <tr data-for="row : kb_movement">
+                                <td>{{row.display_name}}</td>
+                                <td><button class="default" data-event-click="keybind_start(row.action_id, 0)">{{row.primary_label}}</button></td>
+                                <td><button class="default" data-event-click="keybind_start(row.action_id, 1)">{{row.secondary_label}}</button></td>
+                            </tr>
+                        </table>
+                    </details>
+
+                    <details open>
+                        <summary>Combat / Actions</summary>
+                        <table class="keybind-table">
+                            <thead><tr><td></td><td>Primary</td><td>Secondary</td></tr></thead>
+                            <tr data-for="row : kb_combat">
+                                <td>{{row.display_name}}</td>
+                                <td><button class="default" data-event-click="keybind_start(row.action_id, 0)">{{row.primary_label}}</button></td>
+                                <td><button class="default" data-event-click="keybind_start(row.action_id, 1)">{{row.secondary_label}}</button></td>
+                            </tr>
+                        </table>
+                    </details>
+
+                    <details>
+                        <summary>Window Shortcuts</summary>
+                        <table class="keybind-table">
+                            <thead><tr><td></td><td>Primary</td><td>Secondary</td></tr></thead>
+                            <tr data-for="row : kb_ui">
+                                <td>{{row.display_name}}</td>
+                                <td><button class="default" data-event-click="keybind_start(row.action_id, 0)">{{row.primary_label}}</button></td>
+                                <td><button class="default" data-event-click="keybind_start(row.action_id, 1)">{{row.secondary_label}}</button></td>
+                            </tr>
+                        </table>
+                    </details>
+
+                    <details>
+                        <summary>Camera</summary>
+                        <table class="keybind-table">
+                            <thead><tr><td></td><td>Primary</td><td>Secondary</td></tr></thead>
+                            <tr data-for="row : kb_camera">
+                                <td>{{row.display_name}}</td>
+                                <td><button class="default" data-event-click="keybind_start(row.action_id, 0)">{{row.primary_label}}</button></td>
+                                <td><button class="default" data-event-click="keybind_start(row.action_id, 1)">{{row.secondary_label}}</button></td>
+                            </tr>
+                        </table>
+                    </details>
+
+                    <details>
+                        <summary>Quickbar One</summary>
+                        <table class="keybind-table">
+                            <thead><tr><td></td><td>Primary</td><td>Secondary</td></tr></thead>
+                            <tr data-for="row : kb_quickbar">
+                                <td>{{row.display_name}}</td>
+                                <td><button class="default" data-event-click="keybind_start(row.action_id, 0)">{{row.primary_label}}</button></td>
+                                <td><button class="default" data-event-click="keybind_start(row.action_id, 1)">{{row.secondary_label}}</button></td>
+                            </tr>
+                        </table>
+                    </details>
+
+                    <details>
+                        <summary>Quickbar Two</summary>
+                        <table class="keybind-table">
+                            <thead><tr><td></td><td>Primary</td><td>Secondary</td></tr></thead>
+                            <tr data-for="row : kb_quickbar_ext">
+                                <td>{{row.display_name}}</td>
+                                <td><button class="default" data-event-click="keybind_start(row.action_id, 0)">{{row.primary_label}}</button></td>
+                                <td><button class="default" data-event-click="keybind_start(row.action_id, 1)">{{row.secondary_label}}</button></td>
+                            </tr>
+                        </table>
+                    </details>
+
+                    <details>
+                        <summary>Quickbar Switching</summary>
+                        <table class="keybind-table">
+                            <thead><tr><td></td><td>Primary</td><td>Secondary</td></tr></thead>
+                            <tr data-for="row : kb_quickbar_pages">
+                                <td>{{row.display_name}}</td>
+                                <td><button class="default" data-event-click="keybind_start(row.action_id, 0)">{{row.primary_label}}</button></td>
+                                <td><button class="default" data-event-click="keybind_start(row.action_id, 1)">{{row.secondary_label}}</button></td>
+                            </tr>
+                        </table>
+                    </details>
+
+                    <div class="button-row" style="justify-content: center; margin-top: 8dp;">
+                        <button class="default" data-event-click="keybind_reset_defaults()">Reset to Defaults</button>
+                    </div>
+
+                </div>
+            </panel>
+
+            <!-- ===================== GAMEPAD ===================== -->
+            <tab class="default">Gamepad</tab>
+            <panel class="content-box">
+                <div class="options-panel" data-model="options-data">
+
+                    <div class="settings-group">
+                        <h3>Layer Modifiers</h3>
+                        <table class="keybind-table">
+                            <thead><tr><td></td><td>Button</td><td></td></tr></thead>
+                            <tr>
+                                <td>Layer 1</td>
+                                <td><button class="default" style="width: 180dp" data-event-click="gp_layer_rebind(1)">{{gp_layer1_key}}</button></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Layer 2</td>
+                                <td><button class="default" style="width: 180dp" data-event-click="gp_layer_rebind(2)">{{gp_layer2_key}}</button></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3>Sticks</h3>
+                        <table class="main">
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id="gp-swap-sticks" type="checkbox" data-checked="game.swap_sticks" onchange="game-swap-sticks"/>
+                                        <label for="gp-swap-sticks">Swap left/right sticks (walking ↔ camera)</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id="gp-invert-camera-y" type="checkbox" data-checked="game.invert_right_y" onchange="game-invert-right-y"/>
+                                        <label for="gp-invert-camera-y">Invert camera Y axis</label>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <details open>
+                        <summary>Combat / Actions</summary>
+                        <table class="keybind-table">
+                            <thead><tr><td></td><td>Button</td><td></td></tr></thead>
+                            <tr data-for="row : gp_combat">
+                                <td>{{row.display_name}}</td>
+                                <td><button class="default" data-event-click="gp_bind_start(row.action_id)">{{row.label}}</button></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </details>
+
+                    <details>
+                        <summary>Window Shortcuts</summary>
+                        <table class="keybind-table">
+                            <thead><tr><td></td><td>Button</td><td></td></tr></thead>
+                            <tr data-for="row : gp_ui">
+                                <td>{{row.display_name}}</td>
+                                <td><button class="default" data-event-click="gp_bind_start(row.action_id)">{{row.label}}</button></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </details>
+
+                    <details>
+                        <summary>Quickbar (Layer 1: {{gp_layer1_key}})</summary>
+                        <table class="keybind-table">
+                            <thead><tr><td></td><td>Button</td><td></td></tr></thead>
+                            <tr data-for="row : gp_quickbar_l1">
+                                <td>{{row.display_name}}</td>
+                                <td><button class="default" data-event-click="gp_quickbar_bind_start(row.action_id, 1)">{{row.label}}</button></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </details>
+
+                    <details>
+                        <summary>Quickbar (Layer 2: {{gp_layer2_key}})</summary>
+                        <table class="keybind-table">
+                            <thead><tr><td></td><td>Button</td><td></td></tr></thead>
+                            <tr data-for="row : gp_quickbar_l2">
+                                <td>{{row.display_name}}</td>
+                                <td><button class="default" data-event-click="gp_quickbar_bind_start(row.action_id, 2)">{{row.label}}</button></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </details>
+
+                    <details>
+                        <summary>Quickbar (Layer 1 + Layer 2)</summary>
+                        <table class="keybind-table">
+                            <thead><tr><td></td><td>Button</td><td></td></tr></thead>
+                            <tr data-for="row : gp_quickbar_l1l2">
+                                <td>{{row.display_name}}</td>
+                                <td><button class="default" data-event-click="gp_quickbar_bind_start(row.action_id, 3)">{{row.label}}</button></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </details>
+
+                    <div class="button-row" style="justify-content: center; margin-top: 8dp;">
+                        <button class="default" data-event-click="gp_reset_defaults()">Reset to Defaults</button>
+                    </div>
+
+                </div>
+            </panel>
+
+            <!-- ===================== CHAT ===================== -->
+            <tab id="chat-options-tab" class="default">Chat</tab>
+            <panel class="content-box">
+                <div id="chat-options-panel" class="options-panel" data-model="chat-box">
+
+                    <div>
+
+                        <!-- Chat Settings -->
+                        <div class="settings-group">
+                            <h3>Chat Settings</h3>
+                            <table class="main">
+                                <tr>
+                                    <td>
+                                        <label id="font-size">Font Size</label>
+                                    </td>
+                                    <td>
+                                        <input id="font-size" type="range" min="4" max="15" data-value="font_size" data-event-change="font_size_changed()" class="big" onchange="" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <input id="show-timestamps" type="checkbox" data-checked="show_message_timestamps" data-event-change="show_message_timestamps_changed()" />
+                                        <label for="show-timestamps">Show message timestamps</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <div class="tooltip">
+                                            <input id="retain-focus-after-send" type="checkbox" data-checked="retain_focus_after_send" />
+                                            <label for="retain-focus-after-send">Retain input focus after sending messages</label>
+                                            <span class="tooltiptext" style="left: 0">If this option is enabled, after sending a message you will be able to continue to type another message.</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Message Colours (steampunk add-on; script at the end of <head>) -->
+                        <details>
+                            <summary>Message Colours</summary>
+                            <div id="sp-chat-colors">Lua has not run in this window</div>
+                            <div id="sp-chat-colors-status" style="font-size: 11dp; color: rgb(191, 145, 122);"></div>
+                        </details>
+
+                        <!-- Chat Box Tabs -->
+                        <div class="settings-group">
+                            <h3>Chat Box Tabs</h3>
+                            <div style="display: flex; font-effect: outline(1dp black); flex-direction: row; width: 100%; align-items: flex-start; flex-wrap: wrap;">
+                                <button class="default" data-for="tabs" data-class-selected="tab_index == it_index" data-event-click="tab_index = it_index; current_tab_changed()" style="min-width: 5dp;">{{it.name}}</button>
+                                <button class="default" style="min-width: 5dp;" data-event-click="add_tab()">+</button>
+                            </div>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td style="width: 150dp;">Name</td>
+                                        <td><input id="tab-name" type="text" data-value="tabs[tab_index].name" style="width: 100%;" maxlength="30" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 150dp;">Send Message Type</td>
+                                        <td>
+                                            <select style="width:150dp;" data-value="tabs[tab_index].default_input_type" data-event-change="default_input_type_changed()">
+                                                <option value="-1">Do not change</option>
+                                                <option value="0">Chat</option>
+                                                <option value="1">"Whisper</option>
+                                                <option value="2">!Shout</option>
+                                                <option value="3">#Party</option>
+                                                <option value="4">@Clan</option>
+                                                <option value="5">~Group</option>
+                                                <option value="6">$Trade</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <br />
+                            <div class="checkbox-grid">
+                                <span><input id="filter-chat" type="checkbox" data-checked="tabs[tab_index].filter.chat" data-event-change="tab_filter_changed()" /><label for="filter-chat">Chat</label></span>
+                                <span><input id="filter-shout" type="checkbox" data-checked="tabs[tab_index].filter.shout" data-event-change="tab_filter_changed()" /><label for="filter-shout">Shout</label></span>
+                                <span><input id="filter-whisper" type="checkbox" data-checked="tabs[tab_index].filter.whisper" data-event-change="tab_filter_changed()" /><label for="filter-whisper">Whisper</label></span>
+                                <span><input id="filter-trade" type="checkbox" data-checked="tabs[tab_index].filter.trade" data-event-change="tab_filter_changed()" /><label for="filter-trade">Trade</label></span>
+                                <span><input id="filter-party" type="checkbox" data-checked="tabs[tab_index].filter.party" data-event-change="tab_filter_changed()" /><label for="filter-party">Party</label></span>
+                                <span><input id="filter-group" type="checkbox" data-checked="tabs[tab_index].filter.group" data-event-change="tab_filter_changed()" /><label for="filter-group">Group</label></span>
+                                <span><input id="filter-clan" type="checkbox" data-checked="tabs[tab_index].filter.clan" data-event-change="tab_filter_changed()" /><label for="filter-clan">Clan</label></span>
+                                <span><input id="filter-quest" type="checkbox" data-checked="tabs[tab_index].filter.quest" data-event-change="tab_filter_changed()" /><label for="filter-quest">Quest</label></span>
+                                <span><input id="filter-system" type="checkbox" data-checked="tabs[tab_index].filter.system" data-event-change="tab_filter_changed()" /><label for="filter-system">System</label></span>
+                                <span class="wide"><input id="filter-clan-notification" type="checkbox" data-checked="tabs[tab_index].filter.clan_notification" data-event-change="tab_filter_changed()" /><label for="filter-clan-notification">Clan Notifications</label></span>
+                                <span class="wide"><input id="filter-social-notification" type="checkbox" data-checked="tabs[tab_index].filter.social_notification" data-event-change="tab_filter_changed()" /><label for="filter-social-notification">Social Notifications</label></span>
+                            </div>
+                            <div class="button-row">
+                                <button class="default" style="min-width: 5dp;" data-event-click="delete_tab()">Delete Tab</button>
+                            </div>
+                        </div>
+
+                        <!-- System Tab -->
+                        <div class="settings-group">
+                            <h3>System Tab</h3>
+                            <input id="show-system-tab" type="checkbox" data-checked="show_system_tab" />
+                            <label for="show-system-tab">Show System Tab</label>
+
+                            <h3 style="margin-top: 6dp">System Tab Filter</h3>
+                            <div class="checkbox-grid">
+                                <span><input id="s-filter-chat" type="checkbox" data-checked="system_tab_filter.chat" data-event-change="system_tab_filter_changed()" /><label for="s-filter-chat">Chat</label></span>
+                                <span><input id="s-filter-shout" type="checkbox" data-checked="system_tab_filter.shout" data-event-change="system_tab_filter_changed()" /><label for="s-filter-shout">Shout</label></span>
+                                <span><input id="s-filter-whisper" type="checkbox" data-checked="system_tab_filter.whisper" data-event-change="system_tab_filter_changed()" /><label for="s-filter-whisper">Whisper</label></span>
+                                <span><input id="s-filter-trade" type="checkbox" data-checked="system_tab_filter.trade" data-event-change="system_tab_filter_changed()" /><label for="s-filter-trade">Trade</label></span>
+                                <span><input id="s-filter-party" type="checkbox" data-checked="system_tab_filter.party" data-event-change="system_tab_filter_changed()" /><label for="s-filter-party">Party</label></span>
+                                <span><input id="s-filter-group" type="checkbox" data-checked="system_tab_filter.group" data-event-change="system_tab_filter_changed()" /><label for="s-filter-group">Group</label></span>
+                                <span><input id="s-filter-clan" type="checkbox" data-checked="system_tab_filter.clan" data-event-change="system_tab_filter_changed()" /><label for="s-filter-clan">Clan</label></span>
+                                <span><input id="s-filter-quest" type="checkbox" data-checked="system_tab_filter.quest" data-event-change="system_tab_filter_changed()" /><label for="s-filter-quest">Quest</label></span>
+                                <span><input id="s-filter-system" type="checkbox" data-checked="system_tab_filter.system" data-event-change="system_tab_filter_changed()" /><label for="s-filter-system">System</label></span>
+                                <span class="wide"><input id="s-filter-clan-notification" type="checkbox" data-checked="system_tab_filter.clan_notification" data-event-change="system_tab_filter_changed()" /><label for="s-filter-clan-notification">Clan Notifications</label></span>
+                                <span class="wide"><input id="s-filter-social-notification" type="checkbox" data-checked="system_tab_filter.social_notification" data-event-change="system_tab_filter_changed()" /><label for="s-filter-social-notification">Social Notifications</label></span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Chat Bubbles -->
+                    <div class="settings-group">
+                        <h3>Chat Bubbles</h3>
+                        <input id="show-chat-bubbles" type="checkbox" data-checked="show_chat_bubbles" />
+                        <label for="show-chat-bubbles">Show Chat Bubbles</label>
+
+                        <h3 style="margin-top: 6dp">Chat Bubble Filter</h3>
+                        <div class="checkbox-grid">
+                            <span>
+                                <input id="b-filter-chat" type="checkbox" data-checked="chat_bubble_filter.chat" />
+                                <label for="b-filter-chat">Chat</label>
+                            </span>
+                            <span>
+                                <input id="b-filter-shout" type="checkbox" data-checked="chat_bubble_filter.shout"/>
+                                <label for="b-filter-shout">Shout</label>
+                            </span>
+                            <span>
+                                <input id="b-filter-party" type="checkbox" data-checked="chat_bubble_filter.party" />
+                                <label for="b-filter-party">Party</label>
+                            </span>
+                            <span>
+                                <input id="b-filter-group" type="checkbox" data-checked="chat_bubble_filter.group" />
+                                <label for="b-filter-group">Group</label>
+                            </span>
+                            <span>
+                                <input id="b-filter-clan" type="checkbox" data-checked="chat_bubble_filter.clan" />
+                                <label for="b-filter-clan">Clan</label>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 4dp;">
+                        <button class="default" style="min-width: 5dp;" data-event-click="reset_default()">Reset chat settings to default</button>
+                    </div>
+
+                </div>
+            </panel>
+            <!-- ===================== UI (theme add-ons) ===================== -->
+            <tab class="default">UI</tab>
+            <panel class="content-box">
+                <div class="options-panel">
+                        <div class="settings-group">
+                            <h3>Dropped Items</h3>
+                            <table class="main">
+                                <tbody>
+                                        <tr>
+                                            <td>Item names</td>
+                                            <td>
+                                                <input id="item-name" type="checkbox" data-checked="game.show_item_name" onchange="game-itemname"/>
+                                                <label for="item-name"><str string-id="1367">Show dropped item name</str></label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Pickup status</td>
+                                            <td>
+                                                <input id="pickup-status" type="checkbox" data-checked="game.show_item_status" onchange="game-itemstatus"/>
+                                                <label for="pickup-status"><str string-id="1371">Show item pickup status</str></label>
+                                            </td>
+                                        </tr>
+                                        <!-- Label background slider (script at the end of <head>); moved here from the Game tab; shown while item names are on -->
+                                        <tr data-if="game.show_item_name">
+                                            <td>Label background</td>
+                                            <td>
+                                                <div class="slider-row">
+                                                    <input id="sp-label-alpha" type="range" min="0" max="10" step="1" value="0" style="flex: 1" />
+                                                    <label class="slider-value" id="sp-label-alpha-value">No Lua</label>
+                                                </div>
+                                                <div id="sp-label-alpha-debug" style="font-size: 11dp; color: rgb(191, 145, 122);"></div>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="settings-group">
+                            <h3>Minimap</h3>
+                            <table class="main">
+                                <tbody>
+                                    <!-- Steampunk add-on: heading-up minimap (script at the end of <head>) -->
+                                    <tr>
+                                        <td>Minimap</td>
+                                        <td>
+                                            <input id="sp-mm-heading-up" type="checkbox" />
+                                            <label for="sp-mm-heading-up">Turn map with player (facing direction always up)</label>
+                                            <div id="sp-mm-status" style="font-size: 11dp; color: rgb(191, 145, 122);"></div>
+                                        </td>
+                                    </tr>
+                                    <!-- Steampunk add-on: element chart under the minimized minimap (script at the end of <head>) -->
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <input id="sp-el-chart-on" type="checkbox" checked="" />
+                                            <label for="sp-el-chart-on">Element chart under the minimized minimap</label>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="settings-group">
+                            <h3>Windows</h3>
+                            <table class="main">
+                                <tbody>
+                                    <!-- Steampunk add-on: pull every window back into view (script at the end of <head>) -->
+                                    <tr>
+                                        <td>Windows</td>
+                                        <td>
+                                            <button id="sp-windows-onscreen" class="default">Bring all windows on screen</button>
+                                            <div id="sp-windows-status" style="font-size: 11dp; color: rgb(191, 145, 122);"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                </div>
+            </panel>
+        </tabset>
+    </body>
+</rml>

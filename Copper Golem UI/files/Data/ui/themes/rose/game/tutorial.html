@@ -1,0 +1,31 @@
+<rml>
+    <head>
+        <title>Help</title>
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+        <style>
+            body { width: 392dp; max-width: 95vw; }
+            #tutorial-viewport { height: 80dp; overflow: hidden; }
+            #tutorial-text { display: block; position: relative; line-height: 20dp; white-space: pre-wrap; }
+            #next.blink { animation: 0.5s cubic-in-out infinite alternate next-page; }
+            @keyframes next-page {
+                from { image-color: rgba(190, 190, 190, 255); }
+                to { image-color: white; }
+            }
+        </style>
+    </head>
+    <body template="window-fixed-size" id="tutorial">
+        <div data-model="tutorial">
+        <div class="content-box ui-section">
+            <div id="tutorial-viewport" data-style-height="page_height + 'px'"><str id="tutorial-text" data-attr-notify-message="string_id" data-style-line-height="line_height + 'px'" data-style-top="offset + 'px'"></str></div>
+        </div>
+        <div class="ui-pages ui-footer">
+            <button class="left-sm" id="previous" onclick="previous" title="Previous page" data-attrif-disabled="!has_previous"></button>
+            <span id="page" class="ui-page">{{ page_label }}</span>
+            <button class="right-sm" id="next" onclick="next" title="Next page" data-attrif-disabled="!has_next" data-class-blink="has_next"></button>
+        </div>
+        </div>
+    </body>
+</rml>

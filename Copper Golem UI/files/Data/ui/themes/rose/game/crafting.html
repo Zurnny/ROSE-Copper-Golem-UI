@@ -1,0 +1,558 @@
+<rml>
+  <head>
+      <link type="text/rcss" href="../styles/spritesheet_itemicon.css" />
+      <link type="text/rcss" href="../styles/spritesheet_socketgem.css" />
+      <link type="text/rcss" href="../styles/item_slot.css" />
+    <title>Crafting</title>
+
+    <link type="text/template" href="../templates/window-small.html" />
+    <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+    <link type="text/rcss" href="../styles/steampunk.css" />
+
+    <style>
+      body {
+        width: 800dp;
+      }
+
+      .main-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        margin: 5dp;
+      }
+
+      #submain-container {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+      }
+
+      .sub-container {
+        padding: 5dp;
+      }
+
+      .inner-container {
+        margin: 5dp;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+      }
+
+      .material-container {
+        margin: 5dp;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        align-items: center;
+      }
+
+      .enhancer-container {
+        margin: 5dp;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 15dp;
+      }
+
+      .mp-container {
+        margin: 5dp;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        vertical-align: middle;
+      }
+
+      .risk-container {
+        gap: 5dp;
+        margin: 5dp;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .crafting-container {
+        margin: 5dp;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      label.item-name {
+        text-align: center;
+        vertical-align: middle;
+        margin-left: 5dp;
+        margin-right: 11dp;
+        min-width: 295dp;
+        max-width: 295dp;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-weight: 700;
+      }
+
+      span.item-name {
+        height: 16dp;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      label.custom {
+        padding-top: 3dp;
+        padding-bottom: 1dp;
+        font-size: 12dp;
+        font-effect: outline(1dp black);
+        color: rgb(231, 154, 116);
+      }
+
+      label.amount {
+        width: 40dp;
+      }
+
+      span.sub-title {
+        font-weight: 800;
+        color: rgb(231, 154, 116);
+      }
+
+      .warn-text {
+        margin: 5dp;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .warn-container {
+        margin: 5dp;
+        border-radius: 5dp;
+        background-color: #0000008b;
+        border-width: 1dp;
+        border-color: rgb(130, 130, 130);
+      }
+
+      .color-red {
+        color: rgb(255, 0, 0) !important;
+      }
+
+      option:disabled {
+        color: gray;
+      }
+
+      select#make-type {
+        width: 200dp;
+      }
+
+      select option:not(option[disabled]):hover > * {
+        color: #e75c17;
+      }
+
+      #item-list {
+        overflow-y: auto;
+        height: 360dp;
+      }
+
+      .mat-prog {
+        display: flex;
+        flex-direction: column;
+        gap: 2dp;
+        margin: 5dp;
+      }
+
+      @keyframes gauge-red {
+        from {
+          background-color: red;
+        }
+
+        to {
+          background-color: rgb(242, 97, 24);
+        }
+      }
+
+      gauge {
+        margin-right: 11dp;
+        margin-left: 6dp;
+        width: 292dp;
+        height: 5dp;
+        border: 1dp #47454c;
+      }
+
+      img.arrow {
+        position: relative;
+        top: -5dp;
+        width: 7dp;
+        height: 5dp;
+        image-color: red;
+      }
+
+      gauge.red fill {
+        background-color: #f00;
+        animation: 0.5s cubic-in-out infinite alternate gauge-red;
+      }
+
+      gauge fill {
+        background-color: #7ae857;
+      }
+
+      item-slot {
+        width: 40dp;
+        height: 40dp;
+        display: block;
+      }
+
+      item-slot.material {
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      span.mat-quantity {
+        position: relative;
+        z-index: 1;
+        pointer-events: none;
+        text-align: center;
+        vertical-align: middle;
+        line-height: 40dp;
+      }
+
+      button.amount {
+        margin-top: -7dp;
+        margin-right: -10dp;
+        width: 30dp;
+        height: 27dp;
+        decorator: image(craftammount-button-n);
+      }
+
+      button.amount:disabled,
+      button[disabled] {
+        cursor: normal;
+        decorator: image(craftammount-button-d);
+      }
+
+      button.amount:not(button[disabled]):hover {
+        decorator: image(craftammount-button-h);
+      }
+
+      button.amount:not(button[disabled]):active {
+        decorator: image(craftammount-button-a);
+      }
+    </style>
+  </head>
+
+  <body id="game-crafting" class="window-fixed-size">
+    <div data-model="crafting">
+      <handle
+        class="window-title"
+        move_target="#document"
+        id="window-title-text"
+      ></handle>
+      <button
+        class="window-title-close"
+        onclick="close"
+        data-attrif-disabled="is_crafting"
+      ></button>
+    </div>
+
+    <div id="window-content">
+      <div class="main-container" data-model="crafting">
+        <!-- Make Type -->
+        <div class="risk-container">
+          <span class="sub-title">
+            <fc_gold>Type</fc_gold>
+          </span>
+          <select
+            id="pat-make-type"
+            data-if="make_type == 61"
+            data-value="selected_make_class"
+            onchange="set_make_class"
+            data-attrif-disabled="is_crafting"
+          >
+            <option value="511" data-attrif-selected="selected_make_class == 511" data-attrif-disabled="skill_level &lt; 1">Cart Body</option>
+            <option value="521" data-attrif-selected="selected_make_class == 521" data-attrif-disabled="skill_level &lt; 1">Cart Engine</option>
+            <option value="531" data-attrif-selected="selected_make_class == 531" data-attrif-disabled="skill_level &lt; 1">Cart Wheels</option>
+            <option value="571" data-attrif-selected="selected_make_class == 571" data-attrif-disabled="skill_level &lt; 2">Cart Weapons</option>
+            <option value="551" data-attrif-selected="selected_make_class == 551" data-attrif-disabled="skill_level &lt; 2">Cart Accessories</option>
+            <option value="581" data-attrif-selected="selected_make_class == 581" data-attrif-disabled="skill_level &lt; 1">Castle Gear Body</option>
+            <option value="591" data-attrif-selected="selected_make_class == 591" data-attrif-disabled="skill_level &lt; 2">Castle Gear Engine</option>
+            <option value="601" data-attrif-selected="selected_make_class == 601" data-attrif-disabled="skill_level &lt; 1">Castle Gear Leg</option>
+            <option value="611" data-attrif-selected="selected_make_class == 611" data-attrif-disabled="skill_level &lt; 2">Castle Gear Weapons</option>
+          </select>
+          <select
+            id="make-type"
+            data-if="make_type != 61"
+            data-value="selected_make_class"
+            onchange="set_make_class"
+            data-attrif-disabled="is_crafting"
+          >
+            <option
+              data-for="make_class, index : class_list"
+              data-value="make_class.id"
+              data-attrif-selected="index == 0"
+            >
+              <span>{{make_class.name}}</span>
+            </option>
+          </select>
+        </div>
+
+        <div id="submain-container">
+          <div class="main-container">
+            <!-- Item List -->
+            <div class="window-pane sub-container">
+              <span class="sub-title"> </span>
+              <listbox
+                id="item-list"
+                data-value="selected_item"
+                onchange="select_item"
+                data-attrif-disabled="is_crafting"
+              >
+                <listbox-item
+                  class="inner-container"
+                  data-for="item, item_index : item_list"
+                  data-value="item_index"
+                  data-if="item.id != 0"
+                  data-attrif-disabled="is_crafting && selected_item != item_index"
+                  data-selected_item="selected_item"
+                >
+                  <item-slot
+                    data-attr-item-id="item.id"
+                    data-attr-item-type="item.type"
+                    item-quantity="1" hide-quantity data-attrif-item-actions="!preview"
+                  />
+                  <label class="textarea item-name"
+                    ><span
+                      class="item-name"
+                      data-style-color="item.color"
+                      style="width: 295dp"
+                      >{{item.name}}</span
+                    ></label
+                  >
+                </listbox-item>
+              </listbox>
+            </div>
+          </div>
+
+          <div class="main-container">
+            <!-- Target Item -->
+            <div class="window-pane sub-container">
+              <span class="sub-title">
+                <str string-id="1304" />
+              </span>
+              <div class="inner-container">
+                <item-slot
+                  id="target-item"
+                  data-attr-item-id="make_item.id"
+                  data-attr-item-type="make_item.type"
+                  item-quantity="1" hide-quantity data-attrif-item-actions="!preview"
+                  data-attr-item-durability="make_item.durability"
+                />
+                <label
+                  class="textarea item-name"
+                  data-style-color="make_item.color"
+                  >{{make_item.name}}<str
+                /></label>
+              </div>
+            </div>
+
+            <!-- Materials -->
+            <div class="window-pane sub-container">
+              <span class="sub-title">
+                <str string-id="1305" />
+              </span>
+              <div class="inner-container">
+                <item-slot id="material-1" class="material"
+                  ><span
+                    data-if="material_list[0].quantity > 0 && material_list[0].id == 0 && !material_list[0].attached"
+                    class="mat-quantity"
+                    >{{material_list[0].quantity}}</span
+                  ></item-slot
+                >
+                <div class="mat-prog">
+                  <label
+                    class="textarea item-name"
+                    data-style-color="material_list[0].color"
+                    >{{material_list[0].name}}</label
+                  >
+                  <gauge
+                    id="gauge-1"
+                    gvalue="0"
+                    gmax="1000"
+                    animation-duration="800"
+                  >
+                    <img
+                      class="arrow"
+                      sprite="up-arrow"
+                      data-if="material_list[0].id != 0 || material_list[0].item_class != 0"
+                      data-style-left="(287 * success_points[0] / 1000) + 'dp'"
+                    />
+                  </gauge>
+                </div>
+              </div>
+              <div class="inner-container">
+                <item-slot id="material-2" />
+                <div class="mat-prog">
+                  <label
+                    class="textarea item-name"
+                    data-style-color="material_list[1].color"
+                    >{{material_list[1].name}}</label
+                  >
+                  <gauge
+                    id="gauge-2"
+                    gvalue="0"
+                    gmax="1000"
+                    animation-duration="800"
+                  >
+                    <img
+                      class="arrow"
+                      sprite="up-arrow"
+                      data-if="material_list[1].id != 0"
+                      data-style-left="(287 * success_points[1] / 1000) + 'dp'"
+                    />
+                  </gauge>
+                </div>
+              </div>
+              <div class="inner-container">
+                <item-slot id="material-3" />
+                <div class="mat-prog">
+                  <label
+                    class="textarea item-name"
+                    data-style-color="material_list[2].color"
+                    >{{material_list[2].name}}</label
+                  >
+                  <gauge
+                    id="gauge-3"
+                    gvalue="0"
+                    gmax="1000"
+                    animation-duration="800"
+                  >
+                    <img
+                      class="arrow"
+                      sprite="up-arrow"
+                      data-if="material_list[2].id != 0"
+                      data-style-left="((287 * success_points[2]) / 1000) + 'dp'"
+                    />
+                  </gauge>
+                </div>
+              </div>
+              <div class="inner-container">
+                <item-slot id="material-4" />
+                <div class="mat-prog">
+                  <label
+                    class="textarea item-name"
+                    data-style-color="material_list[3].color"
+                    >{{material_list[3].name}}</label
+                  >
+                  <gauge
+                    id="gauge-4"
+                    gvalue="0"
+                    gmax="1000"
+                    animation-duration="800"
+                  >
+                    <img
+                      class="arrow"
+                      sprite="up-arrow"
+                      data-if="material_list[3].id != 0"
+                      data-style-left="(287 * success_points[3] / 1000) + 'dp'"
+                    />
+                  </gauge>
+                </div>
+              </div>
+              <div class="mp-container" data-if="consume_mp > 0">
+                <span>MP</span>
+                <label class="custom">
+                  <fc_blue>{{ format_money(consume_mp) }}</fc_blue>
+                </label>
+              </div>
+            </div>
+
+            <!-- Crafting -->
+            <div class="crafting-container">
+              <div class="mp-container">
+                <div class="mp-container">
+                  <button id="amount" class="amount" onclick="set-amount" />
+                  <label class="custom amount">{{craft_amount}}</label>
+                </div>
+                <div class="mp-container">
+                  <img id="suc-rate" sprite="percent-icon" />
+                  <label class="custom">{{success_rate | format(2)}}%</label>
+                </div>
+              </div>
+
+              <div class="tooltip" data-if="!is_crafting">
+                <button
+                  class="default accept"
+                  onclick="start"
+                  data-attrif-disabled="!is_ready || is_crafting"
+                >
+                  <str string-id="894" />
+                </button>
+                <span
+                  class="tooltiptext"
+                  data-if="!is_ready && make_code > 0 && !is_crafting"
+                >
+                  <div class="warn-text" data-if="make_code == 1">
+                    <img
+                      id="suc-rate"
+                      sprite="warning-red-icon"
+                      width="16dp"
+                      height="16dp"
+                    />
+                    <span><str string-id="17" /></span>
+                  </div>
+                  <div class="warn-text" data-if="make_code == 2">
+                    <img
+                      id="suc-rate"
+                      sprite="warning-icon"
+                      width="16dp"
+                      height="16dp"
+                    />
+                    <span><str string-id="187" /></span>
+                  </div>
+                  <div class="warn-text" data-if="make_code == 3">
+                    <img
+                      id="suc-rate"
+                      sprite="warning-icon"
+                      width="16dp"
+                      height="16dp"
+                    />
+                    <span><str string-id="127" /></span>
+                  </div>
+                  <div class="warn-text" data-if="make_code == 4">
+                    <img
+                      id="suc-rate"
+                      sprite="warning-icon"
+                      width="16dp"
+                      height="16dp"
+                    />
+                    <span><str string-id="326" /></span>
+                  </div>
+                  <div class="warn-text" data-if="make_code == 5">
+                    <img
+                      id="suc-rate"
+                      sprite="warning-icon"
+                      width="16dp"
+                      height="16dp"
+                    />
+                    <span><str string-id="325" /></span>
+                  </div>
+                </span>
+              </div>
+
+              <button
+                class="default accept"
+                data-if="is_crafting"
+                onclick="cancel"
+                data-attrif-disabled="craft_amount <= 0 || cancel_craft"
+              >
+                <str string-id="1353" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</rml>

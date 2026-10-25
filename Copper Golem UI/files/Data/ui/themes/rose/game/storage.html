@@ -1,0 +1,83 @@
+<rml>
+    <head>
+        <title>Storage</title>
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/spritesheet_itemicon.css" />
+        <link type="text/rcss" href="../styles/spritesheet_socketgem.css" />
+        <link type="text/rcss" href="../styles/item_slot.css" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+        <style>
+            body { width: 372dp; max-width: 94vw; }
+            .storage-grid { width: 348dp; }
+            .storage-pages { display: flex; align-items: center; justify-content: center; gap: 8dp; margin-top: 8dp; }
+            .storage-pages button { margin: 0; }
+            #storage-page { min-width: 60dp; text-align: center; font-size: 13dp; }
+            .storage-actions { margin-top: 12dp; }
+        </style>
+    </head>
+    <body template="window-fixed-size" id="storage">
+        <div data-model="storage">
+        <div class="ui-tabs">
+            <button id="storage-tab-0" class="default" onclick="tab-0" data-class-active="tabs[0].active" data-attrif-disabled="!tabs[0].enabled">{{ tabs[0].label }}</button>
+            <button id="storage-tab-1" class="default" onclick="tab-1" data-class-active="tabs[1].active" data-attrif-disabled="!tabs[1].enabled">{{ tabs[1].label }}</button>
+            <button id="storage-tab-2" class="default" onclick="tab-2" data-class-active="tabs[2].active" data-attrif-disabled="!tabs[2].enabled">{{ tabs[2].label }}</button>
+            <button id="storage-tab-3" class="default" onclick="tab-3" data-class-active="tabs[3].active" data-attrif-disabled="!tabs[3].enabled">{{ tabs[3].label }}</button>
+        </div>
+        <div class="storage-grid ui-slot-grid">
+            <item-slot id="storage-slot-0" />
+            <item-slot id="storage-slot-1" />
+            <item-slot id="storage-slot-2" />
+            <item-slot id="storage-slot-3" />
+            <item-slot id="storage-slot-4" />
+            <item-slot id="storage-slot-5" />
+            <item-slot id="storage-slot-6" />
+            <item-slot id="storage-slot-7" />
+            <item-slot id="storage-slot-8" />
+            <item-slot id="storage-slot-9" />
+            <item-slot id="storage-slot-10" />
+            <item-slot id="storage-slot-11" />
+            <item-slot id="storage-slot-12" />
+            <item-slot id="storage-slot-13" />
+            <item-slot id="storage-slot-14" />
+            <item-slot id="storage-slot-15" />
+            <item-slot id="storage-slot-16" />
+            <item-slot id="storage-slot-17" />
+            <item-slot id="storage-slot-18" />
+            <item-slot id="storage-slot-19" />
+            <item-slot id="storage-slot-20" />
+            <item-slot id="storage-slot-21" />
+            <item-slot id="storage-slot-22" />
+            <item-slot id="storage-slot-23" />
+            <item-slot id="storage-slot-24" />
+            <item-slot id="storage-slot-25" />
+            <item-slot id="storage-slot-26" />
+            <item-slot id="storage-slot-27" />
+            <item-slot id="storage-slot-28" />
+            <item-slot id="storage-slot-29" />
+            <item-slot id="storage-slot-30" />
+            <item-slot id="storage-slot-31" />
+            <item-slot id="storage-slot-32" />
+            <item-slot id="storage-slot-33" />
+            <item-slot id="storage-slot-34" />
+            <item-slot id="storage-slot-35" />
+            <item-slot id="storage-slot-36" />
+            <item-slot id="storage-slot-37" />
+            <item-slot id="storage-slot-38" />
+            <item-slot id="storage-slot-39" />
+        </div>
+        <div class="storage-pages">
+            <button id="previous" class="left-sm" onclick="previous" title="Previous page" data-attrif-disabled="!previous_enabled" />
+            <span id="storage-page">{{ page }}</span>
+            <button id="next" class="right-sm" onclick="next" title="Next page" data-attrif-disabled="!next_enabled" />
+        </div>
+        <div id="storage-status" class="ui-status">{{ status }}</div>
+        <div class="ui-currency ui-footer"><img id="storage-currency" sprite="button-zulie-n" /><span id="storage-money">{{ money }}</span></div>
+        <div class="storage-actions ui-actions">
+            <button id="deposit" class="default" onclick="deposit" data-attrif-disabled="!deposit_enabled">{{ deposit_label }}</button>
+            <button id="withdraw" class="default" onclick="withdraw" data-attrif-disabled="!withdraw_enabled">{{ withdraw_label }}</button>
+        </div>
+        </div>
+    </body>
+</rml>

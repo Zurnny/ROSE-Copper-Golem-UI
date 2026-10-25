@@ -1,0 +1,262 @@
+<rml>
+
+    <head>
+        <title>Reinforcement</title>
+
+        <link type="text/template" href="../templates/window-small.html" />
+        <link type="text/rcss" href="../styles/spritesheet_itemicon.css" />
+        <link type="text/rcss" href="../styles/spritesheet_socketgem.css" />
+        <link type="text/rcss" href="../styles/item_slot.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            body {
+                width: 300dp;
+            }
+
+            .title {
+                margin: 5dp;
+            }
+
+            .slot-custom {
+                display: block;
+                width: 100%;
+                height: 100%;
+                decorator: linear-gradient(to top right, red, white, blue);
+            }
+
+            #main-container {
+                display: flex;
+                flex-direction: column;
+                margin: 5dp;
+                gap: 5dp;
+            }
+
+            .sub-container {
+                padding: 5dp;
+            }
+
+            .inner-container {
+                margin: 5dp;
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: flex-start;
+            }
+
+            .material-container {
+                margin: 5dp;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-evenly;
+                align-items: center;
+            }
+
+            .enhancer-container {
+                margin: 5dp;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                gap: 15dp;
+            }
+
+            .zulie-container {
+                margin: 5dp;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .risk-container {
+                margin: 5dp;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .reinforce-container {
+                margin: 5dp;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            label.item-name {
+                text-align: center;
+                margin-left: 5dp;
+                margin-right: 11dp;
+                flex: 1;
+            }
+
+            label.custom {
+                padding-top: 3dp;
+                padding-bottom: 1dp;
+                font-size: 12dp;
+                font-effect: outline(1dp black);
+                color: rgb(231, 154, 116);
+            }
+
+            span.sub-title {
+                font-weight: 800;
+                color: rgb(231, 154, 116);
+            }
+
+            .warn-text {
+                margin: 5dp;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .warn-container {
+                margin: 5dp;
+                border-radius: 5dp;
+                background-color: rgba(42, 40, 45, 170);
+                border-width: 1dp;
+                border-color: rgb(116, 53, 22);
+            }
+
+            .color-red {
+                color: rgb(255, 0, 0) !important;
+            }
+
+            option:disabled {
+                color: gray;
+            }
+
+            select#risk-level {
+                width: 120dp;
+            }
+
+            select option:not(option[disabled]):hover>* {
+                color: rgb(231, 154, 116);
+            }
+        </style>
+    </head>
+
+    <body id="game-reinforcement" class="window-fixed-size">
+        <handle class="window-title title" move_target="#document" id="window-title-text"></handle>
+        <button class="window-title-close title" onclick="close"></button>
+
+        <div id="main-container" data-model="reinforcement">
+            <!-- Target Item -->
+            <div class="window-pane sub-container">
+                <span class="sub-title">
+                    <str string-id="1304" />
+                </span>
+                <div class="inner-container">
+                    <item-slot class="default" id="target-item" />
+                    <label class="textarea item-name">{{target_item.name}}</label>
+                </div>
+            </div>
+
+            <!-- Materials -->
+            <div class="window-pane sub-container">
+                <span class="sub-title">
+                    <str string-id="1305" />
+                </span>
+                <div class="material-container">
+                    <item-slot class="default" id="material-1" />
+                    <item-slot class="default" id="material-2" />
+                    <item-slot class="default" id="material-3" />
+                    <item-slot class="default" id="material-4" />
+                </div>
+                <div class="zulie-container">
+                    <span>+ </span>
+                    <button class="zulie" disabled></button>
+                    <label class="custom">
+                        <span data-class-color-red="!has_enough_money && require_money > 0">{{
+                            format_money(require_money) }}</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Enhancers -->
+            <div class="window-pane sub-container" hidden="true">
+                <span class="sub-title">
+                    <str string-id="1313" />
+                </span>
+                <div class="enhancer-container">
+                    <item-slot class="default" id="enhancer-1" />
+                </div>
+            </div>
+
+            <!-- Reinforced Item -->
+            <div class="window-pane sub-container">
+                <span class="sub-title">
+                    <str string-id="1306" />
+                </span>
+                <div class="inner-container">
+                    <item-slot class="default" id="enhanced-item" data-style-visibility="is_ready ? 'visible' : 'hidden'" />
+                    <label class="textarea item-name">{{is_ready ? target_item.name : ''}}</label>
+                </div>
+            </div>
+
+            <!-- Risk Level -->
+            <div class="risk-container">
+                <span class="sub-title">
+                    <fc_gold>Risk Level </fc_gold>
+                    <div class="tooltip" style="font-size: 12dp;">
+                        <fc_gray>(?)</fc_gray>
+                        <span class="tooltiptext">
+                            <fc_yellow>Increase your success rate by taking more risks.</fc_yellow>
+                        </span>
+                    </div>
+                </span>
+                <select id="risk-level" data-value="risk_level" onchange="set_risk_level" data-attrif-disabled="!is_ready">
+                    <option value="0" selected>
+                        <fc_green>No Risk</fc_green>
+                    </option>
+                    <option value="1" data-attrif-disabled="base_success_rate > 75">
+                        <fc_gold>Medium (+15%)</fc_gold>
+                    </option>
+                    <option value="2" data-attrif-disabled="base_success_rate > 60">
+                        <fc_red>High (+30%)</fc_red>
+                    </option>
+                </select>
+
+                <div class="warn-container">
+                    <div class="warn-text" data-if="risk_level == 0 && is_ready">
+                        <img id="suc-rate" sprite="warning-green-icon" width="16dp" height="16dp" />
+                        <span>Normal success rate, the item will stay the same in case of failure</span>
+                    </div>
+                    <div class="warn-text" data-if="risk_level == 1 && is_ready">
+                        <img id="suc-rate" sprite="warning-icon" width="16dp" height="16dp" />
+                        <span>Medium success rate, but the item durability will <b>DEGRADE</b> in case of failure.</span>
+                    </div>
+                    <div class="warn-text" data-if="risk_level == 2 && is_ready">
+                        <img id="suc-rate" sprite="warning-red-icon" width="16dp" height="16dp" />
+                        <span>Highest success rate, but the item will <b>BREAK</b> in case of failure.</span>
+                    </div>
+
+                    <div class="warn-text">
+                        <span style="font-size: 12dp; color: #ff0;" data-if="risk_level == 0 && base_success_rate < 75">
+                            <b>Note: </b>Higher risk levels can only be applied if total success rate remains under <b>90%</b>.
+                        </span>
+                        <span style="font-size: 12dp; color: #0f0;" data-if="risk_level == 0 && base_success_rate >= 75">
+                            <b>Note: </b>Risk level ignored because total success rate is greater than or equal to <b>90%</b>.
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reinforce -->
+            <div class="reinforce-container">
+                <div class="zulie-container">
+                    <img id="suc-rate" sprite="percent-icon" />
+                    <label class="custom">{{success_rate}}%</label>
+                </div>
+
+                <button class="default accept" onclick="reinforce" data-attrif-disabled="!is_ready">
+                    <str string-id="1307" />
+                </button>
+            </div>
+        </div>
+    </body>
+</rml>

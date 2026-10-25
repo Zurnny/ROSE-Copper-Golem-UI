@@ -1,0 +1,62 @@
+<rml>
+    <head>
+        <title>Skills</title>
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/spritesheet_skillicon.css" />
+        <link type="text/rcss" href="../styles/skill_slot.css" />
+        <link type="text/rcss" href="../styles/spritesheet_skilltree.css" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+        <style>
+            body { width: 450dp; max-width: 95vw; }
+            body.reset-mode .window-title-close { display: none; }
+            .skills-tabs, .skills-pages { flex-wrap: wrap; }
+            .skills-tabs > button.default { min-width: 62dp; }
+            .skills-pages > button.default { min-width: 92dp; }
+            .skills-summary { margin: 8dp 0; }
+            .skills-summary > .ui-section-title { margin-bottom: 0; }
+            .skills-job-description { max-height: 90dp; overflow-y: auto; margin-bottom: 8dp; white-space: pre-line; text-align: left; }
+            #skills-scroll { max-height: 55vh; overflow: auto; }
+            #skills-tree-pane { position: relative; width: 392dp; margin: 0 auto; }
+            #skills-tree { position: absolute; left: 0; top: 0; width: 375dp; height: 320dp; pointer-events: none; }
+            #skills-grid { position: relative; width: 392dp; height: 336dp; }
+            .skill-cell { position: absolute; width: 40dp; height: 40dp; }
+            .skill-cell skill-slot { width: 40dp; height: 40dp; }
+            .skill-cell.resettable { border: 1dp rgb(203, 117, 74); margin: -1dp; }
+            .skill-cell.resettable:hover { background: rgba(203, 117, 74, 60); }
+            /* Bottom-left corner: the level sits bottom-right and the element badge top-right. */
+            .skill-cell button.skill-action { position: absolute; left: -13dp; bottom: -9dp; margin: 0; }
+            .skills-reset-info { margin-top: 8dp; text-align: center; font-size: 13dp; }
+            .skills-reset-instruction { color: rgb(231, 154, 116); font-weight: 820; margin-bottom: 8dp; }
+            .skills-reset-timer { margin-top: 8dp; color: rgb(231, 154, 116); }
+        </style>
+    </head>
+    <body template="window-fixed-size" id="skills">
+        <div id="skills-model" data-model="skills">
+            <div class="skills-tabs ui-tabs">
+                <button class="default" data-for="tab : tabs" data-attr-id="'skills-tab-' + tab.id" data-attr-onclick="'tab:' + tab.id" data-class-selected="selected_tab == tab.id" data-attrif-disabled="!tab.enabled">{{tab.label}}</button>
+            </div>
+            <div class="skills-summary ui-detail-row">
+                <span class="ui-section-title">{{job_name}}</span>
+                <span class="ui-detail-value" id="skills-points">SP: {{points}}</span>
+                <span class="ui-detail-value" data-if="selected_tab == 5"><str string-id="46">Clan Points</str>: {{clan_points}}</span>
+            </div>
+            <div class="skills-job-description ui-status" data-if="selected_tab == 1">{{job_description}}</div>
+            <div class="skills-pages ui-tabs">
+                <button class="default" data-for="page : pages" data-attr-id="'skills-page-' + page.id" data-attr-onclick="'page:' + page.id" data-class-selected="selected_page == page.id" data-attrif-disabled="!page.enabled">{{page.label}}</button>
+            </div>
+            <div id="skills-scroll" class="content-box ui-section">
+                <div id="skills-tree-pane">
+                    <img id="skills-tree" data-if="tree_sprite != ''" data-attr-sprite="tree_sprite" />
+                    <div id="skills-grid" />
+                </div>
+            </div>
+            <div class="content-box ui-section skills-reset-info" data-if="reset_mode">
+                <div class="skills-reset-instruction">{{reset_instruction}}</div>
+                <div>{{reset_cancel}}</div>
+                <div class="skills-reset-timer">{{reset_remaining}}s <str string-id="1413">remaining</str></div>
+            </div>
+        </div>
+    </body>
+</rml>

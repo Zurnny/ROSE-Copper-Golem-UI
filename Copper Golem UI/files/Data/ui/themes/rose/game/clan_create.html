@@ -1,0 +1,65 @@
+<rml>
+    <head>
+        <title>Clan Creation</title>
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/spritesheet_clanback.css" />
+        <link type="text/rcss" href="../styles/spritesheet_clancenter.css" />
+        <link type="text/rcss" href="../styles/clan_mark.css" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            body { width: 370dp; max-width: 92vw; }
+            textarea { height: 54dp; }
+            .mark-preview .ui-section-title { margin-bottom: 0; }
+            clan-mark { display: inline-block; width: 20dp; height: 20dp; pointer-events: none; }
+            .mark-section { margin-bottom: 8dp; }
+            .mark-list { display: flex; flex-wrap: wrap; gap: 4dp; max-height: 128dp; overflow-y: auto; }
+            .mark-heading { display: block; }
+            /* .ui-actions styles direct button children; the tooltip wrapper hides confirm from it. */
+            .ui-actions > .tooltip > button.default { min-width: 150dp; }
+        </style>
+    </head>
+    <body template="window-fixed-size" id="clan-create">
+        <div data-model="clan-create">
+            <div class="ui-form-row">
+                <label for="clan-name"><str string-id="861">Clan name</str></label>
+                <input id="clan-name" type="text" maxlength="20" data-value="name" autofocus="" />
+            </div>
+            <div class="ui-form-row">
+                <label for="clan-slogan"><str string-id="862">Clan slogan</str></label>
+                <textarea id="clan-slogan" maxlength="64" data-value="slogan"></textarea>
+            </div>
+            <div class="content-box ui-section ui-detail-row mark-preview">
+                <str class="ui-section-title" string-id="863">Choose your clan mark</str>
+                <clan-mark id="mark-preview" data-attr-center="center" data-attr-back="back" />
+            </div>
+            <label class="ui-section-title mark-heading"><str string-id="865">Clan mark</str></label>
+            <div class="content-box ui-section mark-section">
+                <div class="mark-list">
+                    <button class="ui-icon-choice" data-for="mark : centers" data-attr-id="'center-' + mark" data-class-selected="center == mark"
+                            data-event-click="select_center(mark)">
+                        <clan-mark data-attr-center="mark" back="0" />
+                    </button>
+                </div>
+            </div>
+            <label class="ui-section-title mark-heading"><str string-id="866">Clan background</str></label>
+            <div class="content-box ui-section mark-section">
+                <div class="mark-list">
+                    <button class="ui-icon-choice" data-for="mark : backgrounds" data-attr-id="'back-' + mark" data-class-selected="back == mark"
+                            data-event-click="select_back(mark)">
+                        <clan-mark center="0" data-attr-back="mark" />
+                    </button>
+                </div>
+            </div>
+            <div class="ui-actions ui-footer">
+                <div class="tooltip">
+                    <button class="default" id="confirm" onclick="confirm" data-attrif-disabled="!is_valid_name(name)"><str string-id="858">Confirm</str></button>
+                    <span class="tooltiptext" data-visible="!is_valid_name(name)"><str string-id="60" /></span>
+                </div>
+                <button class="default" id="cancel" onclick="close"><str string-id="859">Cancel</str></button>
+            </div>
+        </div>
+    </body>
+</rml>

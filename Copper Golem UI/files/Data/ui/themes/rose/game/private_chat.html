@@ -1,0 +1,59 @@
+<rml>
+    <head>
+        <title>Private Chat</title>
+
+        <link type="text/template" href="../templates/window-resizeable.html" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            #game-private-chat
+            {
+                width: 215dp;
+                height: 205dp;
+                min-width: 175dp;
+                min-height: 50dp;
+            }
+
+            #virtual-messages
+            {
+                display: block;
+                word-break: break-word;
+                font-effect: outline(1dp black);
+                overflow: hidden scroll;
+            }
+
+            .chat-message
+            {
+                margin: 0dp 0dp;
+            }
+
+            .chat-message-from:hover
+            {
+                text-decoration: underline;
+            }
+
+            .chat-message-link:hover
+            {
+                text-decoration: underline;
+            }
+
+            .timestamp
+            {
+                color: #a0a0a0;
+            }
+
+            .chat-message-chat
+            {
+                color: #ffffff;
+            }
+        </style>
+    </head>
+
+    <body id="game-private-chat" template="window-resizeable">
+        <div style="width: 100%; height: 100%; display: flex; flex-direction: column;">
+            <virtual-list-box id="virtual-messages" style="flex: 1"></virtual-list-box>
+            <input id="input_text" type="text" maxlength="250" retains-focus autofocus />
+        </div>
+    </body>
+</rml>

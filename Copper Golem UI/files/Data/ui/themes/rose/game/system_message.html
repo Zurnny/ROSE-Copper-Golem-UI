@@ -1,0 +1,25 @@
+<rml>
+    <head>
+        <title>System message</title>
+        <link type="text/template" href="../templates/window-box.html" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+        <style>
+            body {
+                top: 30dp;
+                width: 512dp;
+                box-sizing: border-box;
+                background: rgba(42, 40, 45, 200);
+                pointer-events: none;
+            }
+            #game-system-message #window-content { padding: 8dp; }
+            #message.notice { font-weight: 820; }
+        </style>
+    </head>
+    <body id="game-system-message" template="window-box">
+        <div data-model="system-message">
+            <div id="message" class="ui-banner-text" data-style-color="color" data-class-notice="bold">{{ message }}</div>
+        </div>
+    </body>
+</rml>

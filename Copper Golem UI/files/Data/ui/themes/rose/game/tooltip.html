@@ -1,0 +1,36 @@
+<rml>
+    <head>
+        <title>Tooltip</title>
+        <link type="text/template" href="../templates/window-box.html" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+        <style>
+            body { position: absolute; display: inline-block; width: auto; max-width: 420dp; max-height: 95vh; overflow: hidden auto; z-index: 10000; pointer-events: none; decorator: none; }
+            .tooltip-line { display: block; min-height: 20dp; }
+            .tooltip-line img { width: 18dp; height: 18dp; vertical-align: middle; margin-left: 4dp; }
+            .tooltip-line .bold { font-weight: 820; }
+            .tooltip-line .small { font-size: 12dp; }
+            /* Steampunk: riveted brass frame around dark iron. Set here, on the
+               tooltip itself, so it wins over components.css whatever order
+               the stylesheets load in. */
+            body#rich-tooltip.ui-tooltip-surface
+            {
+                padding: 10dp 12dp;
+                background: rgba(35, 34, 38, 245);
+                border: 0dp;
+                border-radius: 0dp;
+                decorator: tiled-box(
+                    sp-frame-tl, sp-frame-t, sp-frame-tr,
+                    sp-frame-l,  sp-frame-c, sp-frame-r,
+                    sp-frame-bl, sp-frame-b, sp-frame-br
+                );
+                color: rgb(241, 227, 196);
+                font-effect: outline(1dp rgb(23, 22, 25));
+            }
+            /* Headings: darker outline so the gold reads on iron */
+            body#rich-tooltip .tooltip-line .heading { font-effect: outline(1dp rgb(40, 25, 10)); }
+        </style>
+    </head>
+    <body id="rich-tooltip" class="ui-tooltip-surface"><div id="tooltip-content"></div></body>
+</rml>

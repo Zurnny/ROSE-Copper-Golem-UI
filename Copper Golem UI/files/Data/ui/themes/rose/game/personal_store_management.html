@@ -1,0 +1,320 @@
+<rml>
+    <head>
+        <title>Personal Store</title>
+
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+
+        <link type="text/rcss" href="../styles/spritesheet_itemicon.css" />
+        <link type="text/rcss" href="../styles/spritesheet_socketgem.css" />
+        <link type="text/rcss" href="../styles/item_slot.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            item-slot.default { width: 40dp; height: 40dp; margin: 2dp; flex-shrink: 0; decorator: image(slot-icon); }
+            .slot-grid { display: flex; flex-wrap: wrap; width: 220dp; }
+            .slot-grid br { display: none; }
+
+            body
+            {
+                width: 650dp;
+            }
+
+            #top-container
+            {
+                display: flex;
+                flex-direction: row;
+
+            }
+
+            #button-container
+            {
+                text-align: center;
+                width: 100%;
+                margin: 5dp;
+                vertical-align: middle;
+            }
+
+            #inventory-container
+            {
+                display: flex;
+                flex-direction: column;
+                justify-content:center;
+                align-items:center;
+                text-align: center;
+
+                width: 50%;
+                margin: 5dp;
+            }
+
+            #sell-container
+            {
+                display: flex;
+                flex-direction: column;
+                align-items:center;
+
+                width: 50%;
+                margin: 5dp;
+            }
+
+            #inventory-panel
+            {
+                overflow-y: auto;
+                height: 352dp;
+                width: 240dp;
+                margin-top: 10dp;
+                margin-bottom: 10dp;
+            }
+
+            .money {
+                font-size: 12dp;
+                color: rgb(231, 154, 116);
+            }
+
+            input#store-title
+            {
+                margin: 10dp;
+                font-weight: 800;
+                font-effect: outline(1dp black);
+                text-align: center;
+                color: rgb(231, 154, 116);
+            }
+
+            #store-title:disabled
+            {
+                color:rgb(187, 187, 187);
+                opacity: 0.8;
+            }
+
+            tabset
+            {
+                display: inline-block;
+                margin: 5dp;
+                height: 400dp;
+                width: 240dp;
+            }
+
+            tab.default
+            {
+                margin-top: 5dp;
+                font-weight: 800;
+                min-width: 100dp;
+            }
+
+            tabset panels panel
+            {
+                position: relative;
+                display: block;
+                justify-content:center;
+                align-items:center;
+                text-align: center;
+            }
+
+            button.small
+            {
+                min-width: 90dp;
+            }
+
+            .money-panel {
+                margin: 5dp;
+            }
+        </style>
+    </head>
+
+    <body id="game-personal-store-management" template="window-fixed-size" data-model="personalstore-manager-data">
+        <div id="top-container">
+            <div id="sell-container" class="window-pane">
+                <div>
+                    <input id="store-title" type="text" data-value="title" data-if="status == 0" maxlength="30" disabled/>
+                    <input id="store-title" type="text" data-value="title" data-if="status == 1" maxlength="30"/>
+                </div>
+                <div>
+                    <tabset>
+                        <tab class="default">Sell</tab>
+                        <panel id="sell-panel"><div class="slot-grid">
+                            <item-slot id="sell_slot1" class="default"/>
+                            <item-slot id="sell_slot2" class="default"/>
+                            <item-slot id="sell_slot3" class="default"/>
+                            <item-slot id="sell_slot4" class="default"/>
+                            <item-slot id="sell_slot5" class="default"/>
+                            <br />
+                            <item-slot id="sell_slot6" class="default"/>
+                            <item-slot id="sell_slot7" class="default"/>
+                            <item-slot id="sell_slot8" class="default"/>
+                            <item-slot id="sell_slot9" class="default"/>
+                            <item-slot id="sell_slot10" class="default"/>
+                            <br />
+                            <item-slot id="sell_slot11" class="default"/>
+                            <item-slot id="sell_slot12" class="default"/>
+                            <item-slot id="sell_slot13" class="default"/>
+                            <item-slot id="sell_slot14" class="default"/>
+                            <item-slot id="sell_slot15" class="default"/>
+                            <br />
+                            <item-slot id="sell_slot16" class="default"/>
+                            <item-slot id="sell_slot17" class="default"/>
+                            <item-slot id="sell_slot18" class="default"/>
+                            <item-slot id="sell_slot19" class="default"/>
+                            <item-slot id="sell_slot20" class="default"/>
+                            <br />
+                            <item-slot id="sell_slot21" class="default"/>
+                            <item-slot id="sell_slot22" class="default"/>
+                            <item-slot id="sell_slot23" class="default"/>
+                            <item-slot id="sell_slot24" class="default"/>
+                            <item-slot id="sell_slot25" class="default"/>
+                            <br />
+                            <item-slot id="sell_slot26" class="default"/>
+                            <item-slot id="sell_slot27" class="default"/>
+                            <item-slot id="sell_slot28" class="default"/>
+                            <item-slot id="sell_slot29" class="default"/>
+                            <item-slot id="sell_slot30" class="default"/>
+                        </div></panel>
+
+                        <tab class="default">Buy</tab>
+                        <panel><div class="slot-grid">
+                            <item-slot id="buy_slot1" class="default"/>
+                            <item-slot id="buy_slot2" class="default"/>
+                            <item-slot id="buy_slot3" class="default"/>
+                            <item-slot id="buy_slot4" class="default"/>
+                            <item-slot id="buy_slot5" class="default"/>
+                            <br />
+                            <item-slot id="buy_slot6" class="default"/>
+                            <item-slot id="buy_slot7" class="default"/>
+                            <item-slot id="buy_slot8" class="default"/>
+                            <item-slot id="buy_slot9" class="default"/>
+                            <item-slot id="buy_slot10" class="default"/>
+                            <br />
+                            <item-slot id="buy_slot11" class="default"/>
+                            <item-slot id="buy_slot12" class="default"/>
+                            <item-slot id="buy_slot13" class="default"/>
+                            <item-slot id="buy_slot14" class="default"/>
+                            <item-slot id="buy_slot15" class="default"/>
+                            <br />
+                            <item-slot id="buy_slot16" class="default"/>
+                            <item-slot id="buy_slot17" class="default"/>
+                            <item-slot id="buy_slot18" class="default"/>
+                            <item-slot id="buy_slot19" class="default"/>
+                            <item-slot id="buy_slot20" class="default"/>
+                            <br />
+                            <item-slot id="buy_slot21" class="default"/>
+                            <item-slot id="buy_slot22" class="default"/>
+                            <item-slot id="buy_slot23" class="default"/>
+                            <item-slot id="buy_slot24" class="default"/>
+                            <item-slot id="buy_slot25" class="default"/>
+                            <br />
+                            <item-slot id="buy_slot26" class="default"/>
+                            <item-slot id="buy_slot27" class="default"/>
+                            <item-slot id="buy_slot28" class="default"/>
+                            <item-slot id="buy_slot29" class="default"/>
+                            <item-slot id="buy_slot30" class="default"/>
+                        </div></panel>
+                    </tabset>
+                </div>
+            </div>
+
+            <div id="inventory-container" class="window-pane">
+                <div id="inventory-panel"><div class="slot-grid">
+                    <item-slot id="inventory_slot1" class="default"/>
+                    <item-slot id="inventory_slot2" class="default"/>
+                    <item-slot id="inventory_slot3" class="default"/>
+                    <item-slot id="inventory_slot4" class="default"/>
+                    <item-slot id="inventory_slot5" class="default"/>
+                    <item-slot id="inventory_slot6" class="default"/>
+                    <item-slot id="inventory_slot7" class="default"/>
+                    <item-slot id="inventory_slot8" class="default"/>
+                    <item-slot id="inventory_slot9" class="default"/>
+                    <item-slot id="inventory_slot10" class="default"/>
+                    <item-slot id="inventory_slot11" class="default"/>
+                    <item-slot id="inventory_slot12" class="default"/>
+                    <item-slot id="inventory_slot13" class="default"/>
+                    <item-slot id="inventory_slot14" class="default"/>
+                    <item-slot id="inventory_slot15" class="default"/>
+                    <item-slot id="inventory_slot16" class="default"/>
+                    <item-slot id="inventory_slot17" class="default"/>
+                    <item-slot id="inventory_slot18" class="default"/>
+                    <item-slot id="inventory_slot19" class="default"/>
+                    <item-slot id="inventory_slot20" class="default"/>
+                    <item-slot id="inventory_slot21" class="default"/>
+                    <item-slot id="inventory_slot22" class="default"/>
+                    <item-slot id="inventory_slot23" class="default"/>
+                    <item-slot id="inventory_slot24" class="default"/>
+                    <item-slot id="inventory_slot25" class="default"/>
+                    <item-slot id="inventory_slot26" class="default"/>
+                    <item-slot id="inventory_slot27" class="default"/>
+                    <item-slot id="inventory_slot28" class="default"/>
+                    <item-slot id="inventory_slot29" class="default"/>
+                    <item-slot id="inventory_slot30" class="default"/>
+                    <item-slot id="inventory_slot31" class="default"/>
+                    <item-slot id="inventory_slot32" class="default"/>
+                    <item-slot id="inventory_slot33" class="default"/>
+                    <item-slot id="inventory_slot34" class="default"/>
+                    <item-slot id="inventory_slot35" class="default"/>
+                    <item-slot id="inventory_slot36" class="default"/>
+                    <item-slot id="inventory_slot37" class="default"/>
+                    <item-slot id="inventory_slot38" class="default"/>
+                    <item-slot id="inventory_slot39" class="default"/>
+                    <item-slot id="inventory_slot40" class="default"/>
+
+                    <item-slot id="inventory_slot41" class="default"/>
+                    <item-slot id="inventory_slot42" class="default"/>
+                    <item-slot id="inventory_slot43" class="default"/>
+                    <item-slot id="inventory_slot44" class="default"/>
+                    <item-slot id="inventory_slot45" class="default"/>
+                    <item-slot id="inventory_slot46" class="default"/>
+                    <item-slot id="inventory_slot47" class="default"/>
+                    <item-slot id="inventory_slot48" class="default"/>
+                    <item-slot id="inventory_slot49" class="default"/>
+                    <item-slot id="inventory_slot50" class="default"/>
+                    <item-slot id="inventory_slot51" class="default"/>
+                    <item-slot id="inventory_slot52" class="default"/>
+                    <item-slot id="inventory_slot53" class="default"/>
+                    <item-slot id="inventory_slot54" class="default"/>
+                    <item-slot id="inventory_slot55" class="default"/>
+                    <item-slot id="inventory_slot56" class="default"/>
+                    <item-slot id="inventory_slot57" class="default"/>
+                    <item-slot id="inventory_slot58" class="default"/>
+                    <item-slot id="inventory_slot59" class="default"/>
+                    <item-slot id="inventory_slot60" class="default"/>
+                    <item-slot id="inventory_slot61" class="default"/>
+                    <item-slot id="inventory_slot62" class="default"/>
+                    <item-slot id="inventory_slot63" class="default"/>
+                    <item-slot id="inventory_slot64" class="default"/>
+                    <item-slot id="inventory_slot65" class="default"/>
+                    <item-slot id="inventory_slot66" class="default"/>
+                    <item-slot id="inventory_slot67" class="default"/>
+                    <item-slot id="inventory_slot68" class="default"/>
+                    <item-slot id="inventory_slot69" class="default"/>
+                    <item-slot id="inventory_slot70" class="default"/>
+                    <item-slot id="inventory_slot71" class="default"/>
+                    <item-slot id="inventory_slot72" class="default"/>
+                    <item-slot id="inventory_slot73" class="default"/>
+                    <item-slot id="inventory_slot74" class="default"/>
+                    <item-slot id="inventory_slot75" class="default"/>
+                    <item-slot id="inventory_slot76" class="default"/>
+                    <item-slot id="inventory_slot77" class="default"/>
+                    <item-slot id="inventory_slot78" class="default"/>
+                    <item-slot id="inventory_slot79" class="default"/>
+                    <item-slot id="inventory_slot80" class="default"/>
+                    </div>
+                </div>
+
+                <div class="money-panel">
+                    <button data-attr-id="store_id" class="zulie" disabled></button>
+                    <label class="custom money">{{format_money(money)}}</label>
+                </div>
+
+                <div class="money-panel">
+                    <button data-attr-id="store_id" data-if="status == 1" class="default small" onclick="add-money">Deposit</button>
+                    <button data-attr-id="store_id" data-if="status == 0" class="default small" disabled>Deposit</button>
+
+                    <button data-attr-id="store_id" data-if="status == 1" class="default small" onclick="withdraw-money">Withdraw</button>
+                    <button data-attr-id="store_id" data-if="status == 0" class="default small" disabled>Withdraw</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="button-container">
+            <button data-attr-id="store_id" data-if="status == 1" class="default open-store" onclick="open-store">Open</button>
+            <button data-attr-id="store_id" data-if="status == 0" class="default close-store" onclick="close-store">Close</button>
+        </div>
+    </body>
+</rml>

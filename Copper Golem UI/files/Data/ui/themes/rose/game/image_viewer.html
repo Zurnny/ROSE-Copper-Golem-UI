@@ -1,0 +1,20 @@
+<rml>
+    <head>
+        <title>Image Viewer</title>
+
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+        </style>
+    </head>
+
+    <body id="game-image-viewer">
+        <handle move_target="#document" data-model="image-viewer">
+            <img id="image" data-attr-src="src" />
+        </handle>
+
+        <button style="position: absolute; top: -4dp; right: 0dp;" class="window-title-close" onclick="close"></button>
+    </body>
+</rml>

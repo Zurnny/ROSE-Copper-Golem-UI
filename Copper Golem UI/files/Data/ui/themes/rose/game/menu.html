@@ -1,0 +1,248 @@
+<rml>
+    <head>
+        <link type="text/template" href="../templates/window-fixed.html" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            #game-menu-hud {
+                width: 53dp;
+                right: 0dp;
+                bottom: 0dp;
+            }
+
+            button {
+                width: 34dp;
+                height: 30dp;
+            }
+
+            button.blink {
+                animation: 1.5s cubic-in-out infinite alternate color_cycle;
+            }
+
+            @keyframes color_cycle {
+                from  { opacity: 0.5; image-color: rgba(200, 200, 200, 200); }
+                to  { opacity: 1; image-color: rgba(255, 255, 255, 255); }
+            }
+            
+            #gamearena-scoreboard {
+                decorator: image(sp-menu-scoreboard-n);
+                width: 42dp;
+                height: 42dp;
+                opacity: 1;
+            }
+
+            #gamearena-scoreboard.blink { decorator: image(sp-menu-scoreboard-b); }
+            #gamearena-scoreboard:hover { decorator: image(sp-menu-scoreboard-h); opacity: 1; }
+            #gamearena-scoreboard:active { decorator: image(sp-menu-scoreboard-a); opacity: 1; }
+
+            #premium-storage { decorator: image(sp-menu-premium-storage-n); }
+            #premium-storage:hover { decorator: image(sp-menu-premium-storage-h); }
+            #premium-storage:active { decorator: image(sp-menu-premium-storage-a); }
+
+            #item-mall { decorator: image(sp-menu-item-mall-n); width: 43dp; height: 43dp; }
+            #item-mall:hover { decorator: image(sp-menu-item-mall-h); }
+            #item-mall:active { decorator: image(sp-menu-item-mall-a); }
+
+            #character { decorator: image(sp-menu-character-n); }
+            #character:hover { decorator: image(sp-menu-character-h); }
+            #character:active { decorator: image(sp-menu-character-a); }
+
+            #game-arena { decorator: image(sp-menu-game-arena-n); }
+            #game-arena:hover { decorator: image(sp-menu-game-arena-h); }
+            #game-arena:active { decorator: image(sp-menu-game-arena-a); }
+
+            #group-manager-menu { decorator: image(sp-menu-group-manager-n); }
+            #group-manager-menu:hover { decorator: image(sp-menu-group-manager-h); }
+            #group-manager-menu:active { decorator: image(sp-menu-group-manager-a); }
+
+            #inventory { decorator: image(sp-menu-inventory-n); }
+            #inventory:hover { decorator: image(sp-menu-inventory-h); }
+            #inventory:active { decorator: image(sp-menu-inventory-a); }
+
+            #skill-list { decorator: image(sp-menu-skills-n); }
+            #skill-list:hover { decorator: image(sp-menu-skills-h); }
+            #skill-list:active { decorator: image(sp-menu-skills-a); }
+
+            #quest-list { decorator: image(sp-menu-quests-n); }
+            #quest-list:hover { decorator: image(sp-menu-quests-h); }
+            #quest-list:active { decorator: image(sp-menu-quests-a); }
+
+            #friend-list { decorator: image(sp-menu-friends-n); }
+            #friend-list:hover { decorator: image(sp-menu-friends-h); }
+            #friend-list:active { decorator: image(sp-menu-friends-a); }
+
+            #party-finder { decorator: image(sp-menu-party-finder-n); }
+            #party-finder:hover { decorator: image(sp-menu-party-finder-h); }
+            #party-finder:active { decorator: image(sp-menu-party-finder-a); }
+
+            #mail { decorator: image(sp-menu-mail-n); }
+            #mail:hover { decorator: image(sp-menu-mail-h); }
+            #mail:active { decorator: image(sp-menu-mail-a); }
+
+            #clan { decorator: image(sp-menu-clan-n); }
+            #clan:hover { decorator: image(sp-menu-clan-h); }
+            #clan:active { decorator: image(sp-menu-clan-a); }
+
+            #system { decorator: image(sp-menu-system-n); }
+            #system:hover { decorator: image(sp-menu-system-h); }
+            #system:active { decorator: image(sp-menu-system-a); }
+
+            #menu-toggle { decorator: image(sp-menu-toggle-n); width: 53dp; height: 25dp; }
+            #menu-toggle:hover { decorator: image(sp-menu-toggle-h); }
+            #menu-toggle:active { decorator: image(sp-menu-toggle-a); }
+            /* Menu open: arrow points down */
+            #menu-toggle.open { decorator: image(sp-menu-toggle-open-n); }
+            #menu-toggle.open:hover { decorator: image(sp-menu-toggle-open-h); }
+            #menu-toggle.open:active { decorator: image(sp-menu-toggle-open-a); }
+
+            #button-container {
+                text-align: center;
+                width: 43dp;
+                margin-left: 10dp;
+                overflow: hidden;
+                height: 0dp;
+                transition: height 0.2s;
+            }
+
+            #button-container.expanded {
+                height: 373dp;
+                transition: height 0.2s;
+            }
+
+            #button-container.expanded-premium {
+                height: 403dp;
+                transition: height 0.2s;
+            }
+
+            #button-container.expanded-scoreboard {
+                height: 415dp;
+                transition: height 0.2s;
+            }
+
+            #button-container.expanded-premium-scoreboard {
+                height: 445dp;
+                transition: height 0.2s;
+            }
+
+            .tooltip .tooltiptext {
+                left: auto;
+                top: -5dp;
+                right: 105%;
+                height: 2.2em;
+                min-width: 130dp;
+                text-align: left;
+            }
+
+            str {
+                color: rgb(51, 17, 81);
+            }
+        </style>
+    </head>
+
+    <body
+        id="game-menu-hud"
+        data-model="menu"
+    >
+        <div id="button-container" data-class-expanded="expanded && !has_premium_storage && !has_gamearena_scoreboard" data-class-expanded-premium="expanded && has_premium_storage && !has_gamearena_scoreboard"
+            data-class-expanded-scoreboard="expanded && has_gamearena_scoreboard && !has_premium_storage"
+            data-class-expanded-premium-scoreboard="expanded && has_premium_storage && has_gamearena_scoreboard">
+            <div class="tooltip" data-if="has_gamearena_scoreboard">
+                <button id="gamearena-scoreboard" onclick="open_gamearena_scoreboard" />
+                <span class="tooltiptext"><str>Game Arena Scoreboard</str></span>
+            </div>
+            <div class="tooltip">
+                <button id="item-mall" onclick="open_item_mall" />
+                <span class="tooltiptext">
+                    <str string-id="795" /><br/>
+                    <div class="hotkey">{{hotkey.item_mall}}</div>
+                </span>
+            </div>
+            <div class="tooltip" data-if="has_premium_storage">
+                <button id="premium-storage" onclick="open_premium_storage" />
+                <span class="tooltiptext">
+                    <str string-id="1184" />
+                    <div class="hotkey">{{hotkey.premium_storage}}</div>
+                </span>
+            </div>
+            <div class="tooltip">
+                <button id="character" onclick="open_character" />
+                <span class="tooltiptext">
+                    <str string-id="825" />
+                    <div class="hotkey">{{hotkey.character}}</div>
+                </span>
+            </div>
+            <div class="tooltip">
+                <button id="game-arena" onclick="open_game_arena" />
+                <span class="tooltiptext">
+                    <str string-id="406" />
+                    <div class="hotkey">{{hotkey.game_arena}}</div>
+                </span>
+            </div>
+            <div class="tooltip">
+                <button id="group-manager-menu" onclick="open_group_manager" />
+                <span class="tooltiptext">
+                    <str>Group Manager</str>
+                    <div class="hotkey">{{hotkey.group_manager}}</div>
+                </span>
+            </div>
+            <div class="tooltip">
+                <button id="inventory" onclick="open_inventory" />
+                <span class="tooltiptext">
+                    <str string-id="826" />
+                    <div class="hotkey">{{hotkey.inventory}}</div>
+                </span>
+            </div>
+            <div class="tooltip">
+                <button id="skill-list" onclick="open_skill_list" />
+                <span class="tooltiptext">
+                    <str string-id="827" />
+                    <div class="hotkey">{{hotkey.skill_list}}</div>
+                </span>
+            </div>
+            <div class="tooltip">
+                <button id="quest-list" onclick="open_quest_list" />
+                <span class="tooltiptext">
+                    <str string-id="828" />
+                    <div class="hotkey">{{hotkey.quest_list}}</div>
+                </span>
+            </div>
+            <div class="tooltip">
+                <button id="friend-list" onclick="open_friend_list" />
+                <span class="tooltiptext">
+                    <str string-id="829" />
+                    <div class="hotkey">{{hotkey.friend_list}}</div>
+                </span>
+            </div>
+            <div class="tooltip">
+                <button id="party-finder" onclick="open_party_finder" />
+                <span class="tooltiptext">
+                    <str>Party Finder</str>
+                    <div class="hotkey">{{hotkey.party_finder}}</div>
+                </span>
+            </div>
+            <div class="tooltip">
+                <button id="mail" onclick="open_mail" />
+                <span class="tooltiptext">
+                    <str>Inbox</str>
+                    <div class="hotkey">{{hotkey.mail}}</div>
+                </span>
+            </div>
+            <div class="tooltip">
+                <button id="clan" onclick="open_clan" />
+                <span class="tooltiptext">
+                    <str string-id="830" />
+                    <div class="hotkey">{{hotkey.clan}}</div>
+                </span>
+            </div>
+            <div class="tooltip">
+                <button id="system" onclick="open_system" />
+                <span class="tooltiptext">
+                    <str string-id="831" />
+                    <div class="hotkey">{{hotkey.system}}</div>
+                </span>
+            </div>
+        </div>
+        <button id="menu-toggle" data-event-click="expanded = !expanded" data-class-open="expanded" />
+    </body>
+</rml>

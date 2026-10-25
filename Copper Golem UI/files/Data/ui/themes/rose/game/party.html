@@ -1,0 +1,314 @@
+<rml>
+    <head>
+        <title>Party</title>
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+        <style>
+            #party { width: 270dp; min-width: 150dp; min-height: 0; max-width: 95vw; padding: 2dp; padding-top: 24dp; }
+            #party #window-content { padding: 2dp; }
+            #party > .window-title { height: 24dp; line-height: 24dp; padding-left: 4dp; }
+            #party > .window-title-close { display: none; }
+            #party .ui-hud-toolbar { top: -24dp; right: 0; gap: 2dp; }
+            .party-summary { display: flex; align-items: center; gap: 8dp; margin-bottom: 8dp; }
+            /* Round 24dp action icons from party_controls.png; the art carries its own disabled and hover states. */
+            #party button.party-action { width: 20dp; min-width: 20dp; height: 20dp; padding: 0; margin: 0; }
+            #party button.party-action:disabled { opacity: 1; }
+            #party-entrust { decorator: image(party-entrust-n); }
+            #party-entrust:hover { decorator: image(party-entrust-h); }
+            #party-entrust:disabled { decorator: image(party-entrust-d); }
+            #party-kick { decorator: image(party-kick-n); }
+            #party-kick:hover { decorator: image(party-kick-h); }
+            #party-kick:disabled { decorator: image(party-kick-d); }
+            #party-leave { decorator: image(party-leave-n); }
+            #party-leave:hover { decorator: image(party-leave-h); }
+            #party-options { decorator: image(party-options-n); }
+            #party-options:hover { decorator: image(party-options-h); }
+            .party-level { flex-shrink: 0; color: rgb(231, 154, 116); font-weight: 820; }
+            #party gauge.party-experience { flex: 1; height: 12dp; text-align: center; font-size: 10dp; line-height: 12dp; }
+            #party-members { min-height: 80dp; max-height: 40vh; overflow-y: auto; }
+            .party-member.selected .member-name { color: rgb(255, 75, 75); }
+            .party-member { padding: 0; margin-bottom: 0.3em; }
+            gauge.member-health { height: 1.5em; margin-top: 0; }
+            gauge.member-health > .member-name { height: 1.5em; line-height: 1.5em; font-size: 1em; text-align: right; padding-right: 0.2em; box-sizing: border-box; }
+            gauge.member-health.unavailable { opacity: 0.5; }
+            .member-statuses { gap: 0.1em; margin-top: 0.1em; flex-wrap: nowrap; }   /* wide enough for a full row of buffs (window is 18em) */
+            .member-statuses > span, .member-statuses > span > img { width: 1em; height: 1em; }
+            .member-status.blink { opacity: 0.3; }
+            #party-tooltip { visibility: visible; position: absolute; z-index: 100; clip: none; pointer-events: none; padding: 8dp; width: 250dp; max-width: 90vw; max-height: 90vh; background: rgba(226, 208, 170, 245); color: rgb(69, 68, 75); font-effect: none; border: 1dp rgb(116, 53, 22); border-radius: 3dp; }
+            .status-tooltip-name { display: block; font-weight: 820; margin-bottom: 4dp; }
+            .status-tooltip-description { display: block; margin-bottom: 4dp; }
+            .status-tooltip-time { display: block; color: rgb(40, 120, 70); }
+            .status-tooltip-time.warning { color: rgb(162, 65, 16); }
+            .status-tooltip-time.danger { color: rgb(170, 40, 30); }
+            /* ---- Job icons (steampunk add-on, filled in by the script below) ---- */
+            @spritesheet group-job-icons
+            {
+                src: ../imgs/ui_icon0.dds;
+                gj-visitor: 369px 2px 40px 40px;
+                gj-soldier: 200px 2px 40px 40px;
+                gj-knight: 200px 2px 40px 40px;
+                gj-champion: 242px 43px 40px 40px;
+                gj-muse: 242px 2px 40px 40px;
+                gj-mage: 242px 2px 40px 40px;
+                gj-cleric: 284px 43px 40px 40px;
+                gj-hawker: 284px 2px 40px 40px;
+                gj-raider: 284px 2px 40px 40px;
+                gj-scout: 326px 2px 40px 40px;
+                gj-dealer: 200px 43px 40px 40px;
+                gj-artisan: 200px 43px 40px 40px;
+                gj-bourgeois: 326px 43px 40px 40px;
+            }
+            .party-member.sp-has-job { position: relative; padding-left: 1.9em; }
+            /* a badge with no class known yet stays hidden (it showed as an empty black square) */
+            .sp-job-badge { display: none; }
+            .party-member.sp-has-job .sp-job-badge { display: block; }
+            .sp-job-badge { position: absolute; left: 0; top: 0; width: 1.7em; height: 1.7em; box-sizing: border-box; border: 1dp rgb(116, 53, 22); background-color: rgb(42, 40, 45); pointer-events: none; }
+            .sp-job-badge.job-visitor { decorator: image(gj-visitor); }
+            .sp-job-badge.job-soldier { decorator: image(gj-soldier); }
+            .sp-job-badge.job-knight { decorator: image(gj-knight); }
+            .sp-job-badge.job-champion { decorator: image(gj-champion); }
+            .sp-job-badge.job-muse { decorator: image(gj-muse); }
+            .sp-job-badge.job-mage { decorator: image(gj-mage); }
+            .sp-job-badge.job-cleric { decorator: image(gj-cleric); }
+            .sp-job-badge.job-hawker { decorator: image(gj-hawker); }
+            .sp-job-badge.job-raider { decorator: image(gj-raider); }
+            .sp-job-badge.job-scout { decorator: image(gj-scout); }
+            .sp-job-badge.job-dealer { decorator: image(gj-dealer); }
+            .sp-job-badge.job-artisan { decorator: image(gj-artisan); }
+            .sp-job-badge.job-bourgeois { decorator: image(gj-bourgeois); }
+            .sp-job-source { display: none; }
+            .sp-job-probe { display: none; }
+            /* Repeating timer: two identical animations swapped each time one ends */
+            @keyframes sp-job-tick-a { from { opacity: 0; } to { opacity: 0; } }
+            @keyframes sp-job-tick-b { from { opacity: 0; } to { opacity: 0; } }
+            #sp-job-timer { position: absolute; width: 1dp; height: 1dp; opacity: 0; pointer-events: none; animation: 1s sp-job-tick-a; }
+            /* Steampunk: title centred in the 24dp bar, level with the toolbar */
+            #party > .window-title { top: 0dp; }
+            /* Party Options extras (script below): buffs on/off, icon size, fading title bar */
+            #party.sp-buffs-off .member-statuses { display: none; }
+            #party.sp-buff-50 .member-statuses > span, #party.sp-buff-50 .member-statuses > span > img { width: 0.5em; height: 0.5em; }
+            #party.sp-buff-60 .member-statuses > span, #party.sp-buff-60 .member-statuses > span > img { width: 0.6em; height: 0.6em; }
+            #party.sp-buff-70 .member-statuses > span, #party.sp-buff-70 .member-statuses > span > img { width: 0.7em; height: 0.7em; }
+            #party.sp-buff-80 .member-statuses > span, #party.sp-buff-80 .member-statuses > span > img { width: 0.8em; height: 0.8em; }
+            #party.sp-buff-90 .member-statuses > span, #party.sp-buff-90 .member-statuses > span > img { width: 0.9em; height: 0.9em; }
+            #party.sp-buff-110 .member-statuses > span, #party.sp-buff-110 .member-statuses > span > img { width: 1.1em; height: 1.1em; }
+            #party.sp-buff-120 .member-statuses > span, #party.sp-buff-120 .member-statuses > span > img { width: 1.2em; height: 1.2em; }
+            #party.sp-buff-130 .member-statuses > span, #party.sp-buff-130 .member-statuses > span > img { width: 1.3em; height: 1.3em; }
+            #party.sp-buff-140 .member-statuses > span, #party.sp-buff-140 .member-statuses > span > img { width: 1.4em; height: 1.4em; }
+            #party.sp-buff-150 .member-statuses > span, #party.sp-buff-150 .member-statuses > span > img { width: 1.5em; height: 1.5em; }
+            #party.sp-buff-160 .member-statuses > span, #party.sp-buff-160 .member-statuses > span > img { width: 1.6em; height: 1.6em; }
+            #party.sp-buff-170 .member-statuses > span, #party.sp-buff-170 .member-statuses > span > img { width: 1.7em; height: 1.7em; }
+            #party.sp-buff-180 .member-statuses > span, #party.sp-buff-180 .member-statuses > span > img { width: 1.8em; height: 1.8em; }
+            #party.sp-buff-190 .member-statuses > span, #party.sp-buff-190 .member-statuses > span > img { width: 1.9em; height: 1.9em; }
+            #party.sp-buff-200 .member-statuses > span, #party.sp-buff-200 .member-statuses > span > img { width: 2em; height: 2em; }
+            /* Title bar: the game hides it until hovered. Here it fades in and out
+               instead, or stays visible when "Always show title bar" is ticked. */
+            #party > .window-title, #party .ui-hud-toolbar { visibility: visible; opacity: 0; transition: opacity 0.3s linear-in-out; }
+            #party:hover > .window-title, #party:hover .ui-hud-toolbar,
+            #party.sp-title-keep > .window-title, #party.sp-title-keep .ui-hud-toolbar { opacity: 1; }
+            /* The leader's disabled buttons set their own opacity, so fade them directly too */
+            #party .ui-hud-toolbar button.ui-hud-action, #party .ui-hud-toolbar button.ui-hud-action:disabled { opacity: 0; transition: opacity 0.3s linear-in-out; }
+            #party:hover .ui-hud-toolbar button.ui-hud-action, #party:hover .ui-hud-toolbar button.ui-hud-action:disabled,
+            #party.sp-title-keep .ui-hud-toolbar button.ui-hud-action, #party.sp-title-keep .ui-hud-toolbar button.ui-hud-action:disabled { opacity: 1; }
+        </style>
+        <script>
+-- Job icons for group members (steampunk add-on).
+-- This window has no job data, so jobs are collected from places that do:
+-- the Game Arena (group, friends, clan lists), the clan window, and your own
+-- character. They are added when the window opens; adding them at load causes
+-- "Could not locate data model" errors. Every name/job seen is also saved to
+-- sp_job_cache.txt, so icons fill in over time and survive restarts.
+-- Each party row also asks the party data for member.job directly (the
+-- original window never showed it); the Party Finder's listings are read too.
+local ok, err = pcall(function()
+    local MEMBER_SEL, TAG_PATTERN = '.party-member', '^member%-(%d+)$'
+    local SOURCES = {
+        [[<div class="sp-job-source" data-model="game-arena"><span data-for="m : members" sp-kind="name" data-attr-sp-tag="m.tag" data-attr-sp-name="m.name" data-attr-sp-job="m.job"></span><span data-for="m : friends" data-attr-sp-name="m.name" data-attr-sp-job="m.job"></span><span data-for="m : clan" data-attr-sp-name="m.name" data-attr-sp-job="m.job"></span></div>]],
+        [[<div class="sp-job-source" data-model="clan"><span data-for="m : members" data-attr-sp-name="m.name" data-attr-sp-job="m.job_id"></span></div>]],
+        [[<div class="sp-job-source" data-model="character"><span sp-self="1" data-attr-sp-name="name" data-attr-sp-job="job"></span></div>]],
+    }
+    local IDS = { [0] = 'visitor', [111] = 'soldier', [121] = 'knight', [122] = 'champion',
+        [211] = 'muse', [221] = 'mage', [222] = 'cleric', [311] = 'hawker', [321] = 'raider',
+        [322] = 'scout', [411] = 'dealer', [421] = 'bourgeois', [422] = 'artisan' }
+    local FIRST = { [1] = 'soldier', [2] = 'muse', [3] = 'hawker', [4] = 'dealer' }
+    local VALID = {}
+    for _, v in pairs(IDS) do VALID[v] = true end
+    local function job_name(value)
+        local n = tonumber(value)
+        if n then return IDS[n] or FIRST[math.floor(n / 100)] or (n < 100 and 'visitor') or nil end
+        local s = tostring(value or ''):lower():match('^%s*(.-)%s*$')
+        return VALID[s] and s or nil
+    end
+    local function each(list, fn)
+        if not list then return end
+        local i = list[0] and 0 or 1
+        while list[i] do fn(list[i]); i = i + 1 end
+    end
+    local function trim(t) return (tostring(t or ''):gsub('<[^>]*>', ''):match('^%s*(.-)%s*$')) end
+
+    -- name -> job, saved between sessions
+    local CACHE_FILE, cache, dirty = 'sp_job_cache.txt', {}, false
+    pcall(function()
+        local f = io.open(CACHE_FILE, 'r')
+        if not f then return end
+        for line in f:lines() do
+            local name, job = line:match('^(.-)=(%a+)%s*$')
+            if name and VALID[job] then cache[name] = job end
+        end
+        f:close()
+    end)
+    local function remember(name, job)
+        if name ~= '' and job and cache[name] ~= job then cache[name] = job; dirty = true end
+    end
+    local function save()
+        if not dirty then return end
+        dirty = false
+        pcall(function()
+            local f = io.open(CACHE_FILE, 'w')
+            if not f then return end
+            for name, job in pairs(cache) do f:write(name, '=', job, '\n') end
+            f:close()
+        end)
+    end
+
+    local added, flip = false, false
+    local function add_sources()
+        if added then return end
+        local slot = document:GetElementById('sp-job-source-slot')
+        if not slot then return end
+        added = true
+        for _, markup in ipairs(SOURCES) do
+            local holder = document:CreateElement('div')
+            slot:AppendChild(holder)
+            pcall(function() slot.last_child.inner_rml = markup end)
+        end
+    end
+
+    local function update()
+        local by_tag, self_job = {}, nil
+        local spans = {}
+        each(document:QuerySelectorAll('.sp-job-source span'), function(s) spans[#spans + 1] = s end)
+        each(document:QuerySelectorAll('.sp-job-probe'), function(s) spans[#spans + 1] = s end)
+        for _, s in ipairs(spans) do (function(s)
+            local job = job_name(s:GetAttribute('sp-job'))
+            if job then
+                local name, tag = trim(s:GetAttribute('sp-name')), s:GetAttribute('sp-tag')
+                if tag then by_tag[tostring(tag)] = job end
+                if s:GetAttribute('sp-self') then self_job = job end
+                remember(name, job)
+            end
+        end)(s) end
+        save()
+        each(document:QuerySelectorAll(MEMBER_SEL), function(m)
+            local tag = (m.id or ''):match(TAG_PATTERN)
+            local job = tag and by_tag[tag]
+            if not job and m:IsClassSet('sp-self') then job = self_job end
+            if not job then
+                local label = m:QuerySelector('.ui-roster-name')
+                job = label and cache[trim(label.inner_rml)]
+            end
+            local badge = m:QuerySelector('.sp-job-badge')
+            if job then
+                if not badge then
+                    m:AppendChild(document:CreateElement('div'))
+                    badge = m.last_child
+                end
+                local want = 'sp-job-badge job-' .. job
+                if badge:GetAttribute('class') ~= want then badge:SetAttribute('class', want) end
+                m:SetClass('sp-has-job', true)
+            elseif badge then
+                badge:SetAttribute('class', 'sp-job-badge')
+                m:SetClass('sp-has-job', false)
+            end
+        end)
+    end
+
+    document:AddEventListener('show', function() pcall(add_sources) end)
+    local timer = document:GetElementById('sp-job-timer')
+    if timer then
+        timer:AddEventListener('animationend', function()
+            pcall(update)
+            flip = not flip
+            timer.style.animation = '1s ' .. (flip and 'sp-job-tick-b' or 'sp-job-tick-a')
+        end)
+    end
+end)
+        </script>
+        <script>
+
+-- Party HUD extras (steampunk add-on): buff icons on/off, buff icon size and
+-- whether the title bar always shows (the game hides it until hovered). Set in party_options.html, applied in party.html, saved to
+-- sp_party_hud.txt. Written inline because the game ignores edited .lua files.
+local SAVE_FILE = 'sp_party_hud.txt'
+local cfg = {buffs = 1, size = 100, keep = 0}
+pcall(function()
+    local f = io.open(SAVE_FILE, 'r')
+    if not f then return end
+    for line in f:lines() do
+        local k, v = line:match('^%s*(%a+)%s*=%s*(%d+)')
+        if k and cfg[k] ~= nil then cfg[k] = tonumber(v) end
+    end
+    f:close()
+end)
+cfg.size = math.max(50, math.min(200, math.floor(cfg.size / 10 + 0.5) * 10))
+local function save()
+    pcall(function()
+        local f = io.open(SAVE_FILE, 'w')
+        if not f then return end
+        f:write('buffs=', cfg.buffs, '\n', 'size=', cfg.size, '\n', 'keep=', cfg.keep, '\n')
+        f:close()
+    end)
+end
+local function apply_to(doc)
+    if not doc then return false end
+    local body = doc:GetElementById('party')
+    if not body or not doc:GetElementById('party-members') then return false end
+    body:SetClass('sp-buffs-off', cfg.buffs == 0)
+    body:SetClass('sp-title-keep', cfg.keep == 1)
+    for s = 50, 200, 10 do body:SetClass('sp-buff-' .. s, cfg.size == s) end
+    return true
+end
+
+if document:GetElementById('party-members') then
+    apply_to(document)
+    local me = document
+    if _G then _G.SP_PARTY_HUD_APPLY = function(c) if c then cfg = c end; apply_to(me) end end
+end
+
+        </script>
+    </head>
+    <body template="window-fixed-size" id="party" data-model="party" data-style-width="members_font_size * 18 + 'dp'">
+        <div id="sp-job-timer"></div>
+        <div id="sp-job-source-slot"></div>
+        <div data-model="party">
+            <div class="party-summary">
+                <span class="party-level">Level {{level}}</span>
+                <gauge class="party-experience horizontal-sm-lg yellow" data-attr-gvalue="experience" data-attr-gmax="max_experience"><span>{{experience_percent}}%</span></gauge>
+            </div>
+            <div class="ui-hud-toolbar">
+                <button id="party-entrust" class="ui-hud-action party-action" onmouseover="label-tooltip:357" onmouseout="hide-tooltip" onclick="entrust" data-if="is_leader" data-attrif-disabled="!can_entrust" />
+                <button id="party-kick" class="ui-hud-action party-action" onmouseover="label-tooltip:359" onmouseout="hide-tooltip" onclick="kick" data-if="is_leader" data-attrif-disabled="!can_kick" />
+                <button id="party-leave" class="ui-hud-action party-action" onmouseover="label-tooltip:358" onmouseout="hide-tooltip" onclick="leave" />
+                <button id="party-options" class="ui-hud-action party-action" onmouseover="label-tooltip:26" onmouseout="hide-tooltip" onclick="options" />
+            </div>
+            <div id="party-members" data-style-font-size="members_font_size + 'dp'" data-style-min-height="members_min_height + 'dp'" data-style-max-height="members_max_height + 'dp'">
+                <div class="party-member ui-roster-member" data-for="member : members" data-attr-id="'member-' + member.tag" data-attr-onclick="'select:' + member.tag" data-class-selected="member.selected" data-class-leader="member.leader" data-class-sp-self="member.self">
+                    <gauge class="member-health ui-vitals horizontal-sm-md red" data-class-unavailable="!member.available" data-attr-gvalue="member.hp_percent" gmax="100"><span class="member-name ui-roster-name">{{member.name}}</span></gauge>
+                    <div class="member-statuses ui-status-icons" data-if="member.available && member.statuses.size > 0">
+                        <span class="member-status" data-for="status : member.statuses" data-attr-id="'status-' + member.tag + '-' + status.state_id" data-class-blink="status.blink" data-attr-onmouseover="'status-tooltip:' + member.tag + ':' + status.state_id" onmouseout="hide-tooltip"><img data-attr-sprite="'stateicon-' + status.icon" /></span>
+                    </div>
+                </div>
+            </div>
+            <div id="party-tooltip" data-if="tooltip_visible" data-style-left="tooltip_x + 'px'" data-style-top="tooltip_y + 'px'">
+                <div data-if="tooltip_text != ''">{{tooltip_text}}</div>
+                <div data-if="tooltip_text == ''">
+                    <div class="status-tooltip-name">{{tooltip_name}}</div>
+                    <div class="status-tooltip-description">{{tooltip_description}}</div>
+                    <div class="status-tooltip-time" data-class-warning="tooltip_time_class == 'warning'" data-class-danger="tooltip_time_class == 'danger'">{{tooltip_remaining}}</div>
+                </div>
+            </div>
+        </div>
+    </body>
+</rml>

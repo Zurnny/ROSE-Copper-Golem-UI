@@ -1,0 +1,117 @@
+<rml>
+    <head>
+        <title>Mail</title>
+
+        <link type="text/template" href="../templates/window-resizeable.html" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            #game-mail
+            {
+                width: 500dp;
+                height: 300dp;
+                min-width: 410dp;
+                min-height: 200dp;
+            }
+
+            .from {
+                color: #aaa;
+            }
+
+            .timestamp {
+                color: #aaa;
+            }
+
+            .unread > .from {
+                color: rgb(231, 154, 116);
+            }
+
+            .full {
+                color: red;
+            }
+
+            tabset {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+
+            tab.default {
+                min-width: 100dp;
+            }
+
+            tabset > panels {
+                flex: 1;
+            }
+
+            .content-box {
+                margin: 4dp;
+            }
+        </style>
+    </head>
+
+    <body id="game-mail" template="window-resizeable">
+        <tabset id="tabs">
+            <tab class="default">Inbox</tab>
+            <panel>
+                <div style="width: 100%; height: 100%; display: flex; flex-direction: row;" data-model="mail-inbox">
+                    <div style="width: 160dp; display: flex; flex-direction:column;" class="content-box">
+                        <div style="display: flex; margin: 4dp; align-items: center; column-gap: 4dp;">
+                            <span style="width: 50dp">Inbox</span>
+                            <span style="flex: 1"><label class="text" data-class-full="inbox.size == inbox_max_size">{{inbox.size}} / {{inbox_max_size}}</label></span>
+                        </div>
+                        <div style="flex: 1; width: 100%; overflow: hidden auto">
+                            <listbox id="inbox" data-event-change="read_mail_index = inbox.size > 0 ? ev.value : 0">
+                                <listbox-item data-for="mail, mail_index : inbox" data-attr-value="mail_index" data-class-unread="mail.status == 0">
+                                    <span class="from">{{mail.from}}</span><br/>
+                                    <span class="timestamp">{{format_mail_timestamp(mail.timestamp)}}</span>
+                                </listbox-item>
+                            </listbox>
+                        </div>
+                    </div>
+
+                    <div style="flex: 1; display: flex; flex-direction: column; padding: 5dp" class="content-box">
+                        <table data-if="read_mail_index < inbox.size">
+                            <tr>
+                                <td style="width: 50dp; vertical-align: middle;">From</td>
+                                <td><label class="text">{{read_mail_index < inbox.size ? inbox[read_mail_index].from : ''}}</label></td>
+                            </tr>
+                            <tr style="padding-top: 2dp">
+                                <td style="vertical-align: middle;">Sent</td>
+                                <td><label class="text">{{read_mail_index < inbox.size ? format_mail_timestamp(inbox[read_mail_index].timestamp) : ''}}</label></td>
+                            </tr>
+                        </table>
+                        <div style="flex: 1; overflow: hidden auto; margin: 4dp 2dp; word-break: break-word;" id="view-mail-message" data-rml="read_mail_index < inbox.size ? format_mail_message(inbox[read_mail_index].message) : ''"></div>
+                        <div data-if="read_mail_index < inbox.size">
+                            <div style="display: flex; flex-direction: row">
+                                <button class="default" style="min-width: 110dp" data-event-click="start_send_mail(inbox[read_mail_index].from)">Reply</button>
+                                <div style="flex: 1"></div>
+                                <button class="default" style="min-width: 110dp" data-event-click="delete_mail(inbox[read_mail_index].id)" data-attrif-disabled="read_mail_index < inbox.size ? inbox[read_mail_index].deleting : 0">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </panel>
+
+            <tab class="default">Send</tab>
+            <panel data-model="mail-ui">
+                <div style="width: 100%; height: 100%; display: flex; flex-direction: column; padding: 4dp; box-sizing: border-box;">
+                    <div style="display: flex; width: 100%; align-items: center">
+                        <span style="padding-right: 10dp">To</span>
+                        <span style="flex: 1;">
+                            <input id="send-to" type="text" maxlength="20" style="width: 100%" onchange="change_to" data-attrif-disabled="sending" />
+                        </span>
+                    </div>
+                    <div style="flex: 1;">
+                        <textarea id="send-message" style="width: 100%; height: 100%" retains-focus onchange="change_message" data-attrif-disabled="sending"></textarea>
+                    </div>
+                    <div style="text-align: center; padding-top: 4dp">
+                        <button id="send-button" class="default" onclick="send_mail" data-attrif-disabled="sending || !valid_message">Send</button>
+                    </div>
+                </div>
+            </panel>
+        </tabset>
+    </body>
+</rml>

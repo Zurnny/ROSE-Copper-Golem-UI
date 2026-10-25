@@ -1,0 +1,149 @@
+/* Steampunk theme art: imgs/steampunk_ui.dds (512x512, made for this theme) */
+@spritesheet steampunk
+{
+    src: /data/ui/themes/rose/imgs/steampunk_ui.dds;
+
+    sp-gear-ring: 0px 0px 104px 104px;
+    sp-frame-tl: 108px 0px 16px 16px;
+    sp-frame-t: 132px 0px 1px 16px;
+    sp-frame-tr: 140px 0px 16px 16px;
+    sp-frame-l: 108px 24px 16px 1px;
+    sp-frame-c: 132px 24px 1px 1px;
+    sp-frame-r: 140px 24px 16px 1px;
+    sp-frame-bl: 108px 32px 16px 16px;
+    sp-frame-b: 132px 32px 1px 16px;
+    sp-frame-br: 140px 32px 16px 16px;
+    sp-rivet: 160px 0px 10px 10px;
+    sp-cap-l: 172px 0px 10px 22px;
+    sp-cap-r: 184px 0px 10px 22px;
+    sp-badge: 196px 0px 44px 22px;
+    sp-track-l: 244px 0px 1px 16px;
+    sp-track-c: 260px 0px 1px 16px;
+    sp-track-r: 275px 0px 1px 16px;
+    sp-glare: 280px 0px 4px 16px;
+    sp-gear-btn-n: 0px 110px 48px 48px;
+    sp-gear-btn-h: 50px 110px 48px 48px;
+    sp-gear-btn-a: 100px 110px 48px 48px;
+    sp-slot: 150px 110px 46px 46px;
+    sp-dial: 0px 160px 236px 236px;
+    sp-pipe-l: 200px 110px 6px 14px;
+    sp-pipe-c: 212px 110px 1px 14px;
+    sp-pipe-r: 218px 110px 6px 14px;
+    sp-minimap-ring: 244px 164px 180px 180px;
+    /* glossy dark-glass text buttons (n normal, h hover, a pressed/selected, d disabled) */
+    sp-btn-n-l: 0px 410px 10px 26px;
+    sp-btn-n-c: 32px 410px 1px 26px;
+    sp-btn-n-r: 54px 410px 10px 26px;
+    sp-btn-h-l: 0px 440px 10px 26px;
+    sp-btn-h-c: 32px 440px 1px 26px;
+    sp-btn-h-r: 54px 440px 10px 26px;
+    sp-btn-a-l: 70px 410px 10px 26px;
+    sp-btn-a-c: 102px 410px 1px 26px;
+    sp-btn-a-r: 124px 410px 10px 26px;
+    sp-btn-d-l: 70px 440px 10px 26px;
+    sp-btn-d-c: 102px 440px 1px 26px;
+    sp-btn-d-r: 124px 440px 10px 26px;
+}
+
+/* ---- Menu buttons (was spritesheet_steampunk_menu.css) ---- */
+/* Steampunk menu buttons: imgs/steampunk_menu.dds (n = normal, h = hover, a = pressed, b = blink) */
+@spritesheet steampunk-menu
+{
+    src: /data/ui/themes/rose/imgs/steampunk_menu.dds;
+
+    sp-menu-character-n: 0px 0px 34px 30px;
+    sp-menu-character-h: 36px 0px 34px 30px;
+    sp-menu-character-a: 72px 0px 34px 30px;
+    sp-menu-game-arena-n: 0px 32px 34px 30px;
+    sp-menu-game-arena-h: 36px 32px 34px 30px;
+    sp-menu-game-arena-a: 72px 32px 34px 30px;
+    sp-menu-group-manager-n: 0px 64px 34px 30px;
+    sp-menu-group-manager-h: 36px 64px 34px 30px;
+    sp-menu-group-manager-a: 72px 64px 34px 30px;
+    sp-menu-inventory-n: 0px 96px 34px 30px;
+    sp-menu-inventory-h: 36px 96px 34px 30px;
+    sp-menu-inventory-a: 72px 96px 34px 30px;
+    sp-menu-skills-n: 0px 128px 34px 30px;
+    sp-menu-skills-h: 36px 128px 34px 30px;
+    sp-menu-skills-a: 72px 128px 34px 30px;
+    sp-menu-quests-n: 0px 160px 34px 30px;
+    sp-menu-quests-h: 36px 160px 34px 30px;
+    sp-menu-quests-a: 72px 160px 34px 30px;
+    sp-menu-friends-n: 0px 192px 34px 30px;
+    sp-menu-friends-h: 36px 192px 34px 30px;
+    sp-menu-friends-a: 72px 192px 34px 30px;
+    sp-menu-party-finder-n: 0px 224px 34px 30px;
+    sp-menu-party-finder-h: 36px 224px 34px 30px;
+    sp-menu-party-finder-a: 72px 224px 34px 30px;
+    sp-menu-mail-n: 0px 256px 34px 30px;
+    sp-menu-mail-h: 36px 256px 34px 30px;
+    sp-menu-mail-a: 72px 256px 34px 30px;
+    sp-menu-clan-n: 0px 288px 34px 30px;
+    sp-menu-clan-h: 36px 288px 34px 30px;
+    sp-menu-clan-a: 72px 288px 34px 30px;
+    sp-menu-system-n: 0px 320px 34px 30px;
+    sp-menu-system-h: 36px 320px 34px 30px;
+    sp-menu-system-a: 72px 320px 34px 30px;
+    sp-menu-premium-storage-n: 0px 352px 34px 30px;
+    sp-menu-premium-storage-h: 36px 352px 34px 30px;
+    sp-menu-premium-storage-a: 72px 352px 34px 30px;
+    sp-menu-item-mall-n: 120px 0px 43px 43px;
+    sp-menu-item-mall-h: 165px 0px 43px 43px;
+    sp-menu-item-mall-a: 210px 0px 43px 43px;
+    sp-menu-scoreboard-n: 120px 46px 42px 42px;
+    sp-menu-scoreboard-b: 164px 46px 42px 42px;
+    sp-menu-scoreboard-h: 208px 46px 42px 42px;
+    sp-menu-scoreboard-a: 252px 46px 42px 42px;
+    sp-menu-toggle-n: 120px 92px 53px 25px;
+    sp-menu-toggle-h: 175px 92px 53px 25px;
+    sp-menu-toggle-a: 230px 92px 53px 25px;
+    sp-menu-toggle-open-n: 120px 120px 53px 25px;
+    sp-menu-toggle-open-h: 175px 120px 53px 25px;
+    sp-menu-toggle-open-a: 230px 120px 53px 25px;
+}
+
+/* ---- Minimap bezel and knobs (was spritesheet_steampunk_minimap.css) ---- */
+/* Steampunk minimap: imgs/steampunk_minimap.dds (n = normal, h = hover, a = pressed, b = blink) */
+@spritesheet steampunk-minimap
+{
+    src: /data/ui/themes/rose/imgs/steampunk_minimap.dds;
+
+    mm-bezel: 0px 0px 220px 220px;
+    mm-map-n: 230px 0px 40px 40px;
+    mm-map-h: 272px 0px 40px 40px;
+    mm-map-a: 314px 0px 40px 40px;
+    mm-arena-n: 230px 42px 40px 40px;
+    mm-arena-h: 272px 42px 40px 40px;
+    mm-arena-a: 314px 42px 40px 40px;
+    mm-mall-n: 230px 84px 40px 40px;
+    mm-mall-h: 272px 84px 40px 40px;
+    mm-mall-a: 314px 84px 40px 40px;
+    mm-plus-n: 230px 126px 40px 40px;
+    mm-plus-h: 272px 126px 40px 40px;
+    mm-plus-a: 314px 126px 40px 40px;
+    mm-minus-n: 230px 168px 40px 40px;
+    mm-minus-h: 272px 168px 40px 40px;
+    mm-minus-a: 314px 168px 40px 40px;
+    mm-gift-n: 230px 210px 40px 40px;
+    mm-gift-h: 272px 210px 40px 40px;
+    mm-gift-a: 314px 210px 40px 40px;
+    mm-plain-n: 230px 252px 40px 40px;
+    mm-plain-h: 272px 252px 40px 40px;
+    mm-plain-a: 314px 252px 40px 40px;
+    mm-minimize-n: 230px 294px 40px 40px;
+    mm-minimize-h: 272px 294px 40px 40px;
+    mm-minimize-a: 314px 294px 40px 40px;
+    mm-center-n: 230px 336px 40px 40px;
+    mm-center-h: 272px 336px 40px 40px;
+    mm-center-a: 314px 336px 40px 40px;
+    mm-tune-n: 230px 378px 40px 40px;
+    mm-tune-h: 272px 378px 40px 40px;
+    mm-tune-a: 314px 378px 40px 40px;
+    mm-sun-n: 230px 420px 40px 40px;
+    mm-sun-h: 272px 420px 40px 40px;
+    mm-sun-a: 314px 420px 40px 40px;
+    mm-moon-n: 230px 462px 40px 40px;
+    mm-moon-h: 272px 462px 40px 40px;
+    mm-moon-a: 314px 462px 40px 40px;
+    mm-gift-b: 356px 210px 40px 40px;
+}

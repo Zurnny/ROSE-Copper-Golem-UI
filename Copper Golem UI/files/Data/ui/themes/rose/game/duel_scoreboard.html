@@ -1,0 +1,55 @@
+<rml>
+    <head>
+        <title>Duel scoreboard</title>
+        <link type="text/rcss" href="../styles/html.css" />
+        <link type="text/rcss" href="../styles/spritesheet_glassui.css" />
+        <link type="text/rcss" href="../styles/spritesheet_icons.css" />
+        <link type="text/rcss" href="../styles/window.css" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+        <style>
+            body { position: absolute; left: 0; top: 0; width: 100vw; height: 100vh; margin: 0; padding: 0; pointer-events: none; }
+            #duel-scoreboards * { pointer-events: none; }
+            .duel-board { position: absolute; width: 400dp; max-width: 95vw; box-sizing: border-box; transform: translateX(-50%); font-effect: outline(1dp black), shadow(1dp 1dp black); }
+            .duel-board.window-box { padding: 12dp; }
+            .duel-round { display: block; text-align: center; line-height: 20dp; }
+            .duel-players { display: flex; align-items: center; }
+            .duel-player { display: flex; align-items: center; width: 50%; min-width: 0; padding: 0 8dp; box-sizing: border-box; gap: 8dp; font-size: 14dp; }
+            .duel-player.second { border-left: 1dp rgba(134, 134, 134, 100); }
+            .duel-portrait { width: 40dp; height: 40dp; flex-shrink: 0; }
+            .duel-player-info { flex: 1; min-width: 0; text-align: center; }
+            .duel-score { display: block; color: rgb(231, 154, 116); font-size: 18dp; font-weight: 820; line-height: 24dp; }
+            .duel-footer { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8dp; font-size: 13dp; }
+            .duel-time { color: rgb(0, 210, 255); font-weight: 820; }
+            .duel-rule.lose { color: rgb(255, 191, 191); }
+        </style>
+    </head>
+    <body id="duel-scoreboards">
+        <div data-model="duel_scoreboard">
+            <div class="duel-board window-box" data-for="board : boards" data-attr-id="'duel-board-' + board.id" data-style-left="board.x + 'px'" data-style-top="board.y + 'px'">
+                <span class="duel-round ui-section-title ui-section-heading" data-attr-id="'duel-round-' + board.id">{{board.round}}</span>
+                <div class="duel-players">
+                    <div class="duel-player">
+                        <img class="duel-portrait" data-attr-id="'duel-job1-' + board.id" data-attr-sprite="board.job1" />
+                        <div class="duel-player-info">
+                            <span class="duel-name ui-roster-name" data-attr-id="'duel-name1-' + board.id">{{board.name1}}</span>
+                            <span class="duel-score" data-attr-id="'duel-score1-' + board.id">{{board.score1}}</span>
+                        </div>
+                    </div>
+                    <div class="duel-player second">
+                        <div class="duel-player-info">
+                            <span class="duel-name ui-roster-name" data-attr-id="'duel-name2-' + board.id">{{board.name2}}</span>
+                            <span class="duel-score" data-attr-id="'duel-score2-' + board.id">{{board.score2}}</span>
+                        </div>
+                        <img class="duel-portrait" data-attr-id="'duel-job2-' + board.id" data-attr-sprite="board.job2" />
+                    </div>
+                </div>
+                <div class="duel-footer ui-footer" data-if="board.participant">
+                    <span class="duel-time" data-attr-id="'duel-time-' + board.id" data-if="board.time != ''">{{board.time}}</span>
+                    <span class="duel-rule" data-attr-id="'duel-rule-' + board.id" data-class-lose="board.lose_on_disconnect">{{board.rule}}</span>
+                </div>
+            </div>
+        </div>
+    </body>
+</rml>

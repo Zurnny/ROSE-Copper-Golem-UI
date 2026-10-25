@@ -1,0 +1,50 @@
+/* Layout only: frames, controls and selection states use the shared ROSE theme. */
+body { width: 860dp; max-width: 94vw; }
+body #window-content { padding: 10dp; overflow: auto; }
+.arena-browser { display: flex; gap: 10dp; height: 550dp; max-height: 73vh; min-height: 290dp; }
+.arena-sidebar { width: 300dp; flex: 0 0 35%; min-width: 220dp; display: flex; flex-direction: column; }
+.arena-filters { padding: 8dp; flex-shrink: 0; }
+.arena-search-row { display: flex; gap: 6dp; }
+.arena-search-row input { flex: 1; min-width: 0; width: 100dp; }
+.arena-level-choice { width: 30dp; flex: 0 0 30dp; }
+.arena-level-choice button { width: 30dp; min-width: 30dp; padding: 2dp; }
+.arena-level-choice .tooltiptext { left: auto; right: 0; bottom: 32dp; width: 190dp; min-width: 190dp; font-size: 12dp; }
+#arena-game-list { flex: 1; overflow-y: auto; min-height: 0; }
+.arena-heading { padding: 10dp 8dp 4dp; display: flex; justify-content: space-between; }
+.arena-heading .ui-section-title { margin: 0; }
+/* Paint the photo within the tile; the in-flow overlay keeps text above it. */
+.arena-card { display: block; cursor: hand; min-height: 72dp; width: 100%; padding: 0; margin-bottom: 4dp; }
+.arena-card-overlay {
+    display: flex; align-items: center; gap: 8dp; box-sizing: border-box;
+    width: 100%; min-height: 72dp; padding: 12dp 10dp; border-left: 3dp rgb(42, 40, 45);
+    decorator: horizontal-gradient(rgba(35, 34, 38, 235) rgba(35, 34, 38, 70));
+}
+.arena-card:hover .arena-card-overlay { border-left-color: rgb(127, 61, 185); background-color: rgba(203, 117, 74, 25); }
+.arena-card.selected .arena-card-overlay { border-left-color: rgb(203, 117, 74); }
+.arena-card .arena-card-copy { font-effect: shadow(1dp 1dp black); }
+.arena-card .arena-caption { color: #dddddd; }
+.arena-card .arena-dot { border: 1dp rgba(0, 0, 0, 180); }
+.arena-card-copy { flex: 1; min-width: 0; }
+.arena-card-name { display: block; font-weight: 820; word-break: break-word; }
+.arena-caption { display: block; font-size: 12dp; color: #bbbbbb; }
+.arena-dot { width: 6dp; height: 6dp; border-radius: 3dp; background: #777777; flex-shrink: 0; }
+.arena-dot.eligible { background: #70bb70; }
+.arena-detail { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+#arena-detail-content { flex: 1; min-height: 0; overflow-y: auto; }
+.arena-hero { height: 150dp; overflow: hidden; position: relative; }
+.arena-hero-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 8dp 12dp; background: rgba(35, 34, 38, 210); }
+.arena-hero-caption .ui-section-title { font-size: 20dp; margin: 0; }
+.arena-stats { display: flex; gap: 16dp; padding: 10dp 12dp; font-size: 13dp; flex-wrap: wrap; }
+.arena-version-heading { display: flex; justify-content: space-between; padding: 6dp 12dp; }
+.arena-versions { margin: 0 8dp; }
+.arena-version { display: flex; align-items: center; gap: 6dp; padding: 7dp 4dp; border-bottom: 1dp rgba(116, 53, 22, 160); font-size: 13dp; }
+.arena-version-range { flex: 1; min-width: 0; }
+.arena-version-count { width: 58dp; flex-shrink: 0; text-align: center; }
+.arena-version-wait { width: 38dp; flex-shrink: 0; text-align: center; }
+.arena-version-action { width: 104dp; flex-shrink: 0; }
+.arena-version-action button { width: 104dp; min-width: 0; font-size: 12dp; padding: 2dp; }
+.arena-description { padding: 12dp; font-size: 13dp; line-height: 1.5; }
+.arena-version .ui-currency { justify-content: flex-start; }
+.arena-group-footer { display: flex; align-items: center; justify-content: space-between; padding: 8dp; margin-top: 0; gap: 8dp; flex-shrink: 0; font-size: 13dp; }
+.arena-group-footer button.default { width: 150dp; min-width: 150dp; flex-shrink: 0; }
+.arena-empty { padding: 24dp 12dp; }

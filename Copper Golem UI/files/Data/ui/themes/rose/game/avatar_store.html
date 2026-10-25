@@ -1,0 +1,115 @@
+<rml>
+    <head>
+        <title>Personal Store</title>
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/spritesheet_itemicon.css" />
+        <link type="text/rcss" href="../styles/spritesheet_socketgem.css" />
+        <link type="text/rcss" href="../styles/item_slot.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+        <style>
+			body { width: 304dp; max-width: 96vw; }
+			#game-avatar-store #window-content { height: auto; padding: 10dp; max-height: 80vh; overflow: auto; }
+			#store-company { color: #ccc; margin-bottom: 6dp; word-break: break-word; }
+			.shop-tabs { display: flex; gap: 4dp; margin-bottom: 8dp; }
+			.shop-tabs button { flex: 1; min-width: 0; box-sizing: border-box; }
+			.shop-tabs button.active { color: rgb(231, 154, 116); decorator: tiled-horizontal(sp-btn-a-l, sp-btn-a-c, sp-btn-a-r); image-color: rgb(255, 255, 255); }
+			.shop-grid { display: flex; flex-wrap: wrap; width: 272dp; gap: 4dp; margin: 0 auto; }
+			.shop-grid item-slot { width: 40dp; height: 40dp; flex: 0 0 40dp; border: 1dp transparent; }
+			.shop-grid item-slot.selected { border-color: rgb(231, 154, 116); }
+			.shop-selection { display: flex; flex-direction: row; align-items: center; min-height: 24dp; margin-top: 8dp; }
+			#selected-name { flex: 1 1 auto; min-width: 0; white-space: normal; color: rgb(231, 154, 116); margin-right: 8dp; padding-top: 5dp; }
+			.shop-price { display: flex; align-items: center; justify-content: flex-end; gap: 5dp; flex: 0 0 auto; white-space: nowrap; }
+			#selected-price { color: rgb(231, 154, 116); }
+			.shop-price { display: flex; align-items: center; justify-content: flex-end; gap: 5dp; height: 21dp; }
+			.shop-price img { width: 21dp; height: 21dp; flex-shrink: 0; }
+			#store-state { color: #ccc; word-break: break-word; margin: 6dp 0; }
+			.shop-help { font-size: 11dp; color: #ccc; margin: 6dp 0; }
+			.shop-actions { display: flex; gap: 6dp; justify-content: center; }
+			.shop-actions button { min-width: 84dp; }
+		</style>
+    </head>
+    <body id="game-avatar-store" template="window-fixed-size">
+        <div data-model="avatar-store">
+        <div id="store-company" data-if="company != ''">{{ company }}</div>
+        <div class="shop-tabs">
+            <button id="sell-tab" class="default" onclick="sell" data-class-active="!buy">Sell</button>
+            <button id="buy-tab" class="default" onclick="buy" data-class-active="buy">Buy</button>
+        </div>
+        <div id="sell-panel" class="shop-grid" data-if="!buy">
+            <item-slot id="sell_slot1" data-slot="0" onclick="select" data-class-selected="slots[0].selected" />
+            <item-slot id="sell_slot2" data-slot="1" onclick="select" data-class-selected="slots[1].selected" />
+            <item-slot id="sell_slot3" data-slot="2" onclick="select" data-class-selected="slots[2].selected" />
+            <item-slot id="sell_slot4" data-slot="3" onclick="select" data-class-selected="slots[3].selected" />
+            <item-slot id="sell_slot5" data-slot="4" onclick="select" data-class-selected="slots[4].selected" />
+            <item-slot id="sell_slot6" data-slot="5" onclick="select" data-class-selected="slots[5].selected" />
+            <item-slot id="sell_slot7" data-slot="6" onclick="select" data-class-selected="slots[6].selected" />
+            <item-slot id="sell_slot8" data-slot="7" onclick="select" data-class-selected="slots[7].selected" />
+            <item-slot id="sell_slot9" data-slot="8" onclick="select" data-class-selected="slots[8].selected" />
+            <item-slot id="sell_slot10" data-slot="9" onclick="select" data-class-selected="slots[9].selected" />
+            <item-slot id="sell_slot11" data-slot="10" onclick="select" data-class-selected="slots[10].selected" />
+            <item-slot id="sell_slot12" data-slot="11" onclick="select" data-class-selected="slots[11].selected" />
+            <item-slot id="sell_slot13" data-slot="12" onclick="select" data-class-selected="slots[12].selected" />
+            <item-slot id="sell_slot14" data-slot="13" onclick="select" data-class-selected="slots[13].selected" />
+            <item-slot id="sell_slot15" data-slot="14" onclick="select" data-class-selected="slots[14].selected" />
+            <item-slot id="sell_slot16" data-slot="15" onclick="select" data-class-selected="slots[15].selected" />
+            <item-slot id="sell_slot17" data-slot="16" onclick="select" data-class-selected="slots[16].selected" />
+            <item-slot id="sell_slot18" data-slot="17" onclick="select" data-class-selected="slots[17].selected" />
+            <item-slot id="sell_slot19" data-slot="18" onclick="select" data-class-selected="slots[18].selected" />
+            <item-slot id="sell_slot20" data-slot="19" onclick="select" data-class-selected="slots[19].selected" />
+            <item-slot id="sell_slot21" data-slot="20" onclick="select" data-class-selected="slots[20].selected" />
+            <item-slot id="sell_slot22" data-slot="21" onclick="select" data-class-selected="slots[21].selected" />
+            <item-slot id="sell_slot23" data-slot="22" onclick="select" data-class-selected="slots[22].selected" />
+            <item-slot id="sell_slot24" data-slot="23" onclick="select" data-class-selected="slots[23].selected" />
+            <item-slot id="sell_slot25" data-slot="24" onclick="select" data-class-selected="slots[24].selected" />
+            <item-slot id="sell_slot26" data-slot="25" onclick="select" data-class-selected="slots[25].selected" />
+            <item-slot id="sell_slot27" data-slot="26" onclick="select" data-class-selected="slots[26].selected" />
+            <item-slot id="sell_slot28" data-slot="27" onclick="select" data-class-selected="slots[27].selected" />
+            <item-slot id="sell_slot29" data-slot="28" onclick="select" data-class-selected="slots[28].selected" />
+            <item-slot id="sell_slot30" data-slot="29" onclick="select" data-class-selected="slots[29].selected" />
+        </div>
+        <div id="buy-panel" class="shop-grid" data-if="buy">
+            <item-slot id="buy_slot1" data-slot="0" onclick="select" data-class-selected="slots[30].selected" data-attr-dimmed="slots[30].dimmed" />
+            <item-slot id="buy_slot2" data-slot="1" onclick="select" data-class-selected="slots[31].selected" data-attr-dimmed="slots[31].dimmed" />
+            <item-slot id="buy_slot3" data-slot="2" onclick="select" data-class-selected="slots[32].selected" data-attr-dimmed="slots[32].dimmed" />
+            <item-slot id="buy_slot4" data-slot="3" onclick="select" data-class-selected="slots[33].selected" data-attr-dimmed="slots[33].dimmed" />
+            <item-slot id="buy_slot5" data-slot="4" onclick="select" data-class-selected="slots[34].selected" data-attr-dimmed="slots[34].dimmed" />
+            <item-slot id="buy_slot6" data-slot="5" onclick="select" data-class-selected="slots[35].selected" data-attr-dimmed="slots[35].dimmed" />
+            <item-slot id="buy_slot7" data-slot="6" onclick="select" data-class-selected="slots[36].selected" data-attr-dimmed="slots[36].dimmed" />
+            <item-slot id="buy_slot8" data-slot="7" onclick="select" data-class-selected="slots[37].selected" data-attr-dimmed="slots[37].dimmed" />
+            <item-slot id="buy_slot9" data-slot="8" onclick="select" data-class-selected="slots[38].selected" data-attr-dimmed="slots[38].dimmed" />
+            <item-slot id="buy_slot10" data-slot="9" onclick="select" data-class-selected="slots[39].selected" data-attr-dimmed="slots[39].dimmed" />
+            <item-slot id="buy_slot11" data-slot="10" onclick="select" data-class-selected="slots[40].selected" data-attr-dimmed="slots[40].dimmed" />
+            <item-slot id="buy_slot12" data-slot="11" onclick="select" data-class-selected="slots[41].selected" data-attr-dimmed="slots[41].dimmed" />
+            <item-slot id="buy_slot13" data-slot="12" onclick="select" data-class-selected="slots[42].selected" data-attr-dimmed="slots[42].dimmed" />
+            <item-slot id="buy_slot14" data-slot="13" onclick="select" data-class-selected="slots[43].selected" data-attr-dimmed="slots[43].dimmed" />
+            <item-slot id="buy_slot15" data-slot="14" onclick="select" data-class-selected="slots[44].selected" data-attr-dimmed="slots[44].dimmed" />
+            <item-slot id="buy_slot16" data-slot="15" onclick="select" data-class-selected="slots[45].selected" data-attr-dimmed="slots[45].dimmed" />
+            <item-slot id="buy_slot17" data-slot="16" onclick="select" data-class-selected="slots[46].selected" data-attr-dimmed="slots[46].dimmed" />
+            <item-slot id="buy_slot18" data-slot="17" onclick="select" data-class-selected="slots[47].selected" data-attr-dimmed="slots[47].dimmed" />
+            <item-slot id="buy_slot19" data-slot="18" onclick="select" data-class-selected="slots[48].selected" data-attr-dimmed="slots[48].dimmed" />
+            <item-slot id="buy_slot20" data-slot="19" onclick="select" data-class-selected="slots[49].selected" data-attr-dimmed="slots[49].dimmed" />
+            <item-slot id="buy_slot21" data-slot="20" onclick="select" data-class-selected="slots[50].selected" data-attr-dimmed="slots[50].dimmed" />
+            <item-slot id="buy_slot22" data-slot="21" onclick="select" data-class-selected="slots[51].selected" data-attr-dimmed="slots[51].dimmed" />
+            <item-slot id="buy_slot23" data-slot="22" onclick="select" data-class-selected="slots[52].selected" data-attr-dimmed="slots[52].dimmed" />
+            <item-slot id="buy_slot24" data-slot="23" onclick="select" data-class-selected="slots[53].selected" data-attr-dimmed="slots[53].dimmed" />
+            <item-slot id="buy_slot25" data-slot="24" onclick="select" data-class-selected="slots[54].selected" data-attr-dimmed="slots[54].dimmed" />
+            <item-slot id="buy_slot26" data-slot="25" onclick="select" data-class-selected="slots[55].selected" data-attr-dimmed="slots[55].dimmed" />
+            <item-slot id="buy_slot27" data-slot="26" onclick="select" data-class-selected="slots[56].selected" data-attr-dimmed="slots[56].dimmed" />
+            <item-slot id="buy_slot28" data-slot="27" onclick="select" data-class-selected="slots[57].selected" data-attr-dimmed="slots[57].dimmed" />
+            <item-slot id="buy_slot29" data-slot="28" onclick="select" data-class-selected="slots[58].selected" data-attr-dimmed="slots[58].dimmed" />
+            <item-slot id="buy_slot30" data-slot="29" onclick="select" data-class-selected="slots[59].selected" data-attr-dimmed="slots[59].dimmed" />
+        </div>
+        <div class="shop-selection">
+            <div id="selected-name">{{ selected_name }}</div>
+            <div class="shop-price"><img id="selected-currency" sprite="button-zulie-n" data-style-visibility="has_selection ? 'visible' : 'hidden'" /><span id="selected-price">{{ selected_price }}</span></div>
+        </div>
+        <div id="store-state">{{ state_label }}</div>
+        <div class="shop-help">Double-click an item to trade, or drag it to or from your inventory.</div>
+        <div class="shop-actions">
+            <button id="trade" class="default" onclick="trade" data-attrif-disabled="!trade_enabled">{{ trade_label }}</button>
+            <button id="stop" class="default" onclick="stop" data-if="owner">Stop</button>
+        </div>
+        </div>
+    </body>
+</rml>

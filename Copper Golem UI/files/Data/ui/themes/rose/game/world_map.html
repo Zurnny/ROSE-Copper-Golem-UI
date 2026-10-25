@@ -1,0 +1,144 @@
+<rml>
+    <head>
+        <title>World Map</title>
+
+        <link type="text/template" href="../templates/window-resizeable.html" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            body {
+                width: 640dp;
+                height: 480dp;
+            }
+
+            #zone-list {
+                display: inline-block;
+                width: 200dp;
+                height: 100%;
+            }
+
+            listbox-item {
+                padding: 2dp;
+                padding-left: 10dp;
+            }
+
+            .zone-description {
+                color: #aaa;
+            }
+
+            #map-container {
+                height: 100%;
+                overflow: hidden;
+                clip: always;
+            }
+
+            #zoom-control {
+                position: absolute;
+                bottom: 5dp;
+                right: 5dp;
+                font-effect: outline(1dp black);
+            }
+
+            #zoom-control > input {
+                width: 100dp;
+                vertical-align: middle;
+            }
+        </style>
+    </head>
+
+    <body id="game-world-map" template="window-resizeable">
+        <div data-model="world-map" style="width: 100%; height: 100%">
+            <div style="display: flex; flex-direction: row; column-gap: 4dp;">
+                <div class="content-box" id="zone-list" data-if="show_zone_list">
+                    <listbox style="overflow: hidden scroll; height: 100%">
+                        <details
+                            data-for="zone_group, zone_group_index : zone_groups"
+                            data-attr-id="'group-' + zone_group_index"
+                        >
+                            <summary>{{zone_group.name}}</summary>
+                            <div> <!-- wrapped in a div to avoid conflict with <details> and data-if -->
+                                <listbox-item
+                                    data-for="zone_id : zone_group.zone_ids"
+                                    data-attr-id="'zone-' + zone_id"
+                                    data-event-click="show_zone(zone_id)"
+                                    data-if="zone_info[zone_id].visible || player.zone_id == zone_id"
+                                    class="zone"
+                                >
+                                    <div class="zone-name">{{zone_info[zone_id].name}}</div>
+                                    <div class="zone-description">{{zone_info[zone_id].description}}</div>
+                                </listbox-item>
+                            </div>
+                        </details>
+                    </listbox>
+                </div>
+
+                <div style="flex: 1;" id="map-container">
+                    <div id="map">
+                        <img
+                            id="map-image"
+                            data-if="loaded_map.zone_id != 0"
+                            data-attr-src="zone_info[loaded_map.zone_id].map_src"
+                            data-attr-width="round(loaded_map.map_image_size.x * zoom_level) + 'dp'"
+                            data-attr-height="round(loaded_map.map_image_size.y * zoom_level) + 'dp'"
+                            data-event-mousedown="click_map"
+                            style="position: absolute;"
+                        >
+                        </img>
+
+                        <img
+                            data-for="npc : zone_info[loaded_map.zone_id].npcs"
+                            data-style-left="round(zoom_level * npc.map_position.x) + 'dp'"
+                            data-style-top="round(zoom_level * npc.map_position.y) + 'dp'"
+                            data-attr-sprite="npc.icon_sprite"
+                            data-attr-npc_id="npc.npc_id"
+                            data-attr-quest_signal="npc.quest_signal"
+                            data-event-mousedown="click_npc(npc.npc_id, npc.world_position.x, npc.world_position.y)"
+                            style="position: absolute; transform: translate(-50%, -50%);"
+                        >
+                        </img>
+
+                        <img
+                            data-for="party_member : party_members"
+                            data-if="party_member.zone_id == loaded_map.zone_id"
+                            data-style-left="round(zoom_level * party_member.map_position.x) + 'dp'"
+                            data-style-top="round(zoom_level * party_member.map_position.y) + 'dp'"
+                            data-attr-name="party_member.name"
+                            sprite="map-party-member"
+                            style="position: absolute; transform: translate(-50%, -50%);"
+                        >
+                        </img>
+
+                        <img
+                            data-if="player.zone_id == loaded_map.zone_id"
+                            src="/3DData/Control/Res/MiniMap_Arrow.tga"
+                            data-style-left="round(zoom_level * player.map_position.x) + 'dp'"
+                            data-style-top="round(zoom_level * player.map_position.y) + 'dp'"
+                            data-style-transform="'translate(-50%, -50%) rotate(' + player.direction + ' rad)'"
+                            data-event-mousedown="click_player"
+                            style="position: absolute;"
+                        >
+                        </img>
+
+                        <img
+                            data-for="marker : markers"
+                            data-style-left="round(zoom_level * marker.map_position.x) + 'dp'"
+                            data-style-top="round(zoom_level * marker.map_position.y) + 'dp'"
+                            data-attr-sprite="marker.sprite"
+                            style="position: absolute; transform: translate(-50%, -50%); pointer-events: none;"
+                        >
+                        </img>
+                    </div>
+
+                    <button data-attr-class="show_zone_list ? 'minus' : 'plus'" style="margin: 0dp; z-index: 1" data-event-click="show_zone_list = !show_zone_list" />
+                </div>
+            </div>
+
+            <div id="zoom-control">
+                {{zoom_percent + '%'}}
+                <input type="range" min="20" max="500" data-value="zoom_percent" data-event-change="zoom_percent_changed()" ondblclick="zoom-reset" />
+                <button class="close" onclick="zoom-reset" />
+            </div>
+        </div>
+    </body>
+</rml>

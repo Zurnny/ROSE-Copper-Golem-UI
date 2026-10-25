@@ -1,0 +1,53 @@
+<rml>
+    <head>
+        <title>Confirm Purchase</title>
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+        <style>
+            body { width: 490dp; max-width: 94vw; }
+            .cart-heading, .cart-row { display: flex; align-items: center; gap: 8dp; padding: 8dp 0; }
+            .cart-heading { font-size: 13dp; font-weight: 820; color: rgb(231, 154, 116); border-bottom: 1dp rgba(134, 134, 134, 100); }
+            .cart-quantity { width: 42dp; flex: 0 0 42dp; text-align: center; }
+            .cart-item { flex: 1; min-width: 0; word-break: break-word; }
+            .cart-cost { width: 96dp; flex: 0 0 96dp; text-align: right; word-break: break-word; }
+            .cart-row .cart-cost { font-size: 13dp; color: rgb(231, 154, 116); }
+            .cart-remove { width: 24dp; flex: 0 0 24dp; }
+            #cart-rows { max-height: 42vh; overflow-y: auto; }
+            .cart-row { border-bottom: 1dp rgba(134, 134, 134, 100); }
+            .cart-row:last-child { border-bottom: 0; }
+            .pack-size { font-size: 12dp; color: #bbbbbb; }
+            .cart-recipient { margin-bottom: 12dp; }
+            .cart-heading img { width: 21dp; height: 21dp; vertical-align: middle; }
+            .cart-total-label { color: white; }
+            #cart-state { margin-top: 8dp; }
+            #cart-state:empty { display: none; }
+            .cart-actions { margin-top: 12dp; }
+        </style>
+    </head>
+    <body template="window-fixed-size" id="mall-cart">
+        <div data-model="mall-cart">
+        <div class="cart-recipient ui-section-title">For <span id="recipient">{{ recipient }}</span></div>
+        <div class="ui-section content-box">
+            <div class="cart-heading">
+                <span class="cart-quantity">Packs</span>
+                <span class="cart-item">Item</span>
+                <span class="cart-cost"><img sprite="mall-points" alt="Item Mall points" /></span>
+                <span class="cart-remove" />
+            </div>
+            <div id="cart-rows">
+                <div class="cart-row" data-for="row : rows">
+                    <span class="cart-quantity">{{ row.quantity }}</span>
+                    <div class="cart-item">{{ row.name }}<div class="pack-size" data-if="row.pack_size > 1">{{ row.pack_size }} items per pack</div></div>
+                    <span class="cart-cost">{{ row.cost }}</span>
+                    <button data-attr-id="'remove-' + it_index" class="close cart-remove" data-event-click="remove(it_index)" data-attrif-disabled="checking" />
+                </div>
+            </div>
+            <div class="ui-currency ui-footer"><span class="cart-total-label">Total:</span><img sprite="mall-points" alt="Item Mall points" /><span id="total">{{ total }}</span></div>
+        </div>
+        <div id="cart-state" class="ui-status">{{ state }}</div>
+        <div class="cart-actions ui-actions"><button id="purchase" class="default" onclick="purchase" data-attrif-disabled="!purchase_enabled">{{ purchase_label }}</button></div>
+        </div>
+    </body>
+</rml>

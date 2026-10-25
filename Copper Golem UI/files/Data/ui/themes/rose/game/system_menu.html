@@ -1,0 +1,26 @@
+<rml>
+    <head>
+        <title>System Menu</title>
+
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            body {
+                width: 180dp;
+            }
+
+            button {
+                width: 100%;
+            }
+        </style>
+    </head>
+
+    <body template="window-fixed-size">
+        <button class="default" onclick="open-options">Options</button>
+        <button class="default" onclick="open-support">Support</button>
+        <button class="default" onclick="character-select">Character Select</button>
+        <button class="default" onclick="logout">Logout</button>
+    </body>
+</rml>

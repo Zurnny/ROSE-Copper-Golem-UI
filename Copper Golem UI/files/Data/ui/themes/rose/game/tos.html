@@ -1,0 +1,90 @@
+<rml>
+    <head>
+        <title>Terms of Service</title>
+
+        <link type="text/template" href="../templates/window-fixed.html" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            body
+            {
+                width: 600dp;
+                height: 70%;
+            }
+
+            #tos-container
+            {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+            }
+
+            #tos-text
+            {
+                flex: 1;
+                overflow-y: scroll;
+                text-align: left;
+                font-size: 16dp;
+                line-height: 1.2;
+                margin-left: 10dp;
+                margin-top: 10dp;
+                margin-right: 20dp;
+            }
+
+            #checkbox-container
+            {
+                font-effect: outline(1dp black);
+                line-height: 40dp;
+            }
+
+            #button-container
+            {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 5dp;
+            }
+
+            #button-container > button
+            {
+                width: 350dp;
+            }
+        </style>
+    </head>
+
+    <body id="external-tos" data-model="tos_data" template="window-fixed">
+        <div id="tos-container">
+            <div id="tos-text">
+                <span><b>ROSE Online Game Rules</b></span><br/>
+                <span><i>Last updated September 11, 2026</i></span><br/><br/>
+
+                <span>1. Follow the game's terms of service and rules at all times: These outline the behaviour that is expected of players and may include things like not engaging in harassment, cheating, or scamming other players.</span><br/>
+                <br/><span>2. No harassment or hate speech: This includes any behaviour that is intended to offend, intimidate, or discriminate against others based on their race, ethnicity, religion, sexual orientation, gender identity, or any other characteristic.</span><br/>
+                <br/><span>3. No sharing personal information: This includes sharing your own personal information or the personal information of others without their consent.</span><br/>
+                <br/><span>4. No sharing inappropriate content: This includes sharing explicit text, or sharing content that is not suitable for all audiences.</span><br/>
+                <br/><span>5. Respect other players: This includes not using offensive language, not engaging in harassment or bullying, and not stealing from or griefing other players.</span><br/>
+                <br/><span>6. Participate in the economy: You as players can buy, sell, and trade items and resources. Respect the value of these items and do not engage in activities that could disrupt the economy, such as scamming users for example.</span><br/>
+                <br/><span>7. Follow the instructions of the ROSE Online Team: The ROSE Online Team have the final say on any issues that may arise in the server. It is important to follow their instructions.</span><br/>
+                <br/><span>8. Discussing past ROSE projects: (e.g. Ruff, Shin, Titan) is fine, but discussing projects, which are currently active and violating copyright is strictly forbidden across any of our platforms.</span><br/>
+                <br/><span>9. No evading moderation: This includes using alt accounts to circumvent bans/timeouts and using alternate spelling to circumvent the profanity auto-moderation.</span><br/>
+                <br/><span>10. Don't cheat/exploit to gain an advantage: This includes using third-party tools(macroing/scripting/any automation tools), exploiting game bugs, or otherwise breaking the game's rules in order to gain an unfair advantage.</span><br/>
+                <br/><span>11. A maximum of two clients per person: You are allowed to connect two clients to ROSE Online at one time, whether this is from the same PC or two different PC's.</span><br/>
+                <br/><span>12. RMT is prohibited. RMT (Real Money Transaction) is the buying or selling of ingame items, zulie or game accounts for real money and it is strictly forbidden.</span><br/>
+                <br/><span>Not following the rules could result in a temporary and/or permanent suspension of your account</span><br/>
+            </div>
+
+            <div id="checkbox-container">
+                <input id="remember-rules" type="checkbox" data-value="remember_rules" data-checked="remember_rules"/>
+                <label id="remember-rules-label" for="remember-rules" string-id="1094"><b>I know all the rules, please do not show them again</b></label>
+            </div>
+
+            <div id="button-container">
+                <button class="default" onclick="decline"><b><fc_lightred>Decline</fc_lightred></b></button>
+                <button class="default" onclick="accept"><b>Accept</b></button>
+            </div>
+        </div>
+    </body>
+</rml>

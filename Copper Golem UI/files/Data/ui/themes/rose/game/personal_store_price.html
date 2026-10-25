@@ -1,0 +1,110 @@
+<rml>
+    <head>
+        <title>Personal Store</title>
+
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/spritesheet_itemicon.css" />
+        <link type="text/rcss" href="../styles/spritesheet_socketgem.css" />
+        <link type="text/rcss" href="../styles/item_slot.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            body
+            {
+                width: 240dp;
+                height: 140dp;
+                font-effect: outline(1dp black);
+            }
+
+            label.item-name
+            {
+                width: 160dp;
+                font-size: 14dp;
+                color: rgb(231, 154, 116);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            label.item-price
+            {
+                width: 180dp;
+                white-space: nowrap;
+                cursor: hand;
+            }
+
+            label.item-quantity
+            {
+                width: 50dp;
+                font-size: 14dp;
+                color: rgb(231, 154, 116);
+                cursor: hand;
+            }
+
+            tr > td:nth-child(1) {
+                width: 50dp;
+            }
+
+            tr > td:nth-child(2) {
+                width: 160dp;
+            }
+
+            tr {
+                min-height: 15dp;
+            }
+
+            td {
+                vertical-align: top;
+            }
+
+            td.item-name
+            {
+                vertical-align: top;
+            }
+
+            button.default {
+                min-width: 100dp;
+                width: 100dp;
+            }
+
+            .item-container {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                margin: 4dp;
+                gap: 10dp;
+            }
+
+            .item-container > label {
+                flex: 1;
+            }
+
+            .tooltip {
+                width: 100%;
+                text-align: center;
+            }
+        </style>
+    </head>
+
+    <body id="game-personal-store-price" onkeyup="key" data-model="personalstore-price-data" template="window-fixed-size">
+        <div class="item-container">
+            <item-slot item-actions id="item-slot" class="slot" sprite="slot-icon" />
+            <label id="item-name" class="custom-2 item-name">{{data.name}}</label>
+        </div>
+
+        <div class="tooltip">
+            <label>Quantity</label>
+            <label id="quantity" class="custom item-quantity" onclick="quantity"><b>x{{data.quantity}}</b></label>
+            <span class="tooltiptext">Quantity</span>
+        </div>
+
+        <div class="tooltip">
+            <button id="price" class="zulie" onclick="price"></button>
+            <label id="price-value" class="custom item-price" onclick="price">{{format_money(data.price)}}</label>
+            <span class="tooltiptext">Set unit price</span>
+        </div>
+
+        <button id="confirm" class="default" onclick="confirm" style="margin: 10dp auto;">Confirm</button>
+	</body>
+</rml>

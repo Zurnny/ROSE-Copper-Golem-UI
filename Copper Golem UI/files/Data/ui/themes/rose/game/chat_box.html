@@ -1,0 +1,531 @@
+<rml>
+    <head>
+        <title>Chat Box</title>
+
+        <link type="text/template" href="../templates/window-box.html" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            body
+            {
+                width: 405dp;
+                height: 340dp;
+                min-width: 340dp;
+                min-height: 150dp;
+                margin-top: -3dp;
+                margin-left: 3dp;
+                padding-bottom: 64dp;
+            }
+
+            scrollbarvertical
+            {
+                margin-right: -20dp;
+            }
+
+            body scrollbarvertical {
+                display: none;
+            }
+
+            body:hover scrollbarvertical {
+                display: inline-block;
+            }
+
+            body #resizer {
+                display: none;
+            }
+
+            body:hover #resizer {
+                display: inline-block;
+            }
+
+            body #chat-settings,
+            body #mover {
+                display: none;
+            }
+
+            body:hover #chat-settings,
+            body:hover #mover {
+                display: inline-block;
+            }
+
+            #resizer {
+                position: absolute;
+                top: 2dp;
+                right: 2dp;
+            }
+
+            #mover {
+                position: absolute;
+                top: 2dp;
+                right: 27dp;
+            }
+
+            #chat-settings {
+                position: absolute;
+                top: 2dp;
+                right: 52dp;
+            }
+
+            handle {
+                cursor: drag;
+            }
+
+            percentage-handle {
+                position: relative;
+                left: 0dp;
+                top: -8dp;
+                width: 100%;
+                height: 10dp;
+                display: inline-block;
+                cursor: drag;
+            }
+
+            #percentage-handle-icon {
+                display: none;
+                position: absolute;
+                top: -8dp;
+                left: 50%;
+                width: 24dp;
+                height: 20dp;
+                decorator: tiled-vertical(scrollbar-button-t, scrollbar-button-c, scrollbar-button-b);
+            }
+
+            percentage-handle:hover >  #percentage-handle-icon {
+                display: inline-block;
+            }
+
+            #virtual-messages
+            {
+                display: block;
+                word-break: break-word;
+                font-effect: outline(1dp black);
+                overflow: hidden scroll;
+                decorator: horizontal-gradient(rgba(42, 40, 45, 180) rgba(42, 40, 45, 60));
+                padding-left: 15dp;
+                height: 65%;
+            }
+
+            #virtual-system
+            {
+                display: block;
+                word-break: break-word;
+                font-effect: outline(1dp black);
+                overflow: hidden scroll;
+                decorator: horizontal-gradient(rgba(42, 40, 45, 180) rgba(42, 40, 45, 60));
+                padding-left: 15dp;
+                height: 35%;
+            }
+
+            #chat-separator {
+                width: 100%;
+                height: 1dp;
+            }
+
+            select#category
+            {
+                width: 80dp;
+            }
+
+            select#category selectvalue
+            {
+                display: none;
+            }
+
+            select#category selectbox
+            {
+                width: 120dp;
+            }
+
+            span#category-text
+            {
+                position: absolute;
+                left: 10dp;
+                padding-top: 4dp;
+                pointer-events: none;
+            }
+
+            #input-container
+            {
+                decorator: horizontal-gradient(rgba(42, 40, 45, 180) rgba(42, 40, 45, 60));
+                height: 64dp;
+            }
+
+            #input-tab-container
+            {
+                font-effect: outline(1dp black);
+                height: 34dp;
+                overflow: hidden auto;
+            }
+
+            #input-tab-container > button
+            {
+                min-width: 5dp;
+            }
+
+            .window
+            {
+                width: 100%;
+                height: 100%;
+            }
+
+            tab.default
+            {
+                min-width: 5dp;
+            }
+
+            .chat-message
+            {
+                margin: 0dp 0dp;
+            }
+
+            .chat-message-from:hover
+            {
+                text-decoration: underline;
+            }
+
+            .chat-message-link:hover
+            {
+                text-decoration: underline;
+            }
+
+            .timestamp
+            {
+                color: #a0a0a0;
+            }
+
+            .chat-message-chat
+            {
+                color: #ffffff;
+            }
+
+            .chat-message-shout
+            {
+                color: #ff6969;
+            }
+
+            .chat-message-party
+            {
+                color: #bdfaff;
+            }
+
+            .chat-message-clan
+            {
+                color: #f29161;
+            }
+
+            .chat-message-clan-notification
+            {
+                color: #f29161;
+            }
+
+            .chat-message-trade
+            {
+                color: #00d232;
+            }
+
+            .chat-message-whisper
+            {
+                color: #ff9ee8;
+            }
+
+            .chat-message-social-notification
+            {
+                color: #c8a8ff;
+            }
+
+            .chat-message-notice
+            {
+                color: #ffbdac;
+            }
+
+            .chat-message-system
+            {
+                color: #ffe0e5;
+            }
+
+            .chat-message-error
+            {
+                color: #ff0000;
+            }
+
+            .chat-message-quest
+            {
+                color: #97ddf1;
+            }
+
+            .chat-message-quest-reward
+            {
+                color: #e0a2d1;
+            }
+
+            .chat-message-group
+            {
+                color: #9caff3;
+            }
+
+            .chat-message-group-leader
+            {
+                color: #577cdd;
+            }
+
+            .chat-name-gm
+            {
+                color: rgb(172, 145, 255);
+            }
+
+            .chat-name-cm
+            {
+                color: rgb(162, 84, 230);
+            }
+
+            .chat-name-dev
+            {
+                color: rgb(145, 172, 255);
+            }
+
+            .chat-name-mod
+            {
+                color: rgb(242, 104, 35);
+            }
+
+            .chat-name-event
+            {
+                color: rgb(0, 153, 77);
+            }
+            /* =========================================================
+             * Steampunk chat box: see-through iron panel, brass edge
+             * ========================================================= */
+            body#game-chat-box
+            {
+                background-color: rgba(35, 34, 38, 150);
+                border: 2dp rgb(171, 90, 50);
+                border-radius: 3dp;
+            }
+            /* The message areas sit on the panel itself, no extra fade */
+            #virtual-messages,
+            #virtual-system
+            {
+                decorator: none;
+                background-color: transparent;
+            }
+            /* System / chat divider: a thin brass rule */
+            #chat-separator
+            {
+                height: 2dp;
+                background-color: rgb(142, 73, 39);
+            }
+            #percentage-handle-icon { image-color: rgb(203, 117, 74); }
+            /* Tabs and input row on a darker iron strip */
+            #input-container
+            {
+                decorator: none;
+                background-color: rgba(23, 22, 25, 190);
+                border-top: 1dp rgb(116, 53, 22);
+            }
+            #input-tab-container { padding: 3dp 2dp 0dp 2dp; }
+            span#category-text { color: rgb(231, 154, 116); }
+            .timestamp { color: rgb(162, 125, 107); }
+            /* Message colours picked in Options > Chat > Message Colours */
+            #game-chat-box.sp-chat-1 .chat-message-chat { color: rgb(255, 255, 255); }
+            #game-chat-box.sp-chat-2 .chat-message-chat { color: rgb(226, 208, 170); }
+            #game-chat-box.sp-chat-3 .chat-message-chat { color: rgb(203, 117, 74); }
+            #game-chat-box.sp-chat-4 .chat-message-chat { color: rgb(242, 122, 62); }
+            #game-chat-box.sp-chat-5 .chat-message-chat { color: rgb(127, 61, 185); }
+            #game-chat-box.sp-chat-6 .chat-message-chat { color: rgb(152, 63, 230); }
+            #game-chat-box.sp-chat-7 .chat-message-chat { color: rgb(255, 90, 80); }
+            #game-chat-box.sp-chat-8 .chat-message-chat { color: rgb(255, 150, 220); }
+            #game-chat-box.sp-chat-9 .chat-message-chat { color: rgb(190, 150, 255); }
+            #game-chat-box.sp-chat-10 .chat-message-chat { color: rgb(120, 170, 255); }
+            #game-chat-box.sp-chat-11 .chat-message-chat { color: rgb(120, 230, 240); }
+            #game-chat-box.sp-chat-12 .chat-message-chat { color: rgb(110, 220, 110); }
+            #game-chat-box.sp-shout-1 .chat-message-shout { color: rgb(255, 255, 255); }
+            #game-chat-box.sp-shout-2 .chat-message-shout { color: rgb(226, 208, 170); }
+            #game-chat-box.sp-shout-3 .chat-message-shout { color: rgb(203, 117, 74); }
+            #game-chat-box.sp-shout-4 .chat-message-shout { color: rgb(242, 122, 62); }
+            #game-chat-box.sp-shout-5 .chat-message-shout { color: rgb(127, 61, 185); }
+            #game-chat-box.sp-shout-6 .chat-message-shout { color: rgb(152, 63, 230); }
+            #game-chat-box.sp-shout-7 .chat-message-shout { color: rgb(255, 90, 80); }
+            #game-chat-box.sp-shout-8 .chat-message-shout { color: rgb(255, 150, 220); }
+            #game-chat-box.sp-shout-9 .chat-message-shout { color: rgb(190, 150, 255); }
+            #game-chat-box.sp-shout-10 .chat-message-shout { color: rgb(120, 170, 255); }
+            #game-chat-box.sp-shout-11 .chat-message-shout { color: rgb(120, 230, 240); }
+            #game-chat-box.sp-shout-12 .chat-message-shout { color: rgb(110, 220, 110); }
+            #game-chat-box.sp-whisper-1 .chat-message-whisper { color: rgb(255, 255, 255); }
+            #game-chat-box.sp-whisper-2 .chat-message-whisper { color: rgb(226, 208, 170); }
+            #game-chat-box.sp-whisper-3 .chat-message-whisper { color: rgb(203, 117, 74); }
+            #game-chat-box.sp-whisper-4 .chat-message-whisper { color: rgb(242, 122, 62); }
+            #game-chat-box.sp-whisper-5 .chat-message-whisper { color: rgb(127, 61, 185); }
+            #game-chat-box.sp-whisper-6 .chat-message-whisper { color: rgb(152, 63, 230); }
+            #game-chat-box.sp-whisper-7 .chat-message-whisper { color: rgb(255, 90, 80); }
+            #game-chat-box.sp-whisper-8 .chat-message-whisper { color: rgb(255, 150, 220); }
+            #game-chat-box.sp-whisper-9 .chat-message-whisper { color: rgb(190, 150, 255); }
+            #game-chat-box.sp-whisper-10 .chat-message-whisper { color: rgb(120, 170, 255); }
+            #game-chat-box.sp-whisper-11 .chat-message-whisper { color: rgb(120, 230, 240); }
+            #game-chat-box.sp-whisper-12 .chat-message-whisper { color: rgb(110, 220, 110); }
+            #game-chat-box.sp-trade-1 .chat-message-trade { color: rgb(255, 255, 255); }
+            #game-chat-box.sp-trade-2 .chat-message-trade { color: rgb(226, 208, 170); }
+            #game-chat-box.sp-trade-3 .chat-message-trade { color: rgb(203, 117, 74); }
+            #game-chat-box.sp-trade-4 .chat-message-trade { color: rgb(242, 122, 62); }
+            #game-chat-box.sp-trade-5 .chat-message-trade { color: rgb(127, 61, 185); }
+            #game-chat-box.sp-trade-6 .chat-message-trade { color: rgb(152, 63, 230); }
+            #game-chat-box.sp-trade-7 .chat-message-trade { color: rgb(255, 90, 80); }
+            #game-chat-box.sp-trade-8 .chat-message-trade { color: rgb(255, 150, 220); }
+            #game-chat-box.sp-trade-9 .chat-message-trade { color: rgb(190, 150, 255); }
+            #game-chat-box.sp-trade-10 .chat-message-trade { color: rgb(120, 170, 255); }
+            #game-chat-box.sp-trade-11 .chat-message-trade { color: rgb(120, 230, 240); }
+            #game-chat-box.sp-trade-12 .chat-message-trade { color: rgb(110, 220, 110); }
+            #game-chat-box.sp-party-1 .chat-message-party { color: rgb(255, 255, 255); }
+            #game-chat-box.sp-party-2 .chat-message-party { color: rgb(226, 208, 170); }
+            #game-chat-box.sp-party-3 .chat-message-party { color: rgb(203, 117, 74); }
+            #game-chat-box.sp-party-4 .chat-message-party { color: rgb(242, 122, 62); }
+            #game-chat-box.sp-party-5 .chat-message-party { color: rgb(127, 61, 185); }
+            #game-chat-box.sp-party-6 .chat-message-party { color: rgb(152, 63, 230); }
+            #game-chat-box.sp-party-7 .chat-message-party { color: rgb(255, 90, 80); }
+            #game-chat-box.sp-party-8 .chat-message-party { color: rgb(255, 150, 220); }
+            #game-chat-box.sp-party-9 .chat-message-party { color: rgb(190, 150, 255); }
+            #game-chat-box.sp-party-10 .chat-message-party { color: rgb(120, 170, 255); }
+            #game-chat-box.sp-party-11 .chat-message-party { color: rgb(120, 230, 240); }
+            #game-chat-box.sp-party-12 .chat-message-party { color: rgb(110, 220, 110); }
+            #game-chat-box.sp-clan-1 .chat-message-clan, #game-chat-box.sp-clan-1 .chat-message-clan-notification { color: rgb(255, 255, 255); }
+            #game-chat-box.sp-clan-2 .chat-message-clan, #game-chat-box.sp-clan-2 .chat-message-clan-notification { color: rgb(226, 208, 170); }
+            #game-chat-box.sp-clan-3 .chat-message-clan, #game-chat-box.sp-clan-3 .chat-message-clan-notification { color: rgb(203, 117, 74); }
+            #game-chat-box.sp-clan-4 .chat-message-clan, #game-chat-box.sp-clan-4 .chat-message-clan-notification { color: rgb(242, 122, 62); }
+            #game-chat-box.sp-clan-5 .chat-message-clan, #game-chat-box.sp-clan-5 .chat-message-clan-notification { color: rgb(127, 61, 185); }
+            #game-chat-box.sp-clan-6 .chat-message-clan, #game-chat-box.sp-clan-6 .chat-message-clan-notification { color: rgb(152, 63, 230); }
+            #game-chat-box.sp-clan-7 .chat-message-clan, #game-chat-box.sp-clan-7 .chat-message-clan-notification { color: rgb(255, 90, 80); }
+            #game-chat-box.sp-clan-8 .chat-message-clan, #game-chat-box.sp-clan-8 .chat-message-clan-notification { color: rgb(255, 150, 220); }
+            #game-chat-box.sp-clan-9 .chat-message-clan, #game-chat-box.sp-clan-9 .chat-message-clan-notification { color: rgb(190, 150, 255); }
+            #game-chat-box.sp-clan-10 .chat-message-clan, #game-chat-box.sp-clan-10 .chat-message-clan-notification { color: rgb(120, 170, 255); }
+            #game-chat-box.sp-clan-11 .chat-message-clan, #game-chat-box.sp-clan-11 .chat-message-clan-notification { color: rgb(120, 230, 240); }
+            #game-chat-box.sp-clan-12 .chat-message-clan, #game-chat-box.sp-clan-12 .chat-message-clan-notification { color: rgb(110, 220, 110); }
+            #game-chat-box.sp-group-1 .chat-message-group, #game-chat-box.sp-group-1 .chat-message-group-leader { color: rgb(255, 255, 255); }
+            #game-chat-box.sp-group-2 .chat-message-group, #game-chat-box.sp-group-2 .chat-message-group-leader { color: rgb(226, 208, 170); }
+            #game-chat-box.sp-group-3 .chat-message-group, #game-chat-box.sp-group-3 .chat-message-group-leader { color: rgb(203, 117, 74); }
+            #game-chat-box.sp-group-4 .chat-message-group, #game-chat-box.sp-group-4 .chat-message-group-leader { color: rgb(242, 122, 62); }
+            #game-chat-box.sp-group-5 .chat-message-group, #game-chat-box.sp-group-5 .chat-message-group-leader { color: rgb(127, 61, 185); }
+            #game-chat-box.sp-group-6 .chat-message-group, #game-chat-box.sp-group-6 .chat-message-group-leader { color: rgb(152, 63, 230); }
+            #game-chat-box.sp-group-7 .chat-message-group, #game-chat-box.sp-group-7 .chat-message-group-leader { color: rgb(255, 90, 80); }
+            #game-chat-box.sp-group-8 .chat-message-group, #game-chat-box.sp-group-8 .chat-message-group-leader { color: rgb(255, 150, 220); }
+            #game-chat-box.sp-group-9 .chat-message-group, #game-chat-box.sp-group-9 .chat-message-group-leader { color: rgb(190, 150, 255); }
+            #game-chat-box.sp-group-10 .chat-message-group, #game-chat-box.sp-group-10 .chat-message-group-leader { color: rgb(120, 170, 255); }
+            #game-chat-box.sp-group-11 .chat-message-group, #game-chat-box.sp-group-11 .chat-message-group-leader { color: rgb(120, 230, 240); }
+            #game-chat-box.sp-group-12 .chat-message-group, #game-chat-box.sp-group-12 .chat-message-group-leader { color: rgb(110, 220, 110); }
+            #game-chat-box.sp-quest-1 .chat-message-quest { color: rgb(255, 255, 255); }
+            #game-chat-box.sp-quest-2 .chat-message-quest { color: rgb(226, 208, 170); }
+            #game-chat-box.sp-quest-3 .chat-message-quest { color: rgb(203, 117, 74); }
+            #game-chat-box.sp-quest-4 .chat-message-quest { color: rgb(242, 122, 62); }
+            #game-chat-box.sp-quest-5 .chat-message-quest { color: rgb(127, 61, 185); }
+            #game-chat-box.sp-quest-6 .chat-message-quest { color: rgb(152, 63, 230); }
+            #game-chat-box.sp-quest-7 .chat-message-quest { color: rgb(255, 90, 80); }
+            #game-chat-box.sp-quest-8 .chat-message-quest { color: rgb(255, 150, 220); }
+            #game-chat-box.sp-quest-9 .chat-message-quest { color: rgb(190, 150, 255); }
+            #game-chat-box.sp-quest-10 .chat-message-quest { color: rgb(120, 170, 255); }
+            #game-chat-box.sp-quest-11 .chat-message-quest { color: rgb(120, 230, 240); }
+            #game-chat-box.sp-quest-12 .chat-message-quest { color: rgb(110, 220, 110); }
+            #game-chat-box.sp-system-1 .chat-message-system { color: rgb(255, 255, 255); }
+            #game-chat-box.sp-system-2 .chat-message-system { color: rgb(226, 208, 170); }
+            #game-chat-box.sp-system-3 .chat-message-system { color: rgb(203, 117, 74); }
+            #game-chat-box.sp-system-4 .chat-message-system { color: rgb(242, 122, 62); }
+            #game-chat-box.sp-system-5 .chat-message-system { color: rgb(127, 61, 185); }
+            #game-chat-box.sp-system-6 .chat-message-system { color: rgb(152, 63, 230); }
+            #game-chat-box.sp-system-7 .chat-message-system { color: rgb(255, 90, 80); }
+            #game-chat-box.sp-system-8 .chat-message-system { color: rgb(255, 150, 220); }
+            #game-chat-box.sp-system-9 .chat-message-system { color: rgb(190, 150, 255); }
+            #game-chat-box.sp-system-10 .chat-message-system { color: rgb(120, 170, 255); }
+            #game-chat-box.sp-system-11 .chat-message-system { color: rgb(120, 230, 240); }
+            #game-chat-box.sp-system-12 .chat-message-system { color: rgb(110, 220, 110); }
+        </style>
+    <script>
+
+-- Chat message colours (steampunk add-on). Shared by options_bgfx.html (the
+-- picker) and chat_box.html (the messages). Written inline because the game
+-- ignores edited .lua files. Choices are saved to sp_chat_colors.txt.
+local CHANNELS = {{id='chat', name='Chat', default='rgb(255, 255, 255)'}, {id='shout', name='Shout', default='rgb(255, 105, 105)'}, {id='whisper', name='Whisper', default='rgb(255, 158, 232)'}, {id='trade', name='Trade', default='rgb(0, 210, 50)'}, {id='party', name='Party', default='rgb(189, 250, 255)'}, {id='clan', name='Clan', default='rgb(255, 228, 122)'}, {id='group', name='Group', default='rgb(156, 175, 243)'}, {id='quest', name='Quest', default='rgb(151, 221, 241)'}, {id='system', name='System', default='rgb(255, 224, 229)'}}
+local PALETTE = {{name='White', rgb='rgb(255, 255, 255)'}, {name='Parchment', rgb='rgb(226, 208, 170)'}, {name='Brass', rgb='rgb(203, 117, 74)'}, {name='Gold', rgb='rgb(242, 122, 62)'}, {name='Copper', rgb='rgb(127, 61, 185)'}, {name='Orange', rgb='rgb(152, 63, 230)'}, {name='Red', rgb='rgb(255, 90, 80)'}, {name='Pink', rgb='rgb(255, 150, 220)'}, {name='Purple', rgb='rgb(190, 150, 255)'}, {name='Blue', rgb='rgb(120, 170, 255)'}, {name='Cyan', rgb='rgb(120, 230, 240)'}, {name='Green', rgb='rgb(110, 220, 110)'}}
+local SAVE_FILE = 'sp_chat_colors.txt'
+local CHAT_ID = 'game-chat-box'
+local picks = {}   -- channel id -> palette index (0 = game default)
+pcall(function()
+    local f = io.open(SAVE_FILE, 'r')
+    if not f then return end
+    for line in f:lines() do
+        local k, v = line:match('^%s*([%w_]+)%s*=%s*(%d+)')
+        if k then picks[k] = math.max(0, math.min(#PALETTE, tonumber(v))) end
+    end
+    f:close()
+end)
+if _G and type(_G.SP_CHAT_PICKS) == 'table' then
+    for k, v in pairs(_G.SP_CHAT_PICKS) do if picks[k] == nil then picks[k] = v end end
+end
+local function save()
+    if _G then _G.SP_CHAT_PICKS = picks end
+    pcall(function()
+        local f = io.open(SAVE_FILE, 'w')
+        if not f then return end
+        for _, c in ipairs(CHANNELS) do f:write(c.id, '=', tostring(picks[c.id] or 0), '\n') end
+        f:close()
+    end)
+end
+-- Put class sp-<channel>-<n> on the chat window body
+local function apply_to(doc)
+    if not doc then return false end
+    local body = doc:GetElementById(CHAT_ID)
+    if not body then return false end
+    for _, c in ipairs(CHANNELS) do
+        for i = 1, #PALETTE do body:SetClass('sp-' .. c.id .. '-' .. i, (picks[c.id] or 0) == i) end
+    end
+    return true
+end
+
+if document:GetElementById('virtual-messages') then
+    apply_to(document)
+    local me = document
+    if _G then _G.SP_CHAT_APPLY = function(p) if p then picks = p end; apply_to(me) end end
+end
+
+    </script>
+    </head>
+
+    <body id="game-chat-box">
+        <div style="height: 100%; width:100%;" data-model="chat-box">
+            <virtual-list-box id="virtual-system" data-if="show_system_tab"></virtual-list-box>
+
+            <div id="chat-separator" data-if="show_system_tab">
+                <percentage-handle property="height" primary_target="virtual-system" secondary_target="virtual-messages" min="10" max="90">
+                    <span id="percentage-handle-icon"></span>
+                </percentage-handle>
+            </div>
+
+            <virtual-list-box id="virtual-messages"></virtual-list-box>
+
+            <div id="input-container">
+                <div id="input-tab-container">
+                    <button class="default" data-for="tabs" data-class-selected="tab_index == it_index" data-event-click="tab_index = it_index; current_tab_changed()" onclick="tab_button_clicked">{{it.name}}</button>
+                </div>
+                <div style="height: 30dp; width: 100%; margin-left: 2dp;">
+                    <div style="display: flex; flex-direction: row; height: 28dp; width:100%; align-items: center;">
+                        <div style="flex: none; width: 100dp;">
+                            <span id="category-text">Chat</span>
+                            <select id="category" data-event-change="chat_input_category_changed()" data-value="chat_input_category" style="tab-index: none">
+                                <option value="0" selected  onclick="chat_input_category_clicked">Chat /s</option>
+                                <option value="1">Whisper /w</option>
+                                <option value="2">Shout /sh</option>
+                                <option value="3">Party /p</option>
+                                <option value="4">Clan /c</option>
+                                <option value="5">Group /g</option>
+                                <option value="6">Trade /t</option>
+                            </select>
+                        </div>
+                        <input id="whisper_name" type="text" maxlength="20" data-if="chat_input_category == 1" style="margin-right:3dp; tab-index: auto; width: 110dp;" />
+                        <input id="input_text" type="text" style="flex: 2; margin-right:3dp; tab-index: auto" data-attrif-disabled="chat_blocked" maxlength="250" retains-focus />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button id="chat-settings" class="settings" onclick="chat_settings" tooltip="Chat settings"></button>
+        <handle id="mover" class="button-move" move_target="#document"></handle>
+        <handle id="resizer" class="button-resize" size_target="#document"></handle>
+    </body>
+</rml>

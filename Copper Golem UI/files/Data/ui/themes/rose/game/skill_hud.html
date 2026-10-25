@@ -1,0 +1,50 @@
+<rml>
+    <head>
+        <title>Skill Effects</title>
+        <link type="text/rcss" href="../styles/html.css" />
+        <link type="text/rcss" href="../styles/spritesheet_skillicon.css" />
+        <link type="text/rcss" href="../styles/spritesheet_elementicon.css" />
+        <link type="text/rcss" href="../styles/spritesheet_glassui.css" />
+        <link type="text/rcss" href="../styles/scrollbar.css" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+        <style>
+            #skill-hud { position: absolute; top: 10dp; right: 210dp; width: auto; max-width: 70vw; max-height: 40vh; pointer-events: none; font-effect: outline(1dp black), shadow(1dp 1dp black); }
+            #skill-hud-list { display: flex; flex-direction: row-reverse; flex-wrap: wrap; overflow-y: auto; max-height: 40vh; pointer-events: none; }
+            #skill-hud-list scrollbarvertical { pointer-events: auto; }
+            .hud-skill { position: relative; width: 40dp; min-width: 40dp; height: 60dp; flex-shrink: 0; pointer-events: auto; }
+            .hud-skill-icon { display: block; width: 40dp; height: 40dp; pointer-events: none; }
+            .hud-skill.dimmed .hud-skill-icon { image-color: rgb(128, 128, 128); }
+            .hud-skill.invalid-clan:not(.dimmed) .hud-skill-icon { image-color: rgb(128, 128, 255); }
+            .hud-skill-level { position: absolute; top: 22dp; right: 4dp; font-size: 12dp; font-weight: 820; pointer-events: none; }
+            .hud-skill-timer { display: block; width: 40dp; height: 20dp; line-height: 20dp; text-align: center; font-size: 12dp; font-weight: 820; pointer-events: none; }
+            .hud-skill-element { position: absolute; top: 0dp; left: 20dp; width: 18dp; height: 18dp; pointer-events: none; }
+            .hud-skill.dimmed .hud-skill-element { image-color: rgb(128, 128, 128); }
+            #skill-hud-tooltip { position: absolute; z-index: 100; clip: none; pointer-events: none; width: 260dp; max-width: 90vw; max-height: 90vh; }
+            .skill-tooltip-name { display: block; color: rgb(231, 154, 116); margin-bottom: 8dp; }
+            .skill-tooltip-name.invalid-clan { color: rgb(128, 128, 128); }
+            .skill-tooltip-description { display: block; margin-bottom: 8dp; }
+            .skill-tooltip-time { display: block; color: rgb(90, 230, 110); }
+            .skill-tooltip-time.warning { color: rgb(242, 100, 29); }
+            .skill-tooltip-time.danger { color: rgb(255, 80, 80); }
+        </style>
+    </head>
+    <body id="skill-hud">
+        <div id="skill-hud-root" data-model="skill-hud" data-style-width="strip_width + 'dp'" data-style-max-width="strip_max_width + 'dp'">
+        <div id="skill-hud-list" class="ui-icon-strip">
+            <div class="hud-skill" data-for="skill : entries" data-attr-id="'hud-skill-' + skill.slot" data-class-dimmed="skill.dimmed" data-class-invalid-clan="skill.invalid_clan" data-attr-onmouseover="'skill-tooltip:' + skill.slot + ':' + skill.skill_id" onmouseout="hide-tooltip">
+                <img class="hud-skill-icon" data-attr-sprite="'skillicon-' + skill.icon" />
+                <img class="hud-skill-element" data-if="skill.element > 0" data-attr-sprite="'elementicon-' + skill.element" />
+                <span class="hud-skill-level" data-if="skill.level > 1">{{skill.level}}</span>
+                <span class="hud-skill-timer">{{skill.timer}}</span>
+            </div>
+        </div>
+        <div id="skill-hud-tooltip" class="ui-tooltip-surface" data-if="tooltip_visible" data-style-left="tooltip_x + 'px'" data-style-top="tooltip_y + 'px'">
+            <div class="skill-tooltip-name" data-class-invalid-clan="tooltip_invalid_clan">{{tooltip_name}}</div>
+            <div class="skill-tooltip-description" data-if="tooltip_description != ''">{{tooltip_description}}</div>
+            <div class="skill-tooltip-time" data-if="tooltip_remaining != ''" data-class-warning="tooltip_time_class == 'warning'" data-class-danger="tooltip_time_class == 'danger'">{{tooltip_remaining}}</div>
+        </div>
+        </div>
+    </body>
+</rml>

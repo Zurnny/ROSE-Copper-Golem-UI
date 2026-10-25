@@ -1,0 +1,156 @@
+<rml>
+    <head>
+        <title>Selected target</title>
+        <link type="text/rcss" href="../styles/html.css" />
+        <link type="text/rcss" href="../styles/spritesheet_gauge.css" />
+        <link type="text/rcss" href="../styles/gauge.css" />
+        <link type="text/rcss" href="../styles/spritesheet_stateicon.css" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+        <style>
+            body { position: absolute; top: 50dp; left: 50%; width: 240dp; margin-left: -120dp; z-index: -20; pointer-events: none; }
+            #focused-target-root.duel { margin-top: 50dp; }
+            #target-name { font-size: 14dp; font-weight: 820; line-height: 20dp; max-height: 40dp; overflow: hidden; word-break: break-word; text-align: center; font-effect: outline(1dp black); }
+            #target-statuses { width: 100%; }
+            .target-status-icon { pointer-events: auto; }
+
+            /* ---- DPS meter (steampunk add-on, filled in by the script below) ---- */
+            #sp-dps
+            {
+                display: none; margin: 3dp auto 0 auto; width: 228dp; box-sizing: border-box;
+                padding: 2dp 6dp; text-align: center; font-size: 12dp; line-height: 16dp;
+                background-color: rgba(35, 34, 38, 210);
+                border: 1dp rgb(171, 90, 50);
+                color: rgb(226, 208, 170); font-effect: outline(1dp black);
+            }
+            #sp-dps.active { display: block; }
+            /* The line is a read-only text box: it redraws its own text, so changing
+               it every second never creates new text elements (which made the
+               game log "No font face defined" warnings). */
+            #sp-dps-line
+            {
+                display: block; width: 100%; height: 16dp; padding: 0; margin: 0;
+                decorator: none; background: transparent; border: 0;
+                font-family: Nunito; font-weight: 800; font-size: 12dp; line-height: 16dp;
+                color: rgb(231, 154, 116); text-align: center;
+                pointer-events: none; tab-index: none; image-color: rgb(255, 255, 255);
+            }
+            #sp-dps.done #sp-dps-line { color: rgb(150, 220, 110); }
+            #sp-dps.paused #sp-dps-line { color: rgb(191, 145, 122); }
+            #sp-dps-source { display: none; }
+            /* Repeating 1 second timer: two identical animations swapped each time one ends */
+            @keyframes sp-dps-tick-a { from { opacity: 0; } to { opacity: 0; } }
+            @keyframes sp-dps-tick-b { from { opacity: 0; } to { opacity: 0; } }
+            #sp-dps-timer { position: absolute; width: 1dp; height: 1dp; opacity: 0; animation: 1s sp-dps-tick-a; }
+        </style>
+        <script>
+-- DPS meter (steampunk add-on). The game gives the UI no damage numbers, so
+-- this watches the target's HP once a second: HP lost = damage per second.
+-- It measures damage TAKEN by your target, so in a party it includes your
+-- party's hits too. It resets when you change target; when the target dies or
+-- nobody has hit it for 8 seconds, the fight's totals stay on screen for as
+-- long as the target window does.
+pcall(function()
+    local function el(id) return document:GetElementById(id) end
+    local function num(n)
+        local t = string.format('%.0f', n)
+        local r = t:reverse():gsub('(%d%d%d)', '%1,'):reverse():gsub('^,', '')
+        return r
+    end
+    local key, last_hp = nil, nil
+    local fight = nil          -- {total, seconds, recent = {...}, idle, done}
+    local flip = false
+    -- The line is a read-only text box: only its value changes, so no new text
+    -- elements are created each second (that caused font warnings in the log).
+    local shown = nil
+    -- time left until the kill: the target's HP now / damage per second so far
+    local function left()
+        if fight.done then return '0s' end
+        if fight.idle >= 8 then return '-' end
+        local avg = fight.total / math.max(1, fight.seconds)
+        if not last_hp or avg <= 0 then return '-' end
+        local secs = math.ceil(last_hp / avg)
+        if secs >= 3600 then return '1h+' end
+        if secs >= 60 then return math.floor(secs / 60) .. 'm ' .. (secs % 60) .. 's' end
+        return secs .. 's'
+    end
+    local function render()
+        local box, line = el('sp-dps'), el('sp-dps-line')
+        if not box or not line then return end
+        if not fight or fight.total <= 0 then box:SetClass('active', false); return end
+        local recent = 0
+        for _, d in ipairs(fight.recent) do recent = recent + d end
+        local now = #fight.recent > 0 and recent / #fight.recent or 0
+        local avg = fight.total / math.max(1, fight.seconds)
+        local head
+        if fight.done then head = 'Defeated'
+        elseif fight.idle >= 8 then head = 'Paused'
+        else head = 'DPS ' .. num(now) end
+        local text = head .. '  ·  Avg ' .. num(avg) .. '  ·  ' .. 'Kill in ' .. left()
+        if text ~= shown then line:SetAttribute('value', text); shown = text end
+        box:SetClass('done', fight.done == true)
+        box:SetClass('paused', not fight.done and fight.idle >= 8)
+        box:SetClass('active', true)
+    end
+    local function tick()
+        local src = el('sp-dps-values')
+        if not src then return end
+        local visible = src:GetAttribute('sp-visible') == '1'
+        local hp, max = tonumber(src:GetAttribute('sp-hp')), tonumber(src:GetAttribute('sp-max'))
+        local name = src:GetAttribute('sp-name') or ''
+        if not visible or not hp or not max or max <= 0 then
+            key, last_hp, fight = nil, nil, nil
+            render(); return
+        end
+        local k = name .. '|' .. max
+        if k ~= key then
+            -- new target: start fresh
+            key, last_hp, fight = k, hp, nil
+            render(); return
+        end
+        local dealt = (last_hp or hp) - hp
+        last_hp = hp
+        if dealt > 0 then
+            if not fight or fight.done then fight = {total = 0, seconds = 0, recent = {}, idle = 0} end
+            fight.total = fight.total + dealt
+            fight.idle = 0
+        elseif fight then
+            fight.idle = fight.idle + 1
+        end
+        if fight and not fight.done and fight.idle < 8 then
+            fight.seconds = fight.seconds + 1
+            table.insert(fight.recent, math.max(0, dealt))
+            if #fight.recent > 3 then table.remove(fight.recent, 1) end   -- "DPS" = last 3 seconds
+            if hp <= 0 then fight.done = true end
+        end
+        render()
+    end
+    local timer = el('sp-dps-timer')
+    if timer then
+        timer:AddEventListener('animationend', function()
+            pcall(tick)
+            flip = not flip
+            timer.style.animation = '1s ' .. (flip and 'sp-dps-tick-b' or 'sp-dps-tick-a')
+        end)
+    end
+end)
+        </script>
+    </head>
+    <body id="focused-target" onclick="ignore">
+        <!-- The model binds on a child: a body-level model attaches after parsing, too late for data-for templates. -->
+        <div id="focused-target-root" data-model="focused-target" data-if="visible" data-class-duel="duel">
+            <div id="target-name" data-style-color="color">{{name}}</div>
+            <gauge id="target-health" class="ui-vitals horizontal-sm-md red" animation-enabled="false" data-if="show_health" data-attr-gmax="max_hp" data-attr-gvalue="hp">
+                <span><label id="value" /> / <label id="max" /></span>
+            </gauge>
+            <div id="sp-dps"><input id="sp-dps-line" type="text" readonly="" value="" /></div>
+            <div id="target-statuses" class="ui-status-icons">
+                <span class="target-status-icon" data-for="status, index : statuses" data-attr-status-index="index"><img data-attr-sprite="status.sprite"/></span>
+            </div>
+        </div>
+        <!-- DPS meter: hidden copy of the target's data for the script, plus its timer -->
+        <div id="sp-dps-source" data-model="focused-target"><span id="sp-dps-values" data-attr-sp-visible="visible ? 1 : 0" data-attr-sp-name="name" data-attr-sp-hp="hp" data-attr-sp-max="max_hp"></span></div>
+        <div id="sp-dps-timer"></div>
+    </body>
+</rml>

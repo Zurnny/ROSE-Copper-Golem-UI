@@ -1,0 +1,31 @@
+<rml>
+<head>
+    <title>Game Arena</title>
+    <link type="text/template" href="../templates/window-fixed-size.html" />
+    <link type="text/rcss" href="../styles/components.css" />
+    <link type="text/rcss" href="../styles/spritesheet_currencyicon.css" />
+    <link type="text/rcss" href="arena_browser.css" />
+    <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+    <link type="text/rcss" href="../styles/steampunk.css" />
+    <script src="game_arena.lua" />
+</head>
+<body template="window-fixed-size" id="game-arena">
+    <div class="arena-browser">
+        <div class="arena-sidebar content-box">
+            <div class="arena-filters">
+                <div class="ui-tabs">
+                    <button id="arena-all" class="default selected" arena-filter="0">All</button>
+                    <button id="arena-dungeons" class="default" arena-filter="1"><str string-id="984">Dungeons</str></button>
+                    <button id="arena-pvp" class="default" arena-filter="2"><str string-id="985">PvP</str></button>
+                </div>
+                <div class="arena-search-row"><input id="arena-search" type="text" placeholder="Search arenas..." maxlength="80" /><span class="tooltip arena-level-choice"><button id="arena-all-levels" class="default ui-compact selected">A</button><span class="tooltiptext">All levels: show every arena.</span></span><span class="tooltip arena-level-choice"><button id="arena-level-filter" class="default ui-compact">Lv</button><span class="tooltiptext">My level: show arenas with a bracket for your character level.</span></span></div>
+            </div>
+            <div id="arena-game-list"><div class="arena-empty ui-status">Loading arenas...</div></div>
+        </div>
+        <div class="arena-detail content-box">
+            <div id="arena-detail-content"><div class="arena-empty ui-status">Select an arena</div></div>
+            <div class="arena-group-footer ui-footer"><span id="arena-group-summary">No group</span><button id="arena-manage-group" class="default" onclick="group">Manage Group</button></div>
+        </div>
+    </div>
+</body>
+</rml>

@@ -1,0 +1,203 @@
+<rml>
+    <head>
+        <title>Party Finder</title>
+
+        <link type="text/template" href="../templates/window-resizeable.html" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            #game-party-finder
+            {
+                width: 650dp;
+                height: 450dp;
+                min-width: 530dp;
+                min-height: 150dp;
+            }
+
+            listbox {
+                padding-right: 7dp;
+            }
+
+            listbox-item {
+                padding: 4dp;
+            }
+
+            button.default {
+                min-width: 110dp;
+            }
+
+            .party-tooltip-container
+            {
+                position: relative;
+                display: block;
+            }
+
+            .party-tooltip-text
+            {
+                display: block;
+                visibility: hidden;
+                z-index: 1;
+                clip: none;
+                pointer-events: none;
+                background: rgba(42, 40, 45, 240);
+                border: 1dp rgb(116, 53, 22);
+                color: #fff;
+                text-align: center;
+                border-radius: 3dp;
+                padding: 5dp;
+
+                width: auto;
+                min-width: 200dp;
+
+
+                opacity: 0;
+                transition: opacity 0.25s;
+
+                /* Position the tooltip */
+                position: absolute;
+                text-align: left;
+                bottom: auto;
+                top: 100%;
+                left: 10dp;
+                width: 450dp;
+                word-break: break-word;
+            }
+
+            .party-advert:hover .party-tooltip-text
+            {
+                opacity: 1;
+                visibility: visible;
+            }
+
+
+            .party-advert-header {
+                padding-right: 18dp;
+                height: 1.5em;
+            }
+            .party-advert-header td {
+                cursor: hand;
+                vertical-align: middle;
+            }
+            .party-advert-header td:hover {
+                background: rgba(203, 117, 74, 40);
+            }
+
+            .party-owner-name-header {
+                min-width: 150dp;
+            }
+            .party-owner-name {
+                min-width: 150dp;
+                font-weight: 850;
+                color: rgb(231, 154, 116);
+            }
+            .party-owner-zone-header {
+                width: 180dp;
+            }
+            .party-owner-zone {
+                width: 180dp;
+                font-weight: 850;
+            }
+            .party-level-range-header {
+                width: 80dp;
+                text-align: center;
+            }
+            .party-level-range {
+                width: 80dp;
+                text-align: right;
+                padding-right: 5dp;
+                color: rgb(180, 255, 180);
+            }
+            .invalid-level {
+                color: rgb(255, 180, 180);
+            }
+            .party-member-count {
+                width: 80dp;
+                text-align: center;
+            }
+            .party-advert-text {
+                color: rgba(230, 230, 230, 255);
+                word-break: break-word;
+            }
+
+            tbody {
+                padding: 4dp;
+            }
+            tbody:nth-child(even) {
+                background: rgba(67, 65, 72, 90);
+            }
+            td:nth-child(1) {
+                padding-left: 4dp;
+            }
+
+            tbody.my-party {
+                background: rgba(203, 117, 74, 60);
+            }
+        </style>
+    </head>
+
+    <body id="game-party-finder" template="window-resizeable">
+        <div data-model="party-finder" style="width: 100%; height: 100%; display: flex; flex-direction: column;">
+            <div class="content-box" style="padding-top: 0dp; padding-bottom: 0dp; margin-bottom: 0dp;">
+                <table class="party-advert-header">
+                    <tr>
+                        <td class="party-owner-name-header" data-event-click="sort_adverts('owner_name')"><str string-id="1272" /></td>
+                        <td class="party-owner-zone-header" data-event-click="sort_adverts('owner_zone')">Zone</td>
+                        <td class="party-level-range-header" data-event-click="sort_adverts('highest_member_level')"><str string-id="313" /></td>
+                        <td class="party-member-count" data-event-click="sort_adverts('members.size')">Members</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div style="flex: 1;" class="content-box">
+                <div style="overflow: hidden scroll; width: 100%; height: 100%">
+                    <table>
+                        <tbody data-for="advert : party_adverts" class="party-advert" data-class-my-party="advert.party_id == player_party_id">
+                            <tr>
+                                <td class="party-owner-name">{{advert.members[0].name}}</td>
+                                <td class="party-owner-zone"><str data-attr-zone-name="advert.members[0].zone" /></td>
+                                <td class="party-level-range" data-class-invalid-level="abs(advert.highest_member_level - player_level) > max_level_difference_for_xp || abs(advert.lowest_member_level - player_level) > max_level_difference_for_xp">{{advert.lowest_member_level}} - {{advert.highest_member_level}}</td>
+                                <td class="party-member-count">{{advert.members.size}} / {{advert.max_members}}</td>
+                            </tr>
+                            <tr style="min-height: 2.5em">
+                                <td colspan="3">
+                                    <span class="party-advert-text">{{advert.text}}</span>
+                                    <div class="party-tooltip-container">
+                                        <span class="party-tooltip-text">
+                                            <div>{{advert.text}}</div>
+                                            <br />
+                                            <str string-id="489" />: <str data-attr-string-id="advert.rule_items ? 490 : 491" /><br/>
+                                            <str ability-name="30" />: <str data-attr-string-id="advert.rule_xp ? 492 : 493" /><br/>
+                                            <br />
+                                            <table style="text-align: left">
+                                                <tr data-for="member : advert.members">
+                                                    <td>{{member.name}}</td>
+                                                    <td style="width: 50dp">Lv{{member.level}}</td>
+                                                    <td style="width: 90dp"><str data-attr-job-name="member.job"/></td>
+                                                </tr>
+                                            </table>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="default" style="min-width: 70dp; width: 100%;" data-if="!has_party && advert.members.size < advert.max_members && abs(advert.highest_member_level - player_level) <= max_level_difference_for_xp && abs(advert.lowest_member_level - player_level) <= max_level_difference_for_xp" data-attr-onclick="'advert_join(' + advert.party_id + ')'">Join</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: row;">
+                <span style="width: 150dp">
+                    <button class="default" style="width: 150dp" onclick="advert_start" data-if="!has_party || (is_party_owner && !has_party_advert)">Start Advert</button>
+                    <button class="default" style="width: 150dp" onclick="advert_stop" data-if="is_party_owner && has_party_advert">Stop Advert</button>
+                </span>
+                <span style="flex: 1"></span>
+                <button class="default" style="width: 150dp" onclick="advert_start" data-visible-if="is_party_owner && has_party_advert">Edit Advert</button>
+                <span style="flex: 1"></span>
+                <button class="default" style="width: 150dp" onclick="advert_refresh">Refresh</button>
+            </div>
+        </div>
+    </body>
+</rml>

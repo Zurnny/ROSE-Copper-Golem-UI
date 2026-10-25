@@ -1,0 +1,216 @@
+<rml>
+    <head>
+        <title>Inventory</title>
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/spritesheet_itemicon.css" />
+        <link type="text/rcss" href="../styles/spritesheet_socketgem.css" />
+        <link type="text/rcss" href="../styles/spritesheet_elementicon.css" />
+        <link type="text/rcss" href="../styles/item_slot.css" />
+        <link type="text/rcss" href="../styles/spritesheet_inventory.css" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+        <style>
+            body { width: 306dp; max-width: 95vw; }
+            .equipment-pane { position: relative; width: 269dp; height: 133dp; margin: 0 auto 12dp; }
+            .equipment-cell { position: absolute; width: 43dp; height: 43dp; }
+            .equipment-cell > img { position: absolute; width: 43dp; height: 43dp; pointer-events: none; }
+            /* steampunk: brighter slot names (the printed ones are dimmed underneath) */
+            .equipment-pane#equipment-0 .equipment-cell > img, .equipment-pane#equipment-1 .equipment-cell > img, .equipment-pane#equipment-2 .equipment-cell > img { image-color: rgb(110, 110, 110); }
+            .sp-slot-name { position: absolute; left: 2dp; top: 2dp; width: 40dp; height: 40dp; line-height: 40dp; text-align: center; font-size: 9dp; color: rgb(228, 155, 119); font-effect: outline(1dp rgb(35, 34, 38)); pointer-events: none; }
+            .sp-slot-name { display: none; }
+            .equipment-cell item-slot[empty="1"] + .sp-slot-name { display: block; }
+            .equipment-cell item-slot { position: absolute; top: 2dp; left: 2dp; width: 40dp; height: 40dp; }
+            .equipment-cell.filled > img { visibility: hidden; }
+            .bag-grid { width: 260dp; }
+            .inventory-footer { display: flex; align-items: center; justify-content: space-between; gap: 8dp; }
+            #inventory-weight { color: rgb(0, 210, 255); }
+            #inventory-weight.overweight { color: rgb(255, 100, 100); }
+            .vehicle-stats { position: absolute; top: 49dp; left: 0; right: 0; font-size: 12dp; }
+            .vehicle-stat { display: inline-flex; justify-content: space-between; width: 48%; margin-right: 2%; line-height: 19dp; }
+            .vehicle-stat span { color: rgb(231, 154, 116); }
+            #inventory-operation { color: rgb(231, 154, 116); font-size: 12dp; margin-bottom: 8dp; }
+        </style>
+    </head>
+    <body template="window-fixed-size" id="inventory-window">
+        <div data-model="inventory-window">
+            <div class="ui-tabs">
+                <button id="inventory-costume" class="default" onclick="mode:0" data-class-selected="mode == 0"><str string-id="975">Costume</str></button>
+                <button id="inventory-gear" class="default" onclick="mode:1" data-class-selected="mode == 1"><str string-id="839">Gear</str></button>
+                <button id="inventory-vehicle" class="default" onclick="mode:2" data-class-selected="mode == 2"><str string-id="930">PAT</str></button>
+            </div>
+            <div class="equipment-pane" id="equipment-0" data-if="mode == 0">
+                <div class="equipment-cell" style="left: 69dp; top: 0dp;"><img sprite="GEN_INVSLOT17" /><item-slot id="costume-1" /><span class="sp-slot-name">Face</span></div>
+                <div class="equipment-cell" style="left: 114dp; top: 0dp;"><img sprite="GEN_INVSLOT18" /><item-slot id="costume-2" /><span class="sp-slot-name">Head</span></div>
+                <div class="equipment-cell" style="left: 114dp; top: 45dp;"><img sprite="GEN_INVSLOT20" /><item-slot id="costume-3" /><span class="sp-slot-name">Body</span></div>
+                <div class="equipment-cell" style="left: 159dp; top: 0dp;"><img sprite="GEN_INVSLOT19" /><item-slot id="costume-4" /><span class="sp-slot-name">Back</span></div>
+                <div class="equipment-cell" style="left: 69dp; top: 90dp;"><img sprite="GEN_INVSLOT21" /><item-slot id="costume-5" /><span class="sp-slot-name">Arms</span></div>
+                <div class="equipment-cell" style="left: 114dp; top: 90dp;"><img sprite="GEN_INVSLOT22" /><item-slot id="costume-6" /><span class="sp-slot-name">Foot</span></div>
+                <div class="equipment-cell" style="left: 69dp; top: 45dp;"><img sprite="GEN_INVSLOT08" /><item-slot id="costume-7" /><span class="sp-slot-name">Weapon</span></div>
+                <div class="equipment-cell" style="left: 159dp; top: 45dp;"><img sprite="GEN_INVSLOT07" /><item-slot id="costume-8" /><span class="sp-slot-name">Shield</span></div>
+            </div>
+            <div class="equipment-pane" id="equipment-1" data-if="mode == 1">
+                <div class="equipment-cell" style="left: 69dp; top: 0dp;"><img sprite="GEN_INVSLOT17" /><item-slot id="item-1" /><span class="sp-slot-name">Face</span></div>
+                <div class="equipment-cell" style="left: 114dp; top: 0dp;"><img sprite="GEN_INVSLOT18" /><item-slot id="item-2" /><span class="sp-slot-name">Head</span></div>
+                <div class="equipment-cell" style="left: 114dp; top: 45dp;"><img sprite="GEN_INVSLOT20" /><item-slot id="item-3" /><span class="sp-slot-name">Body</span></div>
+                <div class="equipment-cell" style="left: 159dp; top: 0dp;"><img sprite="GEN_INVSLOT19" /><item-slot id="item-4" /><span class="sp-slot-name">Back</span></div>
+                <div class="equipment-cell" style="left: 69dp; top: 90dp;"><img sprite="GEN_INVSLOT21" /><item-slot id="item-5" /><span class="sp-slot-name">Arms</span></div>
+                <div class="equipment-cell" style="left: 114dp; top: 90dp;"><img sprite="GEN_INVSLOT22" /><item-slot id="item-6" /><span class="sp-slot-name">Foot</span></div>
+                <div class="equipment-cell" style="left: 69dp; top: 45dp;"><img sprite="GEN_INVSLOT08" /><item-slot id="item-7" /><span class="sp-slot-name">Weapon</span></div>
+                <div class="equipment-cell" style="left: 159dp; top: 45dp;"><img sprite="GEN_INVSLOT07" /><item-slot id="item-8" /><span class="sp-slot-name">Shield</span></div>
+                <div class="equipment-cell" style="left: 0dp; top: 45dp;"><img sprite="GEN_INVSLOT02" /><item-slot id="item-9" /><span class="sp-slot-name">Necklace</span></div>
+                <div class="equipment-cell" style="left: 0dp; top: 0dp;"><img sprite="GEN_INVSLOT01" /><item-slot id="item-10" /><span class="sp-slot-name">Ring</span></div>
+                <div class="equipment-cell" style="left: 0dp; top: 90dp;"><img sprite="GEN_INVSLOT03" /><item-slot id="item-11" /><span class="sp-slot-name">Earring</span></div>
+                <div class="equipment-cell" style="left: 225dp; top: 0dp;"><img sprite="GEN_INVSLOT04" /><item-slot id="item-132" /><span class="sp-slot-name">Arrow</span></div>
+                <div class="equipment-cell" style="left: 225dp; top: 45dp;"><img sprite="GEN_INVSLOT05" /><item-slot id="item-133" /><span class="sp-slot-name">Bullet</span></div>
+                <div class="equipment-cell" style="left: 225dp; top: 90dp;"><img sprite="GEN_INVSLOT06" /><item-slot id="item-134" /><span class="sp-slot-name">Cannon</span></div>
+            </div>
+            <div class="equipment-pane" id="equipment-2" data-if="mode == 2">
+                <div class="equipment-cell" style="left: 14dp; top: 0dp;"><img sprite="GEN_INVSLOT23" /><item-slot id="item-135" /><span class="sp-slot-name">Body</span></div>
+                <div class="equipment-cell" style="left: 59dp; top: 0dp;"><img sprite="GEN_INVSLOT24" /><item-slot id="item-136" /><span class="sp-slot-name">Engine</span></div>
+                <div class="equipment-cell" style="left: 104dp; top: 0dp;"><img sprite="GEN_INVSLOT25" /><item-slot id="item-137" /><span class="sp-slot-name">Move</span></div>
+                <div class="equipment-cell" style="left: 164dp; top: 0dp;"><img sprite="GEN_INVSLOT26" /><item-slot id="item-138" /><span class="sp-slot-name">Ability</span></div>
+                <div class="equipment-cell" style="left: 209dp; top: 0dp;"><img sprite="GEN_INVSLOT27" /><item-slot id="item-139" /><span class="sp-slot-name">Weapon</span></div>
+                <div class="vehicle-stats"><div class="vehicle-stat"><str string-id="732" /><span>{{vehicle[0]}}</span></div><div class="vehicle-stat"><str string-id="735" /><span>{{vehicle[1]}}</span></div><div class="vehicle-stat"><str string-id="736" /><span>{{vehicle[2]}}</span></div><div class="vehicle-stat"><str string-id="1404" /><span>{{vehicle[3]}}</span></div><div class="vehicle-stat"><str string-id="738" /><span>{{vehicle[4]}}</span></div><div class="vehicle-stat"><str string-id="1407" /><span>{{vehicle[5]}}</span></div><div class="vehicle-stat"><str string-id="1408" /><span>{{vehicle[6]}}</span></div></div>
+            </div>
+            <div class="ui-tabs">
+                <button id="inventory-equipment" class="default" onclick="bag:0" data-class-selected="bag == 0 || mode == 2"><str string-id="840">Equipment</str></button>
+                <button id="inventory-consume" class="default" onclick="bag:1" data-class-selected="bag == 1" data-if="mode != 2"><str string-id="841">Consume</str></button>
+                <button id="inventory-material" class="default" onclick="bag:2" data-class-selected="bag == 2" data-if="mode != 2"><str string-id="842">Material</str></button>
+            </div>
+            <div id="inventory-operation" data-if="operation != ''">{{operation}}</div>
+            <div class="bag-grid ui-slot-grid" id="inventory-bag-0" data-if="mode != 2 &amp;&amp; bag == 0">
+                <div class="bag-cell"><item-slot id="bag-0" /></div>
+                <div class="bag-cell"><item-slot id="bag-1" /></div>
+                <div class="bag-cell"><item-slot id="bag-2" /></div>
+                <div class="bag-cell"><item-slot id="bag-3" /></div>
+                <div class="bag-cell"><item-slot id="bag-4" /></div>
+                <div class="bag-cell"><item-slot id="bag-5" /></div>
+                <div class="bag-cell"><item-slot id="bag-6" /></div>
+                <div class="bag-cell"><item-slot id="bag-7" /></div>
+                <div class="bag-cell"><item-slot id="bag-8" /></div>
+                <div class="bag-cell"><item-slot id="bag-9" /></div>
+                <div class="bag-cell"><item-slot id="bag-10" /></div>
+                <div class="bag-cell"><item-slot id="bag-11" /></div>
+                <div class="bag-cell"><item-slot id="bag-12" /></div>
+                <div class="bag-cell"><item-slot id="bag-13" /></div>
+                <div class="bag-cell"><item-slot id="bag-14" /></div>
+                <div class="bag-cell"><item-slot id="bag-15" /></div>
+                <div class="bag-cell"><item-slot id="bag-16" /></div>
+                <div class="bag-cell"><item-slot id="bag-17" /></div>
+                <div class="bag-cell"><item-slot id="bag-18" /></div>
+                <div class="bag-cell"><item-slot id="bag-19" /></div>
+                <div class="bag-cell"><item-slot id="bag-20" /></div>
+                <div class="bag-cell"><item-slot id="bag-21" /></div>
+                <div class="bag-cell"><item-slot id="bag-22" /></div>
+                <div class="bag-cell"><item-slot id="bag-23" /></div>
+                <div class="bag-cell"><item-slot id="bag-24" /></div>
+                <div class="bag-cell"><item-slot id="bag-25" /></div>
+                <div class="bag-cell"><item-slot id="bag-26" /></div>
+                <div class="bag-cell"><item-slot id="bag-27" /></div>
+                <div class="bag-cell"><item-slot id="bag-28" /></div>
+                <div class="bag-cell"><item-slot id="bag-29" /></div>
+            </div>
+            <div class="bag-grid ui-slot-grid" id="inventory-bag-1" data-if="mode != 2 &amp;&amp; bag == 1">
+                <div class="bag-cell"><item-slot id="bag-30" /></div>
+                <div class="bag-cell"><item-slot id="bag-31" /></div>
+                <div class="bag-cell"><item-slot id="bag-32" /></div>
+                <div class="bag-cell"><item-slot id="bag-33" /></div>
+                <div class="bag-cell"><item-slot id="bag-34" /></div>
+                <div class="bag-cell"><item-slot id="bag-35" /></div>
+                <div class="bag-cell"><item-slot id="bag-36" /></div>
+                <div class="bag-cell"><item-slot id="bag-37" /></div>
+                <div class="bag-cell"><item-slot id="bag-38" /></div>
+                <div class="bag-cell"><item-slot id="bag-39" /></div>
+                <div class="bag-cell"><item-slot id="bag-40" /></div>
+                <div class="bag-cell"><item-slot id="bag-41" /></div>
+                <div class="bag-cell"><item-slot id="bag-42" /></div>
+                <div class="bag-cell"><item-slot id="bag-43" /></div>
+                <div class="bag-cell"><item-slot id="bag-44" /></div>
+                <div class="bag-cell"><item-slot id="bag-45" /></div>
+                <div class="bag-cell"><item-slot id="bag-46" /></div>
+                <div class="bag-cell"><item-slot id="bag-47" /></div>
+                <div class="bag-cell"><item-slot id="bag-48" /></div>
+                <div class="bag-cell"><item-slot id="bag-49" /></div>
+                <div class="bag-cell"><item-slot id="bag-50" /></div>
+                <div class="bag-cell"><item-slot id="bag-51" /></div>
+                <div class="bag-cell"><item-slot id="bag-52" /></div>
+                <div class="bag-cell"><item-slot id="bag-53" /></div>
+                <div class="bag-cell"><item-slot id="bag-54" /></div>
+                <div class="bag-cell"><item-slot id="bag-55" /></div>
+                <div class="bag-cell"><item-slot id="bag-56" /></div>
+                <div class="bag-cell"><item-slot id="bag-57" /></div>
+                <div class="bag-cell"><item-slot id="bag-58" /></div>
+                <div class="bag-cell"><item-slot id="bag-59" /></div>
+            </div>
+            <div class="bag-grid ui-slot-grid" id="inventory-bag-2" data-if="mode != 2 &amp;&amp; bag == 2">
+                <div class="bag-cell"><item-slot id="bag-60" /></div>
+                <div class="bag-cell"><item-slot id="bag-61" /></div>
+                <div class="bag-cell"><item-slot id="bag-62" /></div>
+                <div class="bag-cell"><item-slot id="bag-63" /></div>
+                <div class="bag-cell"><item-slot id="bag-64" /></div>
+                <div class="bag-cell"><item-slot id="bag-65" /></div>
+                <div class="bag-cell"><item-slot id="bag-66" /></div>
+                <div class="bag-cell"><item-slot id="bag-67" /></div>
+                <div class="bag-cell"><item-slot id="bag-68" /></div>
+                <div class="bag-cell"><item-slot id="bag-69" /></div>
+                <div class="bag-cell"><item-slot id="bag-70" /></div>
+                <div class="bag-cell"><item-slot id="bag-71" /></div>
+                <div class="bag-cell"><item-slot id="bag-72" /></div>
+                <div class="bag-cell"><item-slot id="bag-73" /></div>
+                <div class="bag-cell"><item-slot id="bag-74" /></div>
+                <div class="bag-cell"><item-slot id="bag-75" /></div>
+                <div class="bag-cell"><item-slot id="bag-76" /></div>
+                <div class="bag-cell"><item-slot id="bag-77" /></div>
+                <div class="bag-cell"><item-slot id="bag-78" /></div>
+                <div class="bag-cell"><item-slot id="bag-79" /></div>
+                <div class="bag-cell"><item-slot id="bag-80" /></div>
+                <div class="bag-cell"><item-slot id="bag-81" /></div>
+                <div class="bag-cell"><item-slot id="bag-82" /></div>
+                <div class="bag-cell"><item-slot id="bag-83" /></div>
+                <div class="bag-cell"><item-slot id="bag-84" /></div>
+                <div class="bag-cell"><item-slot id="bag-85" /></div>
+                <div class="bag-cell"><item-slot id="bag-86" /></div>
+                <div class="bag-cell"><item-slot id="bag-87" /></div>
+                <div class="bag-cell"><item-slot id="bag-88" /></div>
+                <div class="bag-cell"><item-slot id="bag-89" /></div>
+            </div>
+            <div class="bag-grid ui-slot-grid" id="inventory-bag-3" data-if="mode == 2">
+                <div class="bag-cell"><item-slot id="bag-90" /></div>
+                <div class="bag-cell"><item-slot id="bag-91" /></div>
+                <div class="bag-cell"><item-slot id="bag-92" /></div>
+                <div class="bag-cell"><item-slot id="bag-93" /></div>
+                <div class="bag-cell"><item-slot id="bag-94" /></div>
+                <div class="bag-cell"><item-slot id="bag-95" /></div>
+                <div class="bag-cell"><item-slot id="bag-96" /></div>
+                <div class="bag-cell"><item-slot id="bag-97" /></div>
+                <div class="bag-cell"><item-slot id="bag-98" /></div>
+                <div class="bag-cell"><item-slot id="bag-99" /></div>
+                <div class="bag-cell"><item-slot id="bag-100" /></div>
+                <div class="bag-cell"><item-slot id="bag-101" /></div>
+                <div class="bag-cell"><item-slot id="bag-102" /></div>
+                <div class="bag-cell"><item-slot id="bag-103" /></div>
+                <div class="bag-cell"><item-slot id="bag-104" /></div>
+                <div class="bag-cell"><item-slot id="bag-105" /></div>
+                <div class="bag-cell"><item-slot id="bag-106" /></div>
+                <div class="bag-cell"><item-slot id="bag-107" /></div>
+                <div class="bag-cell"><item-slot id="bag-108" /></div>
+                <div class="bag-cell"><item-slot id="bag-109" /></div>
+                <div class="bag-cell"><item-slot id="bag-110" /></div>
+                <div class="bag-cell"><item-slot id="bag-111" /></div>
+                <div class="bag-cell"><item-slot id="bag-112" /></div>
+                <div class="bag-cell"><item-slot id="bag-113" /></div>
+                <div class="bag-cell"><item-slot id="bag-114" /></div>
+                <div class="bag-cell"><item-slot id="bag-115" /></div>
+                <div class="bag-cell"><item-slot id="bag-116" /></div>
+                <div class="bag-cell"><item-slot id="bag-117" /></div>
+                <div class="bag-cell"><item-slot id="bag-118" /></div>
+                <div class="bag-cell"><item-slot id="bag-119" /></div>
+            </div>
+            <div class="inventory-footer ui-footer">
+                <div id="inventory-weight" class="ui-currency" data-class-overweight="overweight"><img sprite="inventory-weight" /><span>{{weight}}</span></div>
+                <div id="inventory-zulie" class="ui-currency"><button id="inventory-money" class="zulie" onclick="money" data-attrif-disabled="!enabled" /><span>{{money}}</span></div>
+            </div>
+        </div>
+    </body>
+</rml>

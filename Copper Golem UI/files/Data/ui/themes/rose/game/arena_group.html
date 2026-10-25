@@ -1,0 +1,373 @@
+<rml>
+    <head>
+        <title>Group</title>
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+        <style>
+            #arena-group { width: auto; min-width: 150dp; min-height: 0; max-width: 95vw; padding: 2dp; padding-top: 24dp; }
+            #arena-group #window-content { padding: 2dp; }
+            #arena-group > .window-title { height: 24dp; line-height: 24dp; padding-left: 4dp; }
+            #arena-group > .window-title-close { display: none; }
+            #arena-group-panel { display: block; }
+            #arena-group.collapsed { padding-bottom: 0; }
+            #arena-group.collapsed #window-content { height: 0; min-height: 0; padding: 0; }
+            #arena-group.collapsed > .window-title, #arena-group.collapsed .ui-hud-toolbar { visibility: visible; }
+            #arena-group .ui-hud-toolbar { top: -24dp; right: 0; flex-direction: row; gap: 2dp; }
+            #arena-group .ui-hud-toolbar button { width: 20dp; min-width: 20dp; height: 20dp; padding: 0; margin: 0; }
+            #group-settings { decorator: image(party-options-n); }
+            #group-settings:hover { decorator: image(party-options-h); }
+            #group-leave { decorator: image(party-leave-n); }
+            #group-leave:hover { decorator: image(party-leave-h); }
+            #group-leave:disabled { decorator: image(party-leave-d); }
+            #group-collapse { decorator: none; box-sizing: border-box; border: 2dp rgb(171, 90, 50); border-radius: 10dp; background-color: rgb(42, 40, 45); }
+            #group-collapse:hover { border-color: rgb(156, 88, 216); background-color: rgb(81, 79, 88); }
+            #group-collapse icon { display: block; width: 10dp; height: 10dp; font-size: 10dp; line-height: 10dp; margin: 3dp; pointer-events: none; }
+            #arena-group-members { overflow: auto; max-height: 65vh; }
+            .group-columns { display: flex; gap: 0.4em; }
+            .group-column { width: 18em; flex-shrink: 0; }   /* wide enough for a full row of buffs */
+            .group-member { padding: 0; margin-bottom: 0.3em; }
+            gauge.group-health { height: 1.5em; margin-top: 0; }
+            gauge.group-health > .group-name { height: 1.5em; line-height: 1.5em; font-size: 1em; text-align: right; padding-right: 0.2em; box-sizing: border-box; }
+            gauge.group-mana { height: 0.2em; margin-top: 0; }
+            .group-statuses { gap: 0.1em; margin-top: 0.1em; min-height: 1em; flex-wrap: nowrap; }
+            .group-statuses > span, .group-statuses > span > img { width: 1em; height: 1em; }
+            #group-settings-panel { position: absolute; top: 18dp; left: 0dp; z-index: 80; width: 240dp; padding: 4dp; padding-top: 25dp; }
+            #group-settings-panel .window-pane { padding: 8dp; }
+            /* Steampunk: proper title bar for this panel */
+            #arena-group #group-settings-panel { padding-top: 34dp; }
+            #group-settings-panel > .window-title {
+                top: 6dp; left: 6dp; right: 34dp; width: auto; height: 26dp; line-height: 26dp;
+                padding-left: 6dp;
+                border-bottom: 1dp rgb(116, 53, 22);
+            }
+            #group-settings-panel > .window-title-close { top: 7dp; right: 8dp; }
+            #group-settings-panel .ui-range-setting:first-child { margin-top: 0; }
+            #arena-group-tooltip { visibility: visible; position: absolute; z-index: 100; clip: none; pointer-events: none; padding: 8dp; width: 250dp; max-width: 90vw; max-height: 90vh; background: rgba(35, 34, 38, 245); border: 1dp rgb(171, 90, 50); border-radius: 2dp; }
+            .status-tooltip-name { display: block; font-weight: 820; margin-bottom: 4dp; color: rgb(231, 154, 116); }
+            .status-tooltip-description { display: block; margin-bottom: 4dp; }
+            .status-tooltip-time { display: block; color: rgb(90, 230, 110); }
+            .status-tooltip-time.warning { color: rgb(242, 100, 29); }
+            .status-tooltip-time.danger { color: rgb(255, 80, 80); }
+            /* ---- Job icons (steampunk add-on, filled in by the script below) ---- */
+            @spritesheet group-job-icons
+            {
+                src: ../imgs/ui_icon0.dds;
+                gj-visitor: 369px 2px 40px 40px;
+                gj-soldier: 200px 2px 40px 40px;
+                gj-knight: 200px 2px 40px 40px;
+                gj-champion: 242px 43px 40px 40px;
+                gj-muse: 242px 2px 40px 40px;
+                gj-mage: 242px 2px 40px 40px;
+                gj-cleric: 284px 43px 40px 40px;
+                gj-hawker: 284px 2px 40px 40px;
+                gj-raider: 284px 2px 40px 40px;
+                gj-scout: 326px 2px 40px 40px;
+                gj-dealer: 200px 43px 40px 40px;
+                gj-artisan: 200px 43px 40px 40px;
+                gj-bourgeois: 326px 43px 40px 40px;
+            }
+            .group-member.sp-has-job { position: relative; padding-left: 1.9em; }
+            /* a badge with no class known yet stays hidden (it showed as an empty black square) */
+            .sp-job-badge { display: none; }
+            .group-member.sp-has-job .sp-job-badge { display: block; }
+            .sp-job-badge { position: absolute; left: 0; top: 0; width: 1.7em; height: 1.7em; box-sizing: border-box; border: 1dp rgb(116, 53, 22); background-color: rgb(42, 40, 45); pointer-events: none; }
+            .sp-job-badge.job-visitor { decorator: image(gj-visitor); }
+            .sp-job-badge.job-soldier { decorator: image(gj-soldier); }
+            .sp-job-badge.job-knight { decorator: image(gj-knight); }
+            .sp-job-badge.job-champion { decorator: image(gj-champion); }
+            .sp-job-badge.job-muse { decorator: image(gj-muse); }
+            .sp-job-badge.job-mage { decorator: image(gj-mage); }
+            .sp-job-badge.job-cleric { decorator: image(gj-cleric); }
+            .sp-job-badge.job-hawker { decorator: image(gj-hawker); }
+            .sp-job-badge.job-raider { decorator: image(gj-raider); }
+            .sp-job-badge.job-scout { decorator: image(gj-scout); }
+            .sp-job-badge.job-dealer { decorator: image(gj-dealer); }
+            .sp-job-badge.job-artisan { decorator: image(gj-artisan); }
+            .sp-job-badge.job-bourgeois { decorator: image(gj-bourgeois); }
+            .sp-job-source { display: none; }
+            /* Repeating timer: two identical animations swapped each time one ends */
+            @keyframes sp-job-tick-a { from { opacity: 0; } to { opacity: 0; } }
+            @keyframes sp-job-tick-b { from { opacity: 0; } to { opacity: 0; } }
+            #sp-job-timer { position: absolute; width: 1dp; height: 1dp; opacity: 0; pointer-events: none; animation: 1s sp-job-tick-a; }
+            /* Steampunk: title centred in the 24dp bar, level with the toolbar */
+            #arena-group > .window-title { top: 0dp; }
+            /* Group Options extras (script below): buffs on/off, icon size, title bar */
+            #arena-group.sp-buffs-off .group-statuses { display: none; }
+            #arena-group.sp-buff-50 .group-statuses > span, #arena-group.sp-buff-50 .group-statuses > span > img { width: 0.5em; height: 0.5em; }
+            #arena-group.sp-buff-60 .group-statuses > span, #arena-group.sp-buff-60 .group-statuses > span > img { width: 0.6em; height: 0.6em; }
+            #arena-group.sp-buff-70 .group-statuses > span, #arena-group.sp-buff-70 .group-statuses > span > img { width: 0.7em; height: 0.7em; }
+            #arena-group.sp-buff-80 .group-statuses > span, #arena-group.sp-buff-80 .group-statuses > span > img { width: 0.8em; height: 0.8em; }
+            #arena-group.sp-buff-90 .group-statuses > span, #arena-group.sp-buff-90 .group-statuses > span > img { width: 0.9em; height: 0.9em; }
+            #arena-group.sp-buff-110 .group-statuses > span, #arena-group.sp-buff-110 .group-statuses > span > img { width: 1.1em; height: 1.1em; }
+            #arena-group.sp-buff-120 .group-statuses > span, #arena-group.sp-buff-120 .group-statuses > span > img { width: 1.2em; height: 1.2em; }
+            #arena-group.sp-buff-130 .group-statuses > span, #arena-group.sp-buff-130 .group-statuses > span > img { width: 1.3em; height: 1.3em; }
+            #arena-group.sp-buff-140 .group-statuses > span, #arena-group.sp-buff-140 .group-statuses > span > img { width: 1.4em; height: 1.4em; }
+            #arena-group.sp-buff-150 .group-statuses > span, #arena-group.sp-buff-150 .group-statuses > span > img { width: 1.5em; height: 1.5em; }
+            #arena-group.sp-buff-160 .group-statuses > span, #arena-group.sp-buff-160 .group-statuses > span > img { width: 1.6em; height: 1.6em; }
+            #arena-group.sp-buff-170 .group-statuses > span, #arena-group.sp-buff-170 .group-statuses > span > img { width: 1.7em; height: 1.7em; }
+            #arena-group.sp-buff-180 .group-statuses > span, #arena-group.sp-buff-180 .group-statuses > span > img { width: 1.8em; height: 1.8em; }
+            #arena-group.sp-buff-190 .group-statuses > span, #arena-group.sp-buff-190 .group-statuses > span > img { width: 1.9em; height: 1.9em; }
+            #arena-group.sp-buff-200 .group-statuses > span, #arena-group.sp-buff-200 .group-statuses > span > img { width: 2em; height: 2em; }
+            #arena-group.sp-buff-50 .group-statuses { min-height: 0.5em; }
+            /* Title bar: the game hides it until hovered. Here it fades in and out
+               instead, or stays visible when "Always show title bar" is ticked
+               (it also stays while the group is collapsed, as before). */
+            #arena-group > .window-title, #arena-group .ui-hud-toolbar { visibility: visible; opacity: 0; transition: opacity 0.3s linear-in-out; }
+            #arena-group:hover > .window-title, #arena-group:hover .ui-hud-toolbar,
+            #arena-group.collapsed > .window-title, #arena-group.collapsed .ui-hud-toolbar,
+            #arena-group.sp-title-keep > .window-title, #arena-group.sp-title-keep .ui-hud-toolbar { opacity: 1; }
+            /* Disabled buttons set their own opacity, so fade them directly too */
+            #arena-group .ui-hud-toolbar button.ui-hud-action, #arena-group .ui-hud-toolbar button.ui-hud-action:disabled { opacity: 0; transition: opacity 0.3s linear-in-out; }
+            #arena-group:hover .ui-hud-toolbar button.ui-hud-action,
+            #arena-group.collapsed .ui-hud-toolbar button.ui-hud-action,
+            #arena-group.sp-title-keep .ui-hud-toolbar button.ui-hud-action { opacity: 1; }
+            #arena-group:hover .ui-hud-toolbar button.ui-hud-action:disabled,
+            #arena-group.collapsed .ui-hud-toolbar button.ui-hud-action:disabled,
+            #arena-group.sp-title-keep .ui-hud-toolbar button.ui-hud-action:disabled { opacity: 0.4; }
+            .sp-extras { margin-top: 8dp; padding-top: 8dp; border-top: 1dp rgb(116, 53, 22); }
+            .sp-extras .ui-choice-row { display: block; margin: 4dp 0; }
+        </style>
+        <script>
+-- Job icons for group members (steampunk add-on).
+-- This window has no job data, so jobs are collected from places that do:
+-- the Game Arena (group, friends, clan lists), the clan window, and your own
+-- character. They are added when the window opens; adding them at load causes
+-- "Could not locate data model" errors. Every name/job seen is also saved to
+-- sp_job_cache.txt, so icons fill in over time and survive restarts.
+local ok, err = pcall(function()
+    local MEMBER_SEL, TAG_PATTERN = '.group-member', '^group%-member%-(%d+)$'
+    local SOURCES = {
+        [[<div class="sp-job-source" data-model="game-arena"><span data-for="m : members" sp-kind="name" data-attr-sp-tag="m.tag" data-attr-sp-name="m.name" data-attr-sp-job="m.job"></span><span data-for="m : friends" data-attr-sp-name="m.name" data-attr-sp-job="m.job"></span><span data-for="m : clan" data-attr-sp-name="m.name" data-attr-sp-job="m.job"></span></div>]],
+        [[<div class="sp-job-source" data-model="clan"><span data-for="m : members" data-attr-sp-name="m.name" data-attr-sp-job="m.job_id"></span></div>]],
+        [[<div class="sp-job-source" data-model="character"><span sp-self="1" data-attr-sp-name="name" data-attr-sp-job="job"></span></div>]],
+    }
+    local IDS = { [0] = 'visitor', [111] = 'soldier', [121] = 'knight', [122] = 'champion',
+        [211] = 'muse', [221] = 'mage', [222] = 'cleric', [311] = 'hawker', [321] = 'raider',
+        [322] = 'scout', [411] = 'dealer', [421] = 'bourgeois', [422] = 'artisan' }
+    local FIRST = { [1] = 'soldier', [2] = 'muse', [3] = 'hawker', [4] = 'dealer' }
+    local VALID = {}
+    for _, v in pairs(IDS) do VALID[v] = true end
+    local function job_name(value)
+        local n = tonumber(value)
+        if n then return IDS[n] or FIRST[math.floor(n / 100)] or (n < 100 and 'visitor') or nil end
+        local s = tostring(value or ''):lower():match('^%s*(.-)%s*$')
+        return VALID[s] and s or nil
+    end
+    local function each(list, fn)
+        if not list then return end
+        local i = list[0] and 0 or 1
+        while list[i] do fn(list[i]); i = i + 1 end
+    end
+    local function trim(t) return (tostring(t or ''):gsub('<[^>]*>', ''):match('^%s*(.-)%s*$')) end
+
+    -- name -> job, saved between sessions
+    local CACHE_FILE, cache, dirty = 'sp_job_cache.txt', {}, false
+    pcall(function()
+        local f = io.open(CACHE_FILE, 'r')
+        if not f then return end
+        for line in f:lines() do
+            local name, job = line:match('^(.-)=(%a+)%s*$')
+            if name and VALID[job] then cache[name] = job end
+        end
+        f:close()
+    end)
+    local function remember(name, job)
+        if name ~= '' and job and cache[name] ~= job then cache[name] = job; dirty = true end
+    end
+    local function save()
+        if not dirty then return end
+        dirty = false
+        pcall(function()
+            local f = io.open(CACHE_FILE, 'w')
+            if not f then return end
+            for name, job in pairs(cache) do f:write(name, '=', job, '\n') end
+            f:close()
+        end)
+    end
+
+    local added, flip = false, false
+    local function add_sources()
+        if added then return end
+        local slot = document:GetElementById('sp-job-source-slot')
+        if not slot then return end
+        added = true
+        for _, markup in ipairs(SOURCES) do
+            local holder = document:CreateElement('div')
+            slot:AppendChild(holder)
+            pcall(function() slot.last_child.inner_rml = markup end)
+        end
+    end
+
+    local function update()
+        local by_tag, self_job = {}, nil
+        each(document:QuerySelectorAll('.sp-job-source span'), function(s)
+            local job = job_name(s:GetAttribute('sp-job'))
+            if job then
+                local name, tag = trim(s:GetAttribute('sp-name')), s:GetAttribute('sp-tag')
+                if tag then by_tag[tostring(tag)] = job end
+                if s:GetAttribute('sp-self') then self_job = job end
+                remember(name, job)
+            end
+        end)
+        save()
+        each(document:QuerySelectorAll(MEMBER_SEL), function(m)
+            local tag = (m.id or ''):match(TAG_PATTERN)
+            local job = tag and by_tag[tag]
+            if not job and m:IsClassSet('sp-self') then job = self_job end
+            if not job then
+                local label = m:QuerySelector('.ui-roster-name')
+                job = label and cache[trim(label.inner_rml)]
+            end
+            local badge = m:QuerySelector('.sp-job-badge')
+            if job then
+                if not badge then
+                    m:AppendChild(document:CreateElement('div'))
+                    badge = m.last_child
+                end
+                local want = 'sp-job-badge job-' .. job
+                if badge:GetAttribute('class') ~= want then badge:SetAttribute('class', want) end
+                m:SetClass('sp-has-job', true)
+            elseif badge then
+                badge:SetAttribute('class', 'sp-job-badge')
+                m:SetClass('sp-has-job', false)
+            end
+        end)
+    end
+
+    document:AddEventListener('show', function() pcall(add_sources) end)
+    local timer = document:GetElementById('sp-job-timer')
+    if timer then
+        timer:AddEventListener('animationend', function()
+            pcall(update)
+            flip = not flip
+            timer.style.animation = '1s ' .. (flip and 'sp-job-tick-b' or 'sp-job-tick-a')
+        end)
+    end
+end)
+        </script>
+        <script>
+-- Group HUD extras (steampunk add-on): buff icons on/off, buff icon size and
+-- whether the title bar always shows. Set in the attached Group Options panel
+-- (gear button), saved to sp_group_hud.txt. Written inline because the game ignores .lua edits.
+pcall(function()
+    local document = document   -- this window (kept even if another window's script runs later)
+    local SAVE_FILE = 'sp_group_hud.txt'
+    local cfg = {buffs = 1, size = 100, keep = 0}
+    pcall(function()
+        local f = io.open(SAVE_FILE, 'r')
+        if not f then return end
+        for line in f:lines() do
+            local k, v = line:match('^%s*(%a+)%s*=%s*(%d+)')
+            if k and cfg[k] ~= nil then cfg[k] = tonumber(v) end
+        end
+        f:close()
+    end)
+    cfg.size = math.max(50, math.min(200, math.floor(cfg.size / 10 + 0.5) * 10))
+    local function el(id) return document:GetElementById(id) end
+    local function save()
+        pcall(function()
+            local f = io.open(SAVE_FILE, 'w')
+            if not f then return end
+            f:write('buffs=', cfg.buffs, '\n', 'size=', cfg.size, '\n', 'keep=', cfg.keep, '\n')
+            f:close()
+        end)
+    end
+    local function apply()
+        local body = el('arena-group')
+        if not body then return end
+        body:SetClass('sp-buffs-off', cfg.buffs == 0)
+        body:SetClass('sp-title-keep', cfg.keep == 1)
+        for s = 50, 200, 10 do body:SetClass('sp-buff-' .. s, cfg.size == s) end
+    end
+    local function changed() save(); apply() end
+
+    -- Controls in the attached Group Options panel (gear button)
+    local function is_checked(box) return box:HasAttribute('checked') end
+    local function set_checked(box, on)
+        if on then box:SetAttribute('checked', '') else box:RemoveAttribute('checked') end
+    end
+    local function show_size()
+        local r = el('sp-buff-size-value')
+        if r then r.inner_rml = string.format('%d', math.floor(cfg.size + 0.5)) .. '%' end
+    end
+    local buffs, size, keep = el('sp-buffs-on'), el('sp-buff-size'), el('sp-title-keep')
+    if buffs then
+        set_checked(buffs, cfg.buffs == 1)
+        buffs:AddEventListener('change', function() cfg.buffs = is_checked(buffs) and 1 or 0; changed() end)
+    end
+    if keep then
+        set_checked(keep, cfg.keep == 1)
+        keep:AddEventListener('change', function() cfg.keep = is_checked(keep) and 1 or 0; changed() end)
+    end
+    if size then
+        size:SetAttribute('value', string.format('%d', cfg.size))
+        show_size()
+        size:AddEventListener('change', function(event)
+            local v = tonumber(event.parameters and event.parameters.value) or tonumber(size:GetAttribute('value')) or cfg.size
+            cfg.size = math.max(50, math.min(200, math.floor(v / 10 + 0.5) * 10))
+            show_size()
+            changed()
+        end)
+    end
+    apply()
+end)
+        </script>
+    </head>
+    <body template="window-fixed-size" id="arena-group" data-model="arena-group" data-class-collapsed="collapsed">
+        <div id="sp-job-timer"></div>
+        <div id="sp-job-source-slot"></div>
+        <div id="arena-group-panel" data-model="arena-group">
+            <div class="ui-hud-toolbar">
+                <button id="group-collapse" class="ui-hud-action" onclick="collapse"><icon class="arrow-up" data-if="!collapsed" /><icon class="arrow-down" data-if="collapsed" /></button>
+                <button id="group-settings" class="ui-hud-action" onclick="settings"></button>
+                <button id="group-leave" class="ui-hud-action" onclick="leave" data-attrif-disabled="!can_manage" />
+            </div>
+            <div id="group-settings-panel" class="window-fixed-size" data-if="show_settings" onclick="ignore">
+                <span id="sp-group-options-title" class="window-title">Group Options</span>
+                <button id="group-settings-close" class="window-title-close" onclick="settings" />
+                <div class="window-pane">
+                    <div class="ui-range-setting">
+                        <label><span>Opacity</span><span class="ui-detail-value">{{background_opacity}}%</span></label>
+                        <input id="group-opacity" type="range" min="0" max="100" step="5" data-value="background_opacity" onchange="apply-settings" />
+                    </div>
+                    <div class="ui-range-setting">
+                        <label><span>Scale</span><span class="ui-detail-value">{{scale_percent}}%</span></label>
+                        <input id="group-scale" type="range" min="55" max="160" step="5" data-value="scale_percent" onchange="apply-settings" />
+                    </div>
+                    <!-- Steampunk extras (script at the end of <head>); saved to sp_group_hud.txt -->
+                    <div class="sp-extras">
+                        <label class="ui-choice-row"><input type="checkbox" id="sp-buffs-on" checked="" /><span>Show buff icons</span></label>
+                        <div class="ui-range-setting">
+                            <label><span>Buff icon size</span><span class="ui-detail-value" id="sp-buff-size-value">100%</span></label>
+                            <input id="sp-buff-size" type="range" min="50" max="200" step="10" value="100" />
+                        </div>
+                        <label class="ui-choice-row"><input type="checkbox" id="sp-title-keep" /><span>Always show title bar</span></label>
+                    </div>
+                </div>
+            </div>
+            <div id="arena-group-members" data-if="!collapsed" data-style-font-size="members_font_size + 'dp'" data-style-max-height="members_max_height + 'dp'">
+                <div class="group-columns">
+                    <div class="group-column" data-for="column : columns">
+                        <div class="group-member ui-roster-member" data-for="member : column.members" data-attr-id="'group-member-' + member.tag" data-attr-onclick="'select:' + member.tag" data-class-leader="member.leader">
+                            <gauge class="group-health ui-vitals horizontal-sm-md red" data-attr-gvalue="member.hp_percent" gmax="100"><span class="group-name ui-roster-name">{{member.name}}</span></gauge>
+                            <gauge class="group-mana ui-vitals horizontal-sm-sm blue" data-attr-gvalue="member.mp_percent" gmax="100" />
+                            <div class="group-statuses ui-status-icons">
+                                <span class="group-status" data-for="status : member.statuses" data-attr-id="'group-status-' + member.tag + '-' + status.key" data-attr-onmouseover="'status-tooltip:' + member.tag + ':' + status.key" onmouseout="hide-tooltip"><img data-attr-sprite="'stateicon-' + status.icon" /></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="arena-group-tooltip" data-if="tooltip_visible" data-style-left="tooltip_x + 'px'" data-style-top="tooltip_y + 'px'">
+                <div data-if="tooltip_text != ''">{{tooltip_text}}</div>
+                <div data-if="tooltip_text == ''">
+                    <div class="status-tooltip-name">{{tooltip_name}}</div>
+                    <div class="status-tooltip-description">{{tooltip_description}}</div>
+                    <div class="status-tooltip-time" data-class-warning="tooltip_time_class == 'warning'" data-class-danger="tooltip_time_class == 'danger'">{{tooltip_remaining}}</div>
+                </div>
+            </div>
+        </div>
+    </body>
+</rml>

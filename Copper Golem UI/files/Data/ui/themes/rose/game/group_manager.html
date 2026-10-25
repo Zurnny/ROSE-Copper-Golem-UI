@@ -1,0 +1,135 @@
+<rml>
+<head>
+    <title>Group Manager</title>
+    <link type="text/template" href="../templates/window-fixed-size.html" />
+    <link type="text/rcss" href="../styles/components.css" />
+    <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+    <link type="text/rcss" href="../styles/steampunk.css" />
+    <style>
+        body { width: 740dp; max-width: 94vw; }
+        .group-columns { display: flex; gap: 10dp; height: 480dp; max-height: 70vh; min-height: 280dp; }
+        .group-roster { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+        .group-directory { width: 270dp; flex: 0 0 37%; min-width: 215dp; display: flex; flex-direction: column; }
+        .group-heading { display: flex; justify-content: space-between; padding: 8dp; flex-shrink: 0; }
+        .group-heading .ui-section-title { margin: 0; }
+        .group-scroll { flex: 1; min-height: 0; overflow-y: auto; }
+        .group-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .group-job { width: 78dp; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .group-level { width: 32dp; text-align: right; flex-shrink: 0; }
+        .group-leader { width: 12dp; color: rgb(231, 154, 116); flex-shrink: 0; }
+        .group-row { cursor: hand; }
+        .group-empty { padding: 24dp 8dp; }
+        .group-actions { display: flex; flex-wrap: wrap; gap: 6dp; padding: 8dp; flex-shrink: 0; }
+        .group-actions button { flex: 1 0 46%; min-width: 150dp; font-size: 13dp; padding: 4dp 8dp; white-space: nowrap; }
+        .group-invite-entry { display: flex; gap: 6dp; padding: 0 8dp 8dp; flex-shrink: 0; }
+        .group-invite-entry input { flex: 1; width: 100dp; min-width: 0; }
+        .group-invite-entry button, .group-directory-row button { min-width: 58dp; font-size: 12dp; }
+        .group-directory-row { display: flex; align-items: center; gap: 6dp; padding: 6dp 8dp; font-size: 13dp; }
+        .group-directory-label { padding: 8dp; margin-bottom: 0; }
+        .group-help { padding: 8dp; }
+    </style>
+    <script>
+-- Friend levels (steampunk add-on). The game sends level 1 for friends whose
+-- level it does not know. Real levels seen in your group, in the online clan
+-- list and in the clan's member list are remembered (sp_level_cache.txt), and
+-- shown for friends instead. A remembered level is from the last time that
+-- person was seen, so it can lag behind if they have levelled since.
+-- Runs when the window opens and when the mouse moves over it (not on a timer,
+-- so it never creates text mid-frame).
+pcall(function()
+    local document = document
+    local CACHE_FILE, cache, dirty = 'sp_level_cache.txt', {}, false
+    pcall(function()
+        local f = io.open(CACHE_FILE, 'r')
+        if not f then return end
+        for line in f:lines() do
+            local name, lvl = line:match('^(.-)=(%d+)%s*$')
+            if name and name ~= '' then cache[name] = tonumber(lvl) end
+        end
+        f:close()
+    end)
+    local function save()
+        if not dirty then return end
+        dirty = false
+        pcall(function()
+            local f = io.open(CACHE_FILE, 'w')
+            if not f then return end
+            for name, lvl in pairs(cache) do f:write(name, '=', lvl, '\n') end
+            f:close()
+        end)
+    end
+    local function each(list, fn)
+        if not list then return end
+        local i = list[0] and 0 or 1
+        while list[i] do fn(list[i]); i = i + 1 end
+    end
+    local added = false
+    local function add_clan_source()
+        if added then return end
+        local slot = document:GetElementById('sp-level-slot')
+        if not slot then return end
+        added = true
+        pcall(function()
+            slot.inner_rml = '<div data-model="clan"><span class="sp-lv-src" data-for="m : members" data-attr-sp-name="m.name" data-attr-sp-level="m.level"></span></div>'
+        end)
+    end
+    local function refresh()
+        each(document:QuerySelectorAll('.sp-lv-src'), function(e)
+            local name, lvl = e:GetAttribute('sp-name'), tonumber(e:GetAttribute('sp-level'))
+            if name and name ~= '' and lvl and lvl > 1 and cache[name] ~= lvl then cache[name] = lvl; dirty = true end
+        end)
+        save()
+        each(document:QuerySelectorAll('.sp-friend-level'), function(e)
+            local name, lvl = e:GetAttribute('sp-name') or '', tonumber(e:GetAttribute('sp-level')) or 0
+            if lvl <= 1 then lvl = cache[name] or 0 end
+            local text = lvl > 1 and ('Lv ' .. lvl) or ''
+            if e:GetAttribute('sp-shown') ~= text then
+                e.inner_rml = text
+                e:SetAttribute('sp-shown', text)
+            end
+        end)
+    end
+    document:AddEventListener('show', function() pcall(add_clan_source); pcall(refresh) end)
+    document:AddEventListener('mouseover', function() pcall(refresh) end)
+end)
+    </script>
+</head>
+<body template="window-fixed-size" id="group-manager">
+    <!-- Hidden: the clan's full member list (names and levels), added by the script when the window opens -->
+    <div id="sp-level-slot" style="display: none;"></div>
+    <div data-model="game-arena" class="group-columns">
+        <div class="group-roster content-box">
+            <div class="group-heading"><span class="ui-section-title"><str string-id="990">Members</str></span><span>{{members.size}} / {{member_limit}}</span></div>
+            <div class="ui-list-row"><span class="group-leader" /><span class="group-name"><str string-id="992">Name</str></span><span class="group-job"><str string-id="993">Class</str></span><span class="group-level">Lv</span></div>
+            <div id="arena-member-list" class="group-scroll">
+                <div class="group-empty ui-status" data-if="!has_group"><str string-id="1063">Not in a group</str><br/>Invite a player to start a group.</div>
+                <div class="ui-list-row group-row sp-lv-src" data-for="member : members" data-attr-id="'arena-member-' + member.tag" data-attr-onclick="'member:' + member.tag" data-class-selected="selected_member == member.tag" data-attr-sp-name="member.name" data-attr-sp-level="member.level">
+                    <span class="group-leader"><span data-if="member.leader">&#9733;</span></span><span class="group-name">{{member.name}}</span><span class="group-job">{{member.job}}</span><span class="group-level">{{member.level}}</span>
+                </div>
+                <div class="group-help ui-status" data-if="has_group">{{member_limit - members.size}} open slots</div>
+            </div>
+            <div class="group-actions ui-footer">
+                <button id="arena-promote" class="default" onclick="promote" data-attrif-disabled="!can_promote"><str string-id="997">Promote</str></button>
+                <button id="arena-kick" class="default" onclick="kick" data-attrif-disabled="!can_kick">{{kick_text}}</button>
+                <button id="arena-leave" class="default" onclick="leave" data-attrif-disabled="!can_leave">{{leave_text}}</button>
+                <button id="arena-disband" class="default" onclick="disband" data-attrif-disabled="!can_disband"><str string-id="998">Disband</str></button>
+            </div>
+        </div>
+        <div class="group-directory content-box">
+            <div class="group-heading ui-section-title"><str string-id="991">Invite</str></div>
+            <div class="group-invite-entry"><input id="arena-invite-name" type="text" maxlength="32" placeholder="Player name..." data-value="invite_name" /><button id="arena-send-invite" class="default ui-compact" onclick="invite" data-attrif-disabled="!can_invite || invite_name == ''"><str string-id="1000">Invite</str></button></div>
+            <div class="group-help ui-status" data-if="!can_invite">Invites are available while solo or leading a group, outside a game.</div>
+            <div class="group-scroll" id="arena-directory-list">
+                <div class="group-directory-label ui-section-title">Friends online</div>
+                <div class="group-help ui-status" data-if="friends.size == 0">No friends online</div>
+                <!-- The game sends level 1 for friends whose level it does not know; the script fills in a level
+                     remembered from your group or clan instead (saved in sp_level_cache.txt) -->
+                <div class="group-directory-row" data-for="person : friends"><span class="group-name">{{person.name}}</span><span class="sp-friend-level" data-attr-sp-name="person.name" data-attr-sp-level="person.level"></span><button class="default ui-compact" data-attr-id="'arena-friend-' + person.tag" data-attr-onclick="'friend:' + person.tag" data-attrif-disabled="!can_invite">Invite</button></div>
+                <div class="group-directory-label ui-section-title">Clan members online</div>
+                <div class="group-help ui-status" data-if="clan.size == 0">No clan members online</div>
+                <div class="group-directory-row sp-lv-src" data-for="person : clan" data-attr-sp-name="person.name" data-attr-sp-level="person.level"><span class="group-name">{{person.name}}</span><span data-if="person.level > 0">Lv {{person.level}}</span><button class="default ui-compact" data-attr-id="'arena-clan-' + person.tag" data-attr-onclick="'clan-member:' + person.tag" data-attrif-disabled="!can_invite">Invite</button></div>
+            </div>
+        </div>
+    </div>
+</body>
+</rml>

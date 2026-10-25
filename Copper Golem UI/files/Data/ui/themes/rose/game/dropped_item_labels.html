@@ -1,0 +1,136 @@
+<rml>
+    <head>
+        <title>Dropped Items</title>
+        <link type="text/rcss" href="../styles/html.css" />
+        <link type="text/rcss" href="../styles/components.css" />
+        <style>
+            body { z-index: -100; }
+            .dropped-item { position: absolute; display: inline-block; box-sizing: border-box; width: auto; max-width: 100vw; max-height: 100vh; overflow: hidden; padding: 2dp 8dp; white-space: nowrap; pointer-events: none; }
+            .pickup-status { margin-left: 4dp; color: rgb(255, 80, 80); pointer-events: none; }
+            .pickup-status.available { color: rgb(90, 230, 110); }
+            /* Background strength from the Options slider (0 = clear, 10 = solid) */
+            #dropped-item-labels-root .dropped-item { background-color: rgba(42, 40, 45, 0); border: 1dp rgba(116, 53, 22, 0); border-radius: 2dp; }
+            #dropped-item-labels-root.sp-alpha-0 .dropped-item { background-color: rgba(42, 40, 45, 0); border-color: rgba(116, 53, 22, 0); }
+            #dropped-item-labels-root.sp-alpha-1 .dropped-item { background-color: rgba(42, 40, 45, 26); border-color: rgba(116, 53, 22, 26); }
+            #dropped-item-labels-root.sp-alpha-2 .dropped-item { background-color: rgba(42, 40, 45, 51); border-color: rgba(116, 53, 22, 51); }
+            #dropped-item-labels-root.sp-alpha-3 .dropped-item { background-color: rgba(42, 40, 45, 76); border-color: rgba(116, 53, 22, 76); }
+            #dropped-item-labels-root.sp-alpha-4 .dropped-item { background-color: rgba(42, 40, 45, 102); border-color: rgba(116, 53, 22, 102); }
+            #dropped-item-labels-root.sp-alpha-5 .dropped-item { background-color: rgba(42, 40, 45, 128); border-color: rgba(116, 53, 22, 128); }
+            #dropped-item-labels-root.sp-alpha-6 .dropped-item { background-color: rgba(42, 40, 45, 153); border-color: rgba(116, 53, 22, 153); }
+            #dropped-item-labels-root.sp-alpha-7 .dropped-item { background-color: rgba(42, 40, 45, 178); border-color: rgba(116, 53, 22, 178); }
+            #dropped-item-labels-root.sp-alpha-8 .dropped-item { background-color: rgba(42, 40, 45, 204); border-color: rgba(116, 53, 22, 204); }
+            #dropped-item-labels-root.sp-alpha-9 .dropped-item { background-color: rgba(42, 40, 45, 230); border-color: rgba(116, 53, 22, 230); }
+            #dropped-item-labels-root.sp-alpha-10 .dropped-item { background-color: rgba(42, 40, 45, 255); border-color: rgba(116, 53, 22, 255); }
+        </style>
+    <script>
+-- Dropped item label background: a 0-10 slider (0 = clear, 10 = solid).
+-- Shared by options_bgfx.html (the slider) and dropped_item_labels.html
+-- (the labels). The value is saved to a small text file when the game's
+-- Lua allows file access. Written inline because the game ignores edited .lua files.
+local SAVE_FILE = 'sp_label_alpha.txt'
+local DEFAULT = 0
+local LABELS_ID = 'dropped-item-labels'
+local ROOT_ID = 'dropped-item-labels-root'
+
+local function load_value()
+    local ok, v = pcall(function()
+        local f = io.open(SAVE_FILE, 'r')
+        if not f then return nil end
+        local n = tonumber(f:read('*l'))
+        f:close()
+        return n
+    end)
+    if ok and v then return math.max(0, math.min(10, math.floor(v))) end
+    if _G and type(_G.SP_LABEL_ALPHA) == 'number' then return _G.SP_LABEL_ALPHA end
+    return DEFAULT
+end
+
+local function save_value(v)
+    if _G then _G.SP_LABEL_ALPHA = v end
+    pcall(function()
+        local f = io.open(SAVE_FILE, 'w')
+        if f then f:write(tostring(v)); f:close() end
+    end)
+end
+
+-- Put class sp-alpha-<v> on the labels root (and remove the others)
+local function apply_to(doc, v)
+    if not doc then return false end
+    local root = doc:GetElementById(ROOT_ID)
+    if not root then return false end
+    for i = 0, 10 do root:SetClass('sp-alpha-' .. i, i == v) end
+    return true
+end
+
+local value = load_value()
+
+if document:GetElementById(ROOT_ID) then
+    ------------------------------------------------ labels document
+    apply_to(document, value)
+    local me = document
+    if _G then _G.SP_LABELS_APPLY = function(v) apply_to(me, v) end end
+else
+    ------------------------------------------------ options document
+  local ok, err = pcall(function()
+    local slider = document:GetElementById('sp-label-alpha')
+    local readout = document:GetElementById('sp-label-alpha-value')
+    local function show(v) if readout then readout.inner_rml = tostring(v * 10) .. '%' end end
+
+    local function push(v)
+        -- 1) the labels document registered a function
+        local dbg = document:GetElementById('sp-label-alpha-debug')
+        if _G and type(_G.SP_LABELS_APPLY) == 'function' and pcall(_G.SP_LABELS_APPLY, v) then
+            if dbg then dbg.inner_rml = '' end
+            return
+        end
+        local reached = false
+        -- 2) find the labels document through the context
+        pcall(function()
+            local ctx = document.context
+            local doc = ctx.documents[LABELS_ID]
+            reached = apply_to(doc, v)
+            if not reached then
+                for i = 0, #ctx.documents - 1 do
+                    local d = ctx.documents[i]
+                    if d and d.id == LABELS_ID then reached = apply_to(d, v) break end
+                end
+            end
+        end)
+        if dbg then dbg.inner_rml = reached and '' or 'Saved. The labels will update after a restart (could not reach them live).' end
+    end
+
+    if slider then
+        slider:SetAttribute('value', tostring(value))
+        show(value)
+        slider:AddEventListener('change', function(event)
+            local v = tonumber(event.parameters and event.parameters.value)
+            if v == nil then pcall(function() v = tonumber(slider.value) end) end
+            if v == nil then pcall(function() v = tonumber(event.current_element:GetAttribute('value')) end) end
+            if v == nil then v = tonumber(slider:GetAttribute('value')) or value end
+            v = math.max(0, math.min(10, math.floor(v + 0.5)))
+            value = v
+            show(v)
+            save_value(v)
+            push(v)
+        end)
+    end
+    push(value)
+  end)
+  if not ok then
+    local r = document:GetElementById('sp-label-alpha-value')
+    if r then r.inner_rml = 'Lua error' end
+    local d = document:GetElementById('sp-label-alpha-debug')
+    if d then d.inner_rml = tostring(err):gsub('&','&amp;'):gsub('<','&lt;') end
+  end
+end
+
+    </script>
+    </head>
+    <body class="ui-world-layer" id="dropped-item-labels">
+        <!-- The model binds on a child: a body-level model attaches after parsing, too late for data-for templates. -->
+        <div id="dropped-item-labels-root" data-model="dropped-item-labels">
+        <div class="dropped-item" data-for="label : labels" data-if="label.visible" data-style-color="label.color"
+             data-style-left="label.x + 'px'" data-style-top="label.y + 'px'">{{label.name}}<span class="pickup-status" data-if="show_pickup_status" data-class-available="label.can_pick_up">*</span></div>
+        </div>
+    </body>
+</rml>

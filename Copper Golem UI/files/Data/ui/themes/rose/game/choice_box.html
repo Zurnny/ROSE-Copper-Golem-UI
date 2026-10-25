@@ -1,0 +1,134 @@
+<rml>
+
+    <head>
+        <link type="text/template" href="../templates/window-fixed-size.html" />
+        <link type="text/rcss" href="../styles/spritesheet_itemicon.css" />
+        <link type="text/rcss" href="../styles/spritesheet_socketgem.css" />
+        <link type="text/rcss" href="../styles/item_slot.css" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            body {
+                width: 595dp;
+            }
+            
+            handle {
+                text-align: center;
+            }
+
+            #main-container {
+                padding: 10dp;
+                min-height: 100dp;
+
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 5dp;
+            }
+
+            #item-box-preview {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+                gap: 2dp;
+            }
+
+            #item-box-preview>div {
+                display: flex;
+                justify-content: center;
+            }
+
+            #box-icon-container {
+                width: 50dp;
+                height: 50dp;
+                text-align: center;
+                align-items: center;
+                background-color: rgba(42, 40, 45, 170);
+                border-radius: 5dp;
+            }
+
+            #choice-label {
+                text-align: center;
+                font-size: 14dp;
+                font-weight: bold;
+            }
+
+            #choice-message {
+                text-align: center;
+                font-size: 18dp;
+                font-weight: bold;
+                color: rgb(231, 154, 116);
+            }
+
+            #choice-container {
+                width: 100%;
+                min-height: 100dp;
+
+                display: flex;
+                /*display: block;*/
+                box-sizing: border-box;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .choice-item {
+                width: 130dp;
+                height: 90dp;
+                padding: 5dp;
+                margin: 5dp;
+                box-sizing: border-box;
+
+                display: inline-block;
+                text-align: center;
+                background-color: rgba(42, 40, 45, 170);
+            }
+
+            .button-container {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .button-container>.textarea {
+                display: inline-block;
+                width: 45dp;
+                text-align: center;
+            }
+
+            #confirm {
+                font-size: 16dp;
+                font-weight: bold;
+                color: rgb(231, 154, 116);
+            }
+        </style>
+    </head>
+
+    <body id="game-choice-box" template="window-fixed-size">
+        <div id="main-container" data-model="item-box">
+            <div id="item-box-preview">
+                <div id="box-icon-container">
+                    <item-slot item-actions id="box-icon" data-attr-item="item_box.ref_key" data-attr-item-quantity="item_box.quantity"></item-slot>
+                </div>
+                <label id="choice-label">{{choice_quantity}} / {{item_box.quantity}}</label>
+            </div>
+            <label id="choice-message"><str string-id="1427">Choose your item(s)</str></label>
+            <panel id="choice-container" class="content-box">
+                <listbox id="choice-list">
+                    <listbox-item class="choice-item" data-for="choice : choice_list">
+                        <item-slot item-actions data-attr-id="'choice-icon-' + choice.index" data-attr-item="choice.ref_key" item-quantity="0"/>
+                        <div class="button-container">
+                            <button data-attr-id="'choice-decrease-' + choice.index" class="left-sm" data-event-click="dec_choice(choice.index)" /><label class="textarea">{{choice.choice_quantity}}</label><button data-attr-id="'choice-increase-' + choice.index" class="right-sm" data-event-click="inc_choice(choice.index)" />
+                        </div>
+                    </listbox-item>
+                </listbox>
+            </panel>
+            <button class="default" id="confirm" onclick="confirm">
+                <str string-id="858">Confirm</str>
+            </button>
+        </div>
+    </body>
+</rml>

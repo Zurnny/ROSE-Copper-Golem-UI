@@ -1,0 +1,195 @@
+<rml>
+
+    <head>
+        <title>Summon Gauge</title>
+
+        <link type="text/template" href="../templates/window-box.html" />
+        <link type="text/rcss" href="../styles/spritesheet_steampunk.css" />
+        <link type="text/rcss" href="../styles/steampunk.css" />
+
+        <style>
+            .title {
+                display: inline-block;
+                cursor: drag;
+                text-align: center;
+            }
+
+            .title #summon-title {
+                visibility: hidden;
+                font-size: 12dp;
+                font-weight: 600;
+                color: rgb(231, 154, 116);
+            }
+
+            #gauge-area {
+                display: block;
+                align-items: center;
+
+                width: 150dp;
+                padding: 5dp;
+                border-radius: 3.5dp;
+                transition: background 0.4s;
+            }
+
+            #summon-gauge {
+                width: 100%;
+                margin: 0dp;
+            }
+
+            #summons {
+                display: inline-block;
+
+                margin-top: 4dp;
+                line-height: 1.5;
+                color: white;
+                font-effect: outline(1dp black);
+            }
+
+            #gauge-area:hover {
+                background: rgba(42, 40, 45, 178);
+                transition: background 0.2s;
+            }
+
+            #gauge-area:hover .summon-item {
+                opacity: 1;
+            }
+
+            #gauge-area:hover #summon-title {
+                visibility: visible;
+            }
+
+            #gauge-area:hover .despawn {
+                visibility: visible;
+            }
+
+            .summon-item {
+                padding: 5dp;
+                opacity: 0.6;
+                position: relative;
+                display: flex;
+                flex-direction: column;
+
+                width: 140dp;
+                height: auto;
+
+                font-size: 10dp;
+                font-weight: 800;
+
+                line-height: 1;
+                transition: opacity 0.5s;
+                border-radius: 3dp;
+            }
+
+            .summon-item:hover {
+                background: rgba(203, 117, 74, 80);
+                transition: background 0.2s;
+                cursor: hand;
+            }
+
+            .summon-item.selected {
+                background: rgba(203, 117, 74, 80);
+            }
+
+            .summon-item .despawn {
+                visibility: hidden;
+            }
+
+            .despawntip {
+                position: relative;
+                display: inline-block;
+            }
+
+            .despawntip .despawntiptext {
+                z-index: 1;
+                position: absolute;
+                visibility: hidden;
+
+                font-size: 12dp;
+                width: 120dp;
+                background-color: rgba(42, 40, 45, 220);
+                color: #ff6f6f;
+                text-align: center;
+                padding: 5dp 0;
+                border-radius: 6px;
+
+                top: 2dp;
+                left: 25dp;
+            }
+
+            .despawntip:hover .despawntiptext {
+                visibility: visible;
+            }
+
+            @keyframes swap-colors {
+                from {
+                    color: rgb(231, 154, 116);
+                }
+
+                to {
+                    color: rgb(242, 97, 24);
+                }
+            }
+
+            /* steampunk add-on: summon HP numbers, range and low-HP warnings */
+            .sp-sum-top {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                width: 112dp;
+            }
+            .sp-sum-hp { white-space: nowrap; font-size: 10dp; font-weight: 700; color: rgb(241, 227, 196); }
+            .sp-far { font-size: 10dp; font-weight: 700; color: rgb(191, 145, 122); }
+            @keyframes sp-sum-pulse { from { color: rgb(255, 255, 255); } to { color: rgb(255, 90, 60); } }
+            .summon-item.low .sp-sum-name { animation: infinite cubic-in-out 0.8s alternate sp-sum-pulse; }
+            .summon-item.low .sp-sum-hp { color: rgb(255, 120, 90); }
+            #summon-count { font-size: 10dp; font-weight: 600; color: rgb(191, 145, 122); visibility: hidden; }
+            #gauge-area:hover #summon-count { visibility: visible; }
+            .summon-tip {
+                padding-top: 5dp;
+                width: 100%;
+                text-align: center;
+                color: white;
+                font-weight: 800;
+                font-size: 12dp;
+                font-effect: outline(1dp black);
+                
+            }
+
+            .summon-tip b {
+                animation: infinite cubic-in-out 2s alternate swap-colors;
+            }
+        </style>
+    </head>
+
+    <body id="game-summon-gauge">
+        <div id="gauge-area" data-model="summon-gauge-data">
+            <handle class="title" move_target="#document">
+                <label id="summon-title">Summon Gauge</label>
+                <span id="summon-count" data-if="gauge.summons.size > 0"> - {{gauge.summons.size}} out</span>
+                <gauge id="summon-gauge" class="horizontal-sm-md pink" data-attr-gvalue="gauge.value"
+                    data-attr-gmax="gauge.max_value">
+                    <span><label id="value"/>/<label id="max"/></span>
+                </gauge>
+            </handle>
+
+            <div id="summons" data-for="summon : gauge.summons">
+                <div data-attr-id="summon.obj_idx" class="summon-item" data-class-selected="summon.obj_idx == gauge.selected_summon_idx" data-class-low="summon.is_near &amp;&amp; summon.max_hp > 0 &amp;&amp; summon.hp * 10 &lt;= summon.max_hp * 3" onclick="select">
+                    <div class="sp-sum-top">
+                        <span class="sp-sum-name">{{summon.name}}</span>
+                        <span class="sp-sum-hp" data-if="summon.is_near">{{summon.hp | format_number}} / {{summon.max_hp | format_number}}</span>
+                        <span class="sp-far" data-if="!summon.is_near">Out of range</span>
+                    </div>
+                    <gauge data-if="summon.is_near" class="horizontal-sm-sm red" data-attr-gvalue="summon.hp" data-attr-gmax="summon.max_hp"></gauge>
+                    <button data-attr-id="summon.obj_idx" class="window-title-close despawn despawntip" onclick="despawn">
+                        <span class="despawntiptext">Despawn summon</span>
+                    </button>
+                </div>
+            </div>
+
+            <div data-if="gauge.selected_summon_idx > 0" class="summon-tip">
+                <span>Press <b>[Ctrl]</b> + <b>[Left Click]</b> to move your summon.</span>
+            </div>
+        </div>
+    </body>
+</rml>

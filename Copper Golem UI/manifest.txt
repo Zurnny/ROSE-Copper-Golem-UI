@@ -1,5 +1,5 @@
 ; Update list for Copper Golem UI. Upload this next to mod.ini and the files folder.
-version=1.3
+version=1.4
 b4da904abc082f890895af65d6b58626d0ac7857|files/Data/ui/themes/rose/game/announce.html
 82790a6c851c89e3e4c2f186eb830f09b16f9226|files/Data/ui/themes/rose/game/arena_browser.css
 8fb13abac758778905c2ccd6054a3654ee9518a5|files/Data/ui/themes/rose/game/arena_group.html
@@ -128,9 +128,9 @@ fa219d4f2598ae03daa77bbd54a25eb57966fb6c|launcher/nav_settings_h.png
 c7f75cc18de182b5e7d68d2b7896b14c2aa67a04|launcher/nav_support_n.png
 9621f95deec2132c19f43c4af027ab7c986bb47c|launcher/nav_website_h.png
 0bb8a4f629e8a1acac48a24f056017e8c3b994cc|launcher/nav_website_n.png
-514b7df642bb7ffa1524eef73291c2806fc38267|launcher/repair_h.png
-5da29b82fa6328f39a39e846e0ce84b0d952949b|launcher/repair_n.png
+800360f31800c4c4c4c32478a3386f7fe282465a|launcher/repair_h.png
+92b6df93854db81e8ff23a64c8e88ca766170fe8|launcher/repair_n.png
 7e8f2ac0f0c23b7e83561144262c341c27bad5a5|launcher/skin.ini
 21540afb2c00543e886211a3d322082feca69a83|launcher/start_h.png
 8dbb845963698e2100f2206fbaaa5c882b4caf04|launcher/start_n.png
-98a108c9243cf688557d0b2ded0056135b959051|mod.ini
+c3ab0b3265e4068c5b94463f288e154e6d845c37|mod.ini

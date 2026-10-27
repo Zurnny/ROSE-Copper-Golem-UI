@@ -1,5 +1,5 @@
 ; Update list for Copper Golem UI. Upload this next to mod.ini and the files folder.
-version=1.5
+version=1.6
 b4da904abc082f890895af65d6b58626d0ac7857|files/Data/ui/themes/rose/game/announce.html
 82790a6c851c89e3e4c2f186eb830f09b16f9226|files/Data/ui/themes/rose/game/arena_browser.css
 8fb13abac758778905c2ccd6054a3654ee9518a5|files/Data/ui/themes/rose/game/arena_group.html
@@ -24,7 +24,7 @@ c1fbd92e97e23e1f2318f7f5f0c3edc3ac525114|files/Data/ui/themes/rose/game/duel_sco
 b0beecb5b0a09c8a0b8ca2497fb9903a771724f2|files/Data/ui/themes/rose/game/game_arena.html
 a628e54900314bfdbceecc7e9dd4bd2246ef2ff6|files/Data/ui/themes/rose/game/gamearena_scoreboard.html
 a5cea8ce01cac66df98c82a4dbad4efcf1252a5f|files/Data/ui/themes/rose/game/group_manager.html
-83a9c216a87b069abe1bb9a5981aeb6c5de9f049|files/Data/ui/themes/rose/game/hud.html
+fb9368715be8077b8ba8bdbd954fed99fcc61025|files/Data/ui/themes/rose/game/hud.html
 e8ca6f2816b9ed82ef3ca439c41f8863b5495670|files/Data/ui/themes/rose/game/image_viewer.html
 219c071bdf444ff80ee1265dce513fcc1b433714|files/Data/ui/themes/rose/game/inventory.html
 6deb5185247b933207c187ffc5f8786de897a05b|files/Data/ui/themes/rose/game/item_mall.css
@@ -133,4 +133,4 @@ c7f75cc18de182b5e7d68d2b7896b14c2aa67a04|launcher/nav_support_n.png
 7e8f2ac0f0c23b7e83561144262c341c27bad5a5|launcher/skin.ini
 21540afb2c00543e886211a3d322082feca69a83|launcher/start_h.png
 8dbb845963698e2100f2206fbaaa5c882b4caf04|launcher/start_n.png
-f999404f5f63e91696d66236bcb21434c6a55edf|mod.ini
+db9dcec7c6beb4c8d484bd1f1b0dc4b680cfc863|mod.ini

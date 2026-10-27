@@ -204,14 +204,16 @@
 				line-height: 11dp;
 			}
 
-			/* Weapon slot on the right, in a riveted brass socket */
+			/* Weapon slot on the right, in a riveted brass socket. It fills the space
+			   between the bars (they end at 176dp) and the frame's inner edge, and runs
+			   from the top of the HP bar to the bottom of the EXP bar. */
 			.weapon-slot
 			{
 				position: absolute;
-				left: 188dp;
-				top: 40dp;
-				width: 46dp;
-				height: 46dp;
+				left: 181dp;
+				top: 36dp;
+				width: 55dp;
+				height: 55dp;
 				decorator: image(sp-slot);
 			}
 			/* ">" = only the slot's own children, not the icon image inside item-slot */
@@ -222,8 +224,8 @@
 				position: absolute;
 				left: 3dp;
 				top: 3dp;
-				width: 40dp;
-				height: 40dp;
+				width: 49dp;
+				height: 49dp;
 			}
 
 			/* Footer: weight on the left, Zulie on the right.

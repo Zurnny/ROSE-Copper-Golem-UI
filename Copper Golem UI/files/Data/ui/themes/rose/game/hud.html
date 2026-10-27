@@ -319,7 +319,7 @@
 			.sp-tip-warn { display: block; color: rgb(170, 50, 30); }
 			.sp-tip-note { display: block; color: rgb(114, 60, 33); font-size: 11dp; line-height: 15dp; font-weight: 600; }
 
-			/* Session trackers (XP per hour in the EXP tooltip, zuly in the zuly tooltip) */
+			/* Session trackers (XP per hour in the EXP tooltip, Zulie in the Zulie tooltip) */
 			#sp-track { display: none; }
 			#sp-weapon-src { display: none; }
 			@keyframes sp-track-tick-a { from { opacity: 0; } to { opacity: 0; } }
@@ -331,10 +331,10 @@
 		</style>
 		<script>
 -- Session trackers (steampunk add-on).
--- Every 5 seconds this notes your EXP and zuly. Hovering the EXP bar shows EXP
+-- Every 5 seconds this notes your EXP and Zulie. Hovering the EXP bar shows EXP
 -- per hour (over the last 10 minutes), time to the next level and what this
--- session has earned; hovering the zuly shows zuly gained or spent this
--- session and per hour. Double-click the zuly to start a new session. A new
+-- session has earned; hovering the Zulie shows Zulie gained or spent this
+-- session and per hour. Double-click the Zulie to start a new session. A new
 -- character starts a new session by itself. Text only changes while you hover,
 -- so nothing is redrawn in the background.
 pcall(function()
@@ -417,9 +417,9 @@ pcall(function()
     local function show_zuly()
         if not S then return end
         local diff = S.money - S.money0
-        set('sp-zuly-session', (diff >= 0 and 'Gained: +' or 'Spent: ') .. num(diff) .. ' z')
+        set('sp-zuly-session', (diff >= 0 and 'Gained: +' or 'Spent: ') .. num(diff) .. ' Zulie')
         local _, zph = rates()
-        set('sp-zuly-rate', zph and ('Per hour: ' .. (zph >= 0 and '+' or '') .. num(zph) .. ' z') or 'Per hour: gathering data...')
+        set('sp-zuly-rate', zph and ('Per hour: ' .. (zph >= 0 and '+' or '') .. num(zph) .. ' Zulie') or 'Per hour: gathering data...')
         set('sp-zuly-time', 'Session length: ' .. span(S.ticks * STEP))
     end
     -- hover handlers
@@ -577,11 +577,11 @@ end)
 					<span><str string-id="107">Weight</str>: <b>{{weight_percent}}%</b></span>
 					<span class="sp-zulie" id="sp-zulie"><b>{{money | format_number}}</b><img sprite="button-zulie-n" />
 						<div class="sp-tip">
-							<span class="sp-tip-title">Zuly this session</span>
+							<span class="sp-tip-title">Zulie this session</span>
 							<span class="sp-tip-row" id="sp-zuly-session">Gathering data...</span>
 							<span class="sp-tip-row" id="sp-zuly-rate"></span>
 							<span class="sp-tip-row" id="sp-zuly-time"></span>
-							<span class="sp-tip-note">Double-click the zuly to start a new session.</span>
+							<span class="sp-tip-note">Double-click the Zulie to start a new session.</span>
 						</div>
 					</span>
 				</div>
